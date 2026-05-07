@@ -173,25 +173,48 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
     <!-- Pipeline Tab -->
     <div id="tab-content-pipeline" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div class="mb-6"><h2 class="text-2xl md:text-3xl font-bold text-on-surface mb-2" style="font-family:'Space Grotesk',sans-serif">System Pipeline</h2><p class="text-on-surface-variant text-xs">Detailed architecture of the IoT-to-ML data flow.</p></div>
-      <div class="glass-card rounded-xl p-8">
-        <div class="flex flex-col md:flex-row items-center justify-between gap-6 relative">
-          <div class="hidden md:block absolute top-1/2 left-0 w-full h-[1px] bg-outline-variant/30 -translate-y-1/2"></div>
-          <div class="flex flex-col items-center gap-3 w-full md:w-32 z-10">
-            <div class="bg-primary/20 p-4 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-3xl">sensors</span></div>
-            <p class="text-[9px] font-bold uppercase">Gas Sensor</p>
+      <div class="grid grid-cols-1 gap-4">
+      <div class="glass-card rounded-xl p-4 md:p-8 overflow-hidden">
+        <div class="flex flex-col md:flex-row items-center justify-between gap-4 md:gap-2 relative">
+          <!-- Desktop Connection Line -->
+          <div class="hidden md:block absolute top-1/2 left-0 w-full h-[1px] bg-outline-variant/20 -translate-y-1/2 z-0"></div>
+          
+          <!-- Stage 1: Sensors -->
+          <div class="flex flex-col items-center gap-2 w-full md:w-28 z-10">
+            <div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-2xl">sensors</span></div>
+            <div class="text-center"><p class="text-[9px] font-bold uppercase tracking-tight">Sensors</p><p class="text-[8px] text-on-surface-variant leading-none">MQ135 + DHT11</p></div>
           </div>
-          <div class="md:hidden"><span class="material-symbols-outlined text-primary/40">arrow_downward</span></div>
-          <div class="flex flex-col items-center gap-3 w-full md:w-32 z-10">
-            <div class="bg-secondary/20 p-4 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-3xl">developer_board</span></div>
-            <p class="text-[9px] font-bold uppercase">Arduino</p>
+          <div class="md:hidden"><span class="material-symbols-outlined text-primary/30 text-sm">arrow_downward</span></div>
+
+          <!-- Stage 2: Edge -->
+          <div class="flex flex-col items-center gap-2 w-full md:w-28 z-10">
+            <div class="bg-secondary/20 p-3 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-2xl">developer_board</span></div>
+            <div class="text-center"><p class="text-[9px] font-bold uppercase tracking-tight">Edge</p><p class="text-[8px] text-on-surface-variant leading-none">On-Device Comp.</p></div>
           </div>
-          <div class="md:hidden"><span class="material-symbols-outlined text-primary/40">arrow_downward</span></div>
-          <div class="flex flex-col items-center gap-3 w-full md:w-32 z-10">
-            <div class="bg-primary/20 p-4 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-3xl">psychology</span></div>
-            <p class="text-[9px] font-bold uppercase">PyTorch</p>
+          <div class="md:hidden"><span class="material-symbols-outlined text-primary/30 text-sm">arrow_downward</span></div>
+
+          <!-- Stage 3: Logging -->
+          <div class="flex flex-col items-center gap-2 w-full md:w-28 z-10">
+            <div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-2xl">terminal</span></div>
+            <div class="text-center"><p class="text-[9px] font-bold uppercase tracking-tight">Logging</p><p class="text-[8px] text-on-surface-variant leading-none">Serial CSV Stream</p></div>
+          </div>
+          <div class="md:hidden"><span class="material-symbols-outlined text-primary/30 text-sm">arrow_downward</span></div>
+
+          <!-- Stage 4: AI -->
+          <div class="flex flex-col items-center gap-2 w-full md:w-28 z-10">
+            <div class="bg-secondary/20 p-3 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-2xl">psychology</span></div>
+            <div class="text-center"><p class="text-[9px] font-bold uppercase tracking-tight">AI Engine</p><p class="text-[8px] text-on-surface-variant leading-none">Attention-LSTM</p></div>
+          </div>
+          <div class="md:hidden"><span class="material-symbols-outlined text-primary/30 text-sm">arrow_downward</span></div>
+
+          <!-- Stage 5: Cloud -->
+          <div class="flex flex-col items-center gap-2 w-full md:w-28 z-10">
+            <div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-2xl">cloud_sync</span></div>
+            <div class="text-center"><p class="text-[9px] font-bold uppercase tracking-tight">Cloud UI</p><p class="text-[8px] text-on-surface-variant leading-none">HF Spaces Dashboard</p></div>
           </div>
         </div>
       </div>
+    </div>
     </div>
   </div>
 </main>
