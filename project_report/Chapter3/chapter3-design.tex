@@ -1,0 +1,79 @@
+\chapter{System Design and Architecture}
+This chapter describes the overall system design and architecture of the FoodSense AI project, including the hardware pipeline, sensor compensation, AI model architectures, and the web dashboard.
+
+\section{System Overview}
+FoodSense AI is a multi-modal IoT + AI system for early food spoilage detection. The system consists of three main components:
+\begin{itemize}
+    \item Hardware pipeline (Arduino + sensors)
+    \item AI engine (MLP + LSTM)
+    \item Web-based dashboard
+\end{itemize}
+
+The hardware pipeline collects sensor data, performs on-device compensation, and transmits the data in CSV format. The AI engine processes this data to detect ammonia and predict remaining shelf life. The web dashboard provides a user interface for visualizing the results.
+
+\section{Sensor Data Pipeline}
+The sensor data pipeline is responsible for acquiring, processing, and transmitting data from the sensors.
+
+\subsection{On-Device Sensor Compensation}
+A key novelty of FoodSense AI is that temperature and humidity compensation for the MQ135 sensor is performed directly on the Arduino microcontroller, rather than in post-processing. The compensation factor is calculated as:
+\[
+\text{corr} = 1 + 0.02(T - 20) + 0.01(H - 65)
+\]
+where \(T\) is the temperature in °C and \(H\) is the humidity in \% RH. The corrected sensor resistance is then:
+\[
+\text{corrected\_Rs} = \frac{\text{Rs}}{\text{corr}}
+\]
+where Rs is the uncompensated sensor resistance.
+
+\subsection{CSV Transmission}
+The Arduino transmits the sensor data in CSV format over the serial port. Each line contains:
+\[
+\text{timestamp\_ms, temperature, humidity, nh3\_ppm, status}
+\]
+This format allows direct ingestion into Python using pandas.read\_csv, without the need for additional parsing middleware.
+
+\section{AI Model Architectures}
+The FoodSense AI system uses two complementary AI models for different tasks.
+
+\subsection{MLP Gas Classifier}
+The MLP classifier is used for point-in-time detection of ammonia, a primary marker of food spoilage. The model takes 128 features as input (from the UCI Gas Sensor Array Drift Dataset) and outputs a binary classification (ammonia present or not).
+
+Key design choices for the MLP include:
+\begin{itemize}
+    \item Batch normalization after each dense layer to stabilize training
+    \item BCEWithLogitsLoss with pos\_weight = 7.5 to handle class imbalance
+    \item L2 regularization via weight\_decay = 1e-4 to prevent overfitting
+\end{itemize}
+
+\subsection{LSTM with Temporal Attention}
+The LSTM with temporal attention is used for continuous shelf-life prediction. Spoilage is a process, not a snapshot, so the model needs to capture temporal dependencies across time. The model uses a 1-hour context window (last 30 readings) to predict the remaining shelf life in hours.
+
+Key design choices for the LSTM include:
+\begin{itemize}
+    \item Huber loss instead of MSE to be less sensitive to outliers
+    \item ReduceLROnPlateau scheduler to halve the learning rate when validation loss plateaus
+    \item Gradient clipping (max\_norm = 1.0) to prevent exploding gradients
+    \item Target normalization to [0,1] during training for better gradient flow
+\end{itemize}
+
+\section{Web Dashboard Design}
+The web dashboard is built using HTML, CSS, and JavaScript with Tailwind CSS for styling. It provides a user-friendly interface for visualizing sensor data and AI model predictions.
+
+The dashboard includes four main tabs:
+\begin{itemize}
+    \item Dashboard: Real-time sensor readings and AI predictions (simulated in the current version)
+    \item Evaluation: Model performance metrics (Precision, Recall, F1-Score)
+    \item Image Analysis: Upload or capture images for spoilage detection (planned Phase 2)
+    \item Architecture: Advanced multiflow architecture diagram showing 8 components and branching tracks
+\end{itemize}
+
+\section{Novelty and Contributions}
+FoodSense AI introduces several technical novelties compared to traditional systems:
+\begin{itemize}
+    \item \textbf{Multiflow Architecture}: A branched pipeline that processes gas and climate data through parallel MLP and LSTM tracks for simultaneous status and shelf-life inference.
+    \item \textbf{On-Device Compensation}: Signal correction performed at the edge (microcontroller) to ensure data integrity before transmission.
+    \item \textbf{Automated Cloud Sync}: A CI/CD pipeline using GitHub Actions that automatically synchronizes model updates and code to the live Hugging Face Space.
+\end{itemize}
+
+\section{Summary}
+This chapter described the overall system design and architecture of the FoodSense AI project, including the sensor data pipeline, the multiflow AI engine, and the web-based cloud dashboard. The next chapter discusses the implementation details.

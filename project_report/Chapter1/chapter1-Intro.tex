@@ -1,0 +1,71 @@
+\chapter{Introduction to FoodSense AI}
+Food waste is a critical global challenge that impacts food security, the environment, and the economy. This chapter introduces the context of food spoilage detection, the need for automated systems, and outlines the objectives and methodology of the FoodSense AI project.
+
+\section[Introduction]{\textbf{Introduction}}
+Food waste is a pressing global issue, with approximately 19\% of all food produced annually being discarded before consumption, as reported by the United Nations Environment Programme. This waste contributes to greenhouse gas emissions, economic losses, and exacerbates food insecurity in many regions. Traditional methods of assessing food freshness rely on manual inspection, which is subjective, labor-intensive, and prone to human error.
+
+Automated food spoilage detection systems have emerged as a solution to this problem, leveraging sensors, machine learning, and computer vision to assess food quality. However, existing systems often suffer from several limitations: they use expensive electronic noses with multiple sensors, provide only binary "fresh vs rotten" classifications without temporal context, and lack on-device sensor compensation.
+
+The FoodSense AI project addresses these limitations by developing a low-cost IoT + AI pipeline for early food spoilage detection. The system uses a combination of MQ135 gas sensor, DHT11 temperature and humidity sensor, Arduino microcontroller, and two AI models: an MLP for ammonia classification and an LSTM for continuous shelf-life prediction.
+
+\section[Literature Review]{\textbf{Literature Review}}
+A literature review was conducted to understand the current state of research in food spoilage detection and identify gaps that FoodSense AI aims to address.
+
+\subsection{Gas Sensor-Based Spoilage Detection}
+Multiple studies have explored the use of gas sensors for food spoilage detection. Ulucan et al. investigated different image feature extractors for produce freshness classification, using a dataset with images of three fruit types. They found that CNN-based feature extractors outperformed traditional methods like gray level co-occurrence matrix and bag of features.
+
+Palakodati et al. used transfer learning models including VGG16, VGG19, MobileNet, and Xception for fresh vs rotten fruit classification, achieving an impressive accuracy of 97.82%. Miah et al. employed InceptionV3, which achieved the highest accuracy of 97.34% on a diverse dataset.
+
+\subsection{Sensor Compensation and Temporal Modeling}
+Most existing systems apply sensor compensation in post-processing, rather than on the microcontroller itself. Chakraborty et al. demonstrated the effectiveness of MobileNetV2 in achieving over 99\% accuracy in both training and validation stages for fruit freshness classification. Amin et al. proposed a fruit freshness classification method using AlexNet with transfer learning, achieving near-perfect accuracies across multiple datasets.
+
+For temporal modeling, recent studies have explored LSTMs and attention mechanisms for time-series data. However, few have applied these techniques to continuous shelf-life prediction for food spoilage.
+
+\section[Motivation]{\textbf{Motivation}}
+The motivation for developing FoodSense AI stems from several key factors:
+\begin{itemize}
+    \item The need to reduce food waste and improve food security
+    \item The high cost of existing electronic nose systems, which limits accessibility
+    \item The lack of temporal context in binary classification systems
+    \item The opportunity to apply modern AI techniques like LSTMs with attention to this domain
+\end{itemize}
+
+\section[Problem statement]{\textbf{Problem statement}}
+The problem this project addresses is the lack of a low-cost, accessible, and accurate system for continuous food spoilage detection that provides temporal context and shelf-life prediction, rather than just binary classification.
+
+\section[Objectives]{\textbf{Objectives}}
+The objectives of the project are:
+\begin{enumerate}
+    \item To develop a low-cost IoT system using Arduino, MQ135, and DHT11 sensors for food spoilage detection
+    \item To implement on-device temperature and humidity compensation for the MQ135 sensor
+    \item To train and evaluate an MLP model for ammonia classification and an LSTM model with temporal attention for shelf-life prediction
+\end{enumerate}
+
+\section[Brief Methodology of the project]{\textbf{Brief Methodology of the project}}
+The methodology for FoodSense AI involves several key steps:
+\begin{itemize}
+    \item Hardware setup: Connect MQ135 and DHT11 sensors to Arduino and implement on-device compensation
+    \item Data collection: Generate synthetic time-series data for LSTM training and use the UCI Gas Sensor Array Drift Dataset for MLP training
+    \item Model training: Train MLP for classification and LSTM with attention for regression
+    \item Evaluation: Test models on appropriate datasets and report metrics
+    \item UI development: Create a web-based dashboard using HTML, CSS, and JavaScript
+\end{itemize}
+
+\section[Assumptions made / Constraints of the project]{\textbf{Assumptions made / Constraints of the project}}
+The project makes the following assumptions and operates under the following constraints:
+\begin{itemize}
+    \item The MQ135 sensor is calibrated for ammonia detection
+    \item The synthetic time-series data accurately models real-world spoilage dynamics
+    \item The system is intended for use in controlled indoor environments
+    \item The vision branch is a planned enhancement and not implemented in the current version
+\end{itemize}
+
+\section[Organization of the report]{\textbf{Organization of the report}}
+This report is organized as follows:
+\begin{itemize}
+    \item Chapter 2 discusses the fundamentals of sensors, machine learning, and the AI architectures used in this project
+    \item Chapter 3 discusses the system design and architecture
+    \item Chapter 4 discusses the implementation details
+    \item Chapter 5 discusses the results and evaluation
+    \item Chapter 6 discusses the conclusion and future work
+\end{itemize}

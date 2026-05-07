@@ -1,0 +1,56 @@
+\chapter{Implementation Details}
+This chapter describes the implementation details of the FoodSense AI project, including the hardware setup, Arduino code, AI model training, and web dashboard development.
+
+\section{Hardware Setup}
+The hardware setup consists of an Arduino Uno, MQ135 gas sensor, and DHT11 temperature and humidity sensor.
+
+\subsection{Wiring Diagram}
+The MQ135 sensor is connected to the Arduino Uno as follows:
+\begin{itemize}
+    \item VCC → 5V
+    \item GND → GND
+    \item AO → A0 (analog input)
+\end{itemize}
+
+The DHT11 sensor is connected to the Arduino Uno as follows:
+\begin{itemize}
+    \item VCC → 5V
+    \item GND → GND
+    \item DATA → Digital pin 2
+\end{itemize}
+
+\section{Arduino Implementation}
+The Arduino code reads data from the sensors, performs on‑device compensation, and transmits the data in CSV format over the serial port.
+
+\subsection{Sensor Reading and Compensation}
+The Arduino reads the analog value from the MQ135 sensor, converts it to resistance, applies temperature and humidity compensation, and calculates the ammonia concentration in ppm. The code also reads temperature and humidity from the DHT11 sensor.
+
+\subsection{CSV Transmission}
+The Arduino transmits the sensor data in CSV format at 2‑minute intervals. Each line includes a timestamp, temperature, humidity, ammonia concentration, and status.
+
+\section{AI Model Implementation}
+The AI models are implemented in Python using PyTorch.
+
+\subsection{MLP Training}
+The MLP is trained on the UCI Gas Sensor Array Drift Dataset. The dataset is split into training and test sets (80/20 split), stratified by class. The model is trained using the Adam optimizer with a learning rate of 0.001 and weight decay of 1e‑4.
+
+\subsection{LSTM Training}
+The LSTM is trained on a synthetic 48‑hour spoilage time‑series dataset. The dataset is split into training and test sets, with the test set consisting of the last 10 % of the sequence (chronological split). The model is trained using the Adam optimizer with a learning rate of 0.001, Huber loss, and a ReduceLROnPlateau scheduler.
+
+\section{Web Dashboard Implementation}
+The web dashboard is built using HTML, CSS, and JavaScript with Tailwind CSS for styling.
+
+\subsection{Dashboard Tabs}
+The dashboard includes four main tabs:
+\begin{itemize}
+    \item Dashboard: Displays real‑time sensor readings and AI predictions (simulated in the current version)
+    \item Evaluation: Displays model performance metrics
+    \item Image Analysis: Allows users to upload or capture images for spoilage detection (placeholder implementation)
+    \item Architecture: Displays the advanced multiflow architecture diagram with 8 components, branching sensor tracks, and parallel AI inference flows.
+\end{itemize}
+
+\subsection{Real‑Time Simulation}
+The dashboard includes a simulation function that updates the sensor readings and AI predictions every 3 seconds to demonstrate the system's functionality.
+
+\section{Summary}
+This chapter described the implementation details of the FoodSense AI project, including the hardware setup, Arduino code, AI model training, and web dashboard development. The next chapter discusses the results and evaluation.
