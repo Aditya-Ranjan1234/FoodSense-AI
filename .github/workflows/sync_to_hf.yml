@@ -14,7 +14,7 @@ jobs:
           lfs: true
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
@@ -26,24 +26,28 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           if [ -z "$HF_TOKEN" ]; then
-            echo "::error::HF_TOKEN is missing! Add it to GitHub Secrets."
+            echo "::error::HF_TOKEN is missing! Please go to your Repo Settings > Secrets > Actions and add HF_TOKEN."
             exit 1
           fi
           
-          # Use the official huggingface-cli to upload the folder
-          # This is much more reliable than raw git commands in Actions
           python -c "
           from huggingface_hub import HfApi
           import os
+          import sys
           
-          api = HfApi(token=os.environ['HF_TOKEN'])
-          
-          print('Starting upload to aditya-ranjan1234/foodsense-ai...')
-          api.upload_folder(
-              folder_path='huggingface_space',
-              repo_id='aditya-ranjan1234/foodsense-ai',
-              repo_type='space',
-              delete_patterns=['*']  # This ensures the Space matches your local folder exactly
-          )
-          print('Upload successful!')
+          try:
+              api = HfApi(token=os.environ['HF_TOKEN'])
+              user = api.whoami()
+              print(f'Authenticated as: {user[\"name\"]}')
+              
+              print('Starting upload to aditya-ranjan1234/foodsense-ai...')
+              api.upload_folder(
+                  folder_path='huggingface_space',
+                  repo_id='aditya-ranjan1234/foodsense-ai',
+                  repo_type='space'
+              )
+              print('Upload successful!')
+          except Exception as e:
+              print(f'::error::Sync failed: {e}')
+              sys.exit(1)
           "
