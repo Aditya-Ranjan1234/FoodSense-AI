@@ -118,7 +118,7 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
         </div>
       </div>
       <div class="glass-card rounded-3xl p-8 h-full">
-        <p class="text-xs font-bold text-secondary mb-6 tracking-widest uppercase">Vision Analysis (Placeholder)</p>
+        <p class="text-xs font-bold text-secondary mb-6 tracking-widest uppercase">Vision Analysis</p>
         <div class="space-y-6">
           <div>
             <div class="flex justify-between text-[10px] font-bold uppercase mb-2"><span class="text-[#dde4dd]">Visual Freshness</span><span id="vision-freshness" class="text-primary">--</span></div>
@@ -332,39 +332,54 @@ document.getElementById('image-upload').addEventListener('change', (e) => {
   reader.readAsDataURL(file);
 });
 
-function analyzeImage() {
-  const freshness = Math.floor(70 + Math.random() * 30);
-  const risk = 100 - freshness;
-  const shelfLife = Math.floor(20 + (freshness / 100) * 72);
-  let quality, qualityText;
-
-  if (freshness >= 85) {
-    quality = "Excellent";
-    qualityText = "Premium quality, very fresh produce";
-  } else if (freshness >= 70) {
-    quality = "Good";
-    qualityText = "Good quality, still fresh";
-  } else {
-    quality = "Fair";
-    qualityText = "Fair quality, use soon";
+async function analyzeImage() {
+  if (!currentImageData) {
+    alert('Please upload or capture an image first.');
+    return;
   }
 
-  document.getElementById('vision-freshness').textContent = freshness + '%';
-  document.getElementById('vision-freshness-bar').style.width = freshness + '%';
-  
-  document.getElementById('vision-risk').textContent = risk + '%';
-  document.getElementById('vision-risk-bar').style.width = risk + '%';
-
-  document.getElementById('vision-quality').textContent = quality;
-  document.getElementById('vision-quality-text').textContent = qualityText;
-  document.getElementById('vision-shelf').textContent = shelfLife + 'h';
-
+  const analyzeBtn = document.getElementById('analyze-btn');
   const deduction = document.getElementById('vision-deduction');
+  analyzeBtn.disabled = true;
+  analyzeBtn.classList.add('opacity-60');
+  analyzeBtn.innerHTML = '<span class="material-symbols-outlined text-sm">hourglass_top</span> ANALYZING...';
   deduction.classList.remove('hidden');
-  deduction.querySelector('p:last-child').textContent = 
-    (risk < 30) 
-      ? 'No visible mold or surface decomposition detected. Texture appears firm. Predicted produce: Fresh Vegetable.' 
-      : 'Signs of discoloration and softening detected. Early spoilage indicators present.';
+  deduction.querySelector('p:last-child').textContent = 'Running local Vision backend models...';
+
+  try {
+    const response = await fetch('/api/vision/analyze', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ image: currentImageData })
+    });
+
+    if (!response.ok) {
+      const error = await response.json().catch(() => ({}));
+      throw new Error(error.detail || 'Vision backend request failed');
+    }
+
+    const result = await response.json();
+    const freshness = Math.max(0, Math.min(100, Number(result.freshness || 0)));
+    const risk = Math.max(0, Math.min(100, Number(result.risk || 0)));
+    const qualityText = `${result.product || 'Food item'} - ${result.freshness_label || 'Analyzed'} (${result.spoilage_confidence || 0}% confidence)`;
+
+    document.getElementById('vision-freshness').textContent = freshness.toFixed(1) + '%';
+    document.getElementById('vision-freshness-bar').style.width = freshness + '%';
+    
+    document.getElementById('vision-risk').textContent = risk.toFixed(1) + '%';
+    document.getElementById('vision-risk-bar').style.width = risk + '%';
+
+    document.getElementById('vision-quality').textContent = result.quality || '--';
+    document.getElementById('vision-quality-text').textContent = qualityText;
+    document.getElementById('vision-shelf').textContent = `${result.shelf_life || 0}h`;
+    deduction.querySelector('p:last-child').textContent = result.deduction || 'Analysis complete.';
+  } catch (err) {
+    deduction.querySelector('p:last-child').textContent = `Backend error: ${err.message}`;
+  } finally {
+    analyzeBtn.disabled = false;
+    analyzeBtn.classList.remove('opacity-60');
+    analyzeBtn.innerHTML = '<span class="material-symbols-outlined text-sm">analytics</span> ANALYZE IMAGE';
+  }
 }
 
 function simulate() {
