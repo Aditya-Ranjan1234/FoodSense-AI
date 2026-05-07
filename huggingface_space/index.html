@@ -24,10 +24,10 @@ tailwind.config = {
 .glass-card { background-color: rgba(26, 33, 29, 0.7); border: 1px solid rgba(134, 148, 138, 0.15); backdrop-filter: blur(16px); }
 body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width: 100vw; margin: 0; }
 .tab-content { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 1.5rem; }
-.flow-line { position: absolute; background: rgba(255, 255, 255, 0.3); pointer-events: none; height: 1.5px; }
 .camera-view { aspect-ratio: 4/3; background: #000; border-radius: 1rem; overflow: hidden; position: relative; }
 .progress-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.1); overflow: hidden; }
 .progress-fill { height: 100%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
+.flow-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
 </style>
 </head>
 <body class="bg-background text-on-background">
@@ -39,7 +39,7 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
   <div class="hidden md:flex gap-6 items-center h-full">
     <button onclick="showTab('dashboard')" id="tab-dashboard" class="text-[13px] transition-all">Dashboard</button>
     <button onclick="showTab('insights')" id="tab-insights" class="text-[13px] transition-all">Evaluation</button>
-    <button onclick="showTab('vision')" id="tab-vision" class="text-[13px] transition-all">Vision Branch</button>
+    <button onclick="showTab('vision')" id="tab-vision" class="text-[13px] transition-all">Image Analysis</button>
     <button onclick="showTab('pipeline')" id="tab-pipeline" class="text-[13px] transition-all">Architecture</button>
   </div>
   <div class="flex items-center gap-3">
@@ -92,38 +92,49 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
     </div>
   </div>
 
-  <!-- 3. Vision Tab (NEW) -->
+  <!-- 3. Image Analysis Tab -->
   <div id="tab-content-vision" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
     <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
-      <div class="camera-view shadow-2xl shadow-primary/5">
-        <div class="absolute inset-0 flex flex-col items-center justify-center text-on-surface/20">
-          <span class="material-symbols-outlined text-6xl mb-2">videocam_off</span>
-          <p class="text-xs font-bold uppercase tracking-widest">Camera Stream Offline</p>
+      <div class="space-y-4">
+        <div class="camera-view shadow-2xl shadow-primary/5">
+          <video id="camera-video" class="w-full h-full object-cover hidden"></video>
+          <img id="preview-image" class="w-full h-full object-cover hidden" />
+          <div id="camera-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-on-surface/40">
+            <span class="material-symbols-outlined text-6xl mb-2">image</span>
+            <p class="text-xs font-bold uppercase tracking-widest">Upload or Capture Image</p>
+          </div>
         </div>
-        <div class="absolute bottom-4 left-0 w-full flex justify-center gap-3 px-4">
-          <button class="bg-primary/20 hover:bg-primary/30 text-primary text-[10px] font-bold px-4 py-2 rounded-lg transition-all border border-primary/30 flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm">camera</span> CAPTURE
+        <div class="flex gap-3">
+          <input type="file" id="image-upload" accept="image/*" class="hidden" />
+          <button onclick="document.getElementById('image-upload').click()" class="flex-1 glass-card hover:bg-primary/10 text-on-surface text-[11px] font-bold px-4 py-3 rounded-xl transition-all border border-outline-variant flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-sm">upload_file</span> UPLOAD IMAGE
           </button>
-          <button class="bg-white/5 hover:bg-white/10 text-white text-[10px] font-bold px-4 py-2 rounded-lg transition-all border border-white/10 flex items-center gap-2">
-            <span class="material-symbols-outlined text-sm">upload</span> UPLOAD
+          <button onclick="toggleCamera()" id="camera-btn" class="flex-1 glass-card hover:bg-primary/10 text-on-surface text-[11px] font-bold px-4 py-3 rounded-xl transition-all border border-outline-variant flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-sm">videocam</span> OPEN CAMERA
+          </button>
+          <button onclick="captureImage()" id="capture-btn" class="hidden glass-card hover:bg-primary/20 text-primary text-[11px] font-bold px-4 py-3 rounded-xl transition-all border border-primary/30 flex items-center justify-center gap-2">
+            <span class="material-symbols-outlined text-sm">camera_alt</span> CAPTURE
           </button>
         </div>
       </div>
       <div class="glass-card rounded-3xl p-8 h-full">
-        <p class="text-xs font-bold text-secondary mb-6 tracking-widest uppercase">MobileViTv2 Analysis</p>
-        <div class="space-y-8">
+        <p class="text-xs font-bold text-secondary mb-6 tracking-widest uppercase">Vision Analysis (Placeholder)</p>
+        <div class="space-y-6">
           <div>
-            <div class="flex justify-between text-[10px] font-bold uppercase mb-2"><span>Visual Freshness</span><span class="text-primary">88%</span></div>
-            <div class="progress-bar"><div class="progress-fill bg-primary w-[88%]"></div></div>
+            <div class="flex justify-between text-[10px] font-bold uppercase mb-2"><span>Visual Freshness</span><span id="vision-freshness" class="text-primary">--</span></div>
+            <div class="progress-bar"><div id="vision-freshness-bar" class="progress-fill bg-primary w-0"></div></div>
           </div>
           <div>
-            <div class="flex justify-between text-[10px] font-bold uppercase mb-2"><span>Spoilage Risk</span><span class="text-error">12%</span></div>
-            <div class="progress-bar"><div class="progress-fill bg-error w-[12%]"></div></div>
+            <div class="flex justify-between text-[10px] font-bold uppercase mb-2"><span>Spoilage Risk</span><span id="vision-risk" class="text-error">--</span></div>
+            <div class="progress-bar"><div id="vision-risk-bar" class="progress-fill bg-error w-0"></div></div>
           </div>
-          <div class="bg-primary/5 border border-primary/10 rounded-xl p-4 mt-4">
+          <div id="vision-deduction" class="bg-primary/5 border border-primary/10 rounded-xl p-4 mt-4 hidden">
             <p class="text-[9px] uppercase font-bold text-primary mb-1">AI Deduction</p>
-            <p class="text-xs text-on-surface leading-relaxed">No visible mold or surface decomposition detected. Texture appears firm. Predicted produce: <span class="font-bold text-secondary">Tomato (Fresh)</span>.</p>
+            <p class="text-xs text-on-surface leading-relaxed">Analysis complete.</p>
           </div>
+          <button onclick="analyzeImage()" id="analyze-btn" class="w-full bg-primary/20 hover:bg-primary/30 text-primary text-[11px] font-bold px-4 py-3 rounded-xl transition-all border border-primary/30 flex items-center justify-center gap-2 hidden">
+            <span class="material-symbols-outlined text-sm">analytics</span> ANALYZE IMAGE
+          </button>
         </div>
       </div>
     </div>
@@ -132,49 +143,51 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
   <!-- 4. Architecture Tab -->
   <div id="tab-content-pipeline" class="tab-content animate-in fade-in zoom-in-95 duration-500">
     <div class="max-w-5xl w-full glass-card rounded-3xl p-10 relative overflow-hidden">
-      <div class="grid grid-cols-5 items-center justify-items-center gap-y-16 relative h-64">
+      <svg id="flow-svg" class="flow-svg"></svg>
+      <div class="grid grid-cols-5 items-center justify-items-center gap-y-12 relative z-10">
         
         <!-- Col 1 -->
-        <div id="node-1" class="flex flex-col gap-10 z-10">
-          <div class="flex flex-col items-center gap-2"><div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-white text-xl">sensors</span></div><p class="text-[9px] font-bold text-on-surface">MQ135</p></div>
-          <div class="flex flex-col items-center gap-2"><div class="bg-secondary/20 p-3 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-white text-xl">water_drop</span></div><p class="text-[9px] font-bold text-on-surface">DHT11</p></div>
+        <div class="flex flex-col gap-12">
+          <div class="flex flex-col items-center gap-2 pipeline-node" id="node-mq135">
+            <div class="bg-primary/20 p-4 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-white text-2xl">sensors</span></div>
+            <p class="text-[10px] font-bold text-on-surface">MQ135</p>
+          </div>
+          <div class="flex flex-col items-center gap-2 pipeline-node" id="node-dht11">
+            <div class="bg-secondary/20 p-4 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-white text-2xl">water_drop</span></div>
+            <p class="text-[10px] font-bold text-on-surface">DHT11</p>
+          </div>
         </div>
 
         <!-- Col 2 -->
-        <div id="node-2" class="z-10 flex flex-col items-center">
-          <div class="bg-primary/10 p-5 rounded-2xl border border-primary/20"><span class="material-symbols-outlined text-white text-3xl">developer_board</span></div>
-          <p class="text-[10px] font-bold uppercase mt-2 text-on-surface">Arduino</p>
+        <div class="flex flex-col items-center pipeline-node" id="node-arduino">
+          <div class="bg-primary/10 p-6 rounded-2xl border border-primary/20"><span class="material-symbols-outlined text-white text-4xl">developer_board</span></div>
+          <p class="text-[11px] font-bold uppercase mt-2 text-on-surface">Arduino Uno</p>
         </div>
 
         <!-- Col 3 -->
-        <div id="node-3" class="z-10 flex flex-col items-center">
-          <div class="bg-secondary/10 p-5 rounded-2xl border border-secondary/20"><span class="material-symbols-outlined text-white text-3xl">terminal</span></div>
-          <p class="text-[10px] font-bold uppercase mt-2 text-on-surface">Serial CSV</p>
+        <div class="flex flex-col items-center pipeline-node" id="node-csv">
+          <div class="bg-secondary/10 p-6 rounded-2xl border border-secondary/20"><span class="material-symbols-outlined text-white text-4xl">table_chart</span></div>
+          <p class="text-[11px] font-bold uppercase mt-2 text-on-surface">Serial CSV</p>
         </div>
 
         <!-- Col 4 -->
-        <div id="node-4" class="flex flex-col gap-10 z-10">
-          <div class="flex flex-col items-center gap-2"><div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-white text-xl">account_tree</span></div><p class="text-[9px] font-bold text-on-surface">MLP Class</p></div>
-          <div class="flex flex-col items-center gap-2"><div class="bg-secondary/20 p-3 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-white text-xl">timeline</span></div><p class="text-[9px] font-bold text-on-surface">LSTM Reg</p></div>
+        <div class="flex flex-col gap-12">
+          <div class="flex flex-col items-center gap-2 pipeline-node" id="node-mlp">
+            <div class="bg-primary/20 p-4 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-white text-2xl">account_tree</span></div>
+            <p class="text-[10px] font-bold text-on-surface">MLP Class</p>
+          </div>
+          <div class="flex flex-col items-center gap-2 pipeline-node" id="node-lstm">
+            <div class="bg-secondary/20 p-4 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-white text-2xl">timeline</span></div>
+            <p class="text-[10px] font-bold text-on-surface">LSTM Reg</p>
+          </div>
         </div>
 
         <!-- Col 5 -->
-        <div id="node-5" class="z-10 flex flex-col items-center">
-          <div class="bg-primary/30 p-6 rounded-3xl border border-primary/50 shadow-xl shadow-primary/10"><span class="material-symbols-outlined text-white text-4xl">cloud_sync</span></div>
-          <p class="text-[11px] font-bold uppercase mt-3 tracking-widest text-primary">Live UI</p>
+        <div class="flex flex-col items-center pipeline-node" id="node-ui">
+          <div class="bg-primary/30 p-7 rounded-3xl border border-primary/50 shadow-xl shadow-primary/10"><span class="material-symbols-outlined text-white text-5xl">insights</span></div>
+          <p class="text-[12px] font-bold uppercase mt-3 tracking-widest text-primary">Live UI</p>
         </div>
 
-        <!-- Corrected Flow Lines (No Overlap) -->
-        <!-- Start Col 1 to Col 2 -->
-        <div class="flow-line top-[25%] left-[13%] w-[7%]"></div>
-        <div class="flow-line bottom-[25%] left-[13%] w-[7%]"></div>
-        <!-- Col 2 to Col 3 -->
-        <div class="flow-line top-[50%] left-[30%] w-[10%]"></div>
-        <!-- Col 3 to Col 4 -->
-        <div class="flow-line top-[50%] left-[50%] w-[10%]"></div>
-        <!-- Col 4 to Col 5 -->
-        <div class="flow-line top-[25%] right-[13%] w-[7%]"></div>
-        <div class="flow-line bottom-[25%] right-[13%] w-[7%]"></div>
       </div>
     </div>
   </div>
@@ -182,6 +195,9 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
 </main>
 
 <script>
+let stream = null;
+let currentImageData = null;
+
 function showTab(tab) {
   ['dashboard','insights','vision','pipeline'].forEach(t => {
     document.getElementById('tab-content-' + t).classList.add('hidden');
@@ -191,7 +207,142 @@ function showTab(tab) {
   document.getElementById('tab-content-' + tab).classList.remove('hidden');
   const btn = document.getElementById('tab-' + tab);
   if(btn) btn.className = "text-[13px] text-primary border-b-2 border-primary pb-1 font-bold";
+  
+  if (tab === 'pipeline') {
+    setTimeout(drawFlowLines, 100);
+  }
 }
+
+function drawFlowLines() {
+  const svg = document.getElementById('flow-svg');
+  if (!svg) return;
+  
+  const nodes = {
+    mq135: document.getElementById('node-mq135'),
+    dht11: document.getElementById('node-dht11'),
+    arduino: document.getElementById('node-arduino'),
+    csv: document.getElementById('node-csv'),
+    mlp: document.getElementById('node-mlp'),
+    lstm: document.getElementById('node-lstm'),
+    ui: document.getElementById('node-ui')
+  };
+
+  const rect = svg.parentElement.getBoundingClientRect();
+  svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
+  
+  let svgContent = '';
+  
+  function getRightEdgeCenter(el) {
+    const r = el.getBoundingClientRect();
+    const parentR = svg.parentElement.getBoundingClientRect();
+    return { x: r.right - parentR.left, y: r.top - parentR.top + r.height/2 };
+  }
+  
+  function getLeftEdgeCenter(el) {
+    const r = el.getBoundingClientRect();
+    const parentR = svg.parentElement.getBoundingClientRect();
+    return { x: r.left - parentR.left, y: r.top - parentR.top + r.height/2 };
+  }
+
+  const connections = [
+    [getRightEdgeCenter(nodes.mq135.querySelector('div')), getLeftEdgeCenter(nodes.arduino.querySelector('div'))],
+    [getRightEdgeCenter(nodes.dht11.querySelector('div')), getLeftEdgeCenter(nodes.arduino.querySelector('div'))],
+    [getRightEdgeCenter(nodes.arduino.querySelector('div')), getLeftEdgeCenter(nodes.csv.querySelector('div'))],
+    [getRightEdgeCenter(nodes.csv.querySelector('div')), getLeftEdgeCenter(nodes.mlp.querySelector('div'))],
+    [getRightEdgeCenter(nodes.csv.querySelector('div')), getLeftEdgeCenter(nodes.lstm.querySelector('div'))],
+    [getRightEdgeCenter(nodes.mlp.querySelector('div')), getLeftEdgeCenter(nodes.ui.querySelector('div'))],
+    [getRightEdgeCenter(nodes.lstm.querySelector('div')), getLeftEdgeCenter(nodes.ui.querySelector('div'))]
+  ];
+
+  connections.forEach(([start, end]) => {
+    svgContent += `<line x1="${start.x}" y1="${start.y}" x2="${end.x}" y2="${end.y}" stroke="rgba(255,255,255,0.25)" stroke-width="2" />`;
+  });
+  
+  svg.innerHTML = svgContent;
+}
+
+async function toggleCamera() {
+  const video = document.getElementById('camera-video');
+  const placeholder = document.getElementById('camera-placeholder');
+  const previewImg = document.getElementById('preview-image');
+  const cameraBtn = document.getElementById('camera-btn');
+  const captureBtn = document.getElementById('capture-btn');
+
+  if (!stream) {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      video.srcObject = stream;
+      video.play();
+      video.classList.remove('hidden');
+      placeholder.classList.add('hidden');
+      previewImg.classList.add('hidden');
+      cameraBtn.innerHTML = '<span class="material-symbols-outlined text-sm">videocam_off</span> CLOSE CAMERA';
+      captureBtn.classList.remove('hidden');
+      document.getElementById('analyze-btn').classList.add('hidden');
+    } catch (err) {
+      alert('Camera access denied');
+    }
+  } else {
+    stream.getTracks().forEach(track => track.stop());
+    stream = null;
+    video.classList.add('hidden');
+    placeholder.classList.remove('hidden');
+    previewImg.classList.add('hidden');
+    cameraBtn.innerHTML = '<span class="material-symbols-outlined text-sm">videocam</span> OPEN CAMERA';
+    captureBtn.classList.add('hidden');
+  }
+}
+
+function captureImage() {
+  const video = document.getElementById('camera-video');
+  const previewImg = document.getElementById('preview-image');
+  const canvas = document.createElement('canvas');
+  canvas.width = video.videoWidth;
+  canvas.height = video.videoHeight;
+  canvas.getContext('2d').drawImage(video, 0, 0);
+  previewImg.src = canvas.toDataURL('image/png');
+  previewImg.classList.remove('hidden');
+  video.classList.add('hidden');
+  currentImageData = canvas.toDataURL('image/png');
+  
+  document.getElementById('analyze-btn').classList.remove('hidden');
+}
+
+document.getElementById('image-upload').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  
+  const reader = new FileReader();
+  reader.onload = (event) => {
+    const previewImg = document.getElementById('preview-image');
+    previewImg.src = event.target.result;
+    previewImg.classList.remove('hidden');
+    document.getElementById('camera-placeholder').classList.add('hidden');
+    document.getElementById('camera-video').classList.add('hidden');
+    currentImageData = event.target.result;
+    document.getElementById('analyze-btn').classList.remove('hidden');
+  };
+  reader.readAsDataURL(file);
+});
+
+function analyzeImage() {
+  const freshness = Math.floor(70 + Math.random() * 30);
+  const risk = 100 - freshness;
+
+  document.getElementById('vision-freshness').textContent = freshness + '%';
+  document.getElementById('vision-freshness-bar').style.width = freshness + '%';
+  
+  document.getElementById('vision-risk').textContent = risk + '%';
+  document.getElementById('vision-risk-bar').style.width = risk + '%';
+
+  const deduction = document.getElementById('vision-deduction');
+  deduction.classList.remove('hidden');
+  deduction.querySelector('p:last-child').textContent = 
+    (risk < 30) 
+      ? 'No visible mold or surface decomposition detected. Texture appears firm. Predicted produce: Fresh Vegetable.' 
+      : 'Signs of discoloration and softening detected. Early spoilage indicators present.';
+}
+
 function simulate() {
   const n = (2.1 + Math.random() * 1.4).toFixed(1);
   document.getElementById('sim-temp').textContent = (24.5 + Math.random() * 1.5).toFixed(1);
@@ -205,6 +356,11 @@ function simulate() {
 setInterval(simulate, 3000);
 simulate();
 showTab('dashboard');
+window.addEventListener('resize', () => {
+  if (!document.getElementById('tab-content-pipeline').classList.contains('hidden')) {
+    drawFlowLines();
+  }
+});
 </script>
 </body>
 </html>
