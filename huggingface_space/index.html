@@ -173,43 +173,56 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
     <!-- Pipeline Tab -->
     <div id="tab-content-pipeline" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
       <div class="mb-6"><h2 class="text-2xl md:text-3xl font-bold text-on-surface mb-2" style="font-family:'Space Grotesk',sans-serif">System Pipeline</h2><p class="text-on-surface-variant text-xs">Detailed architecture of the IoT-to-ML data flow.</p></div>
-      <div class="flex-1 flex flex-col items-center justify-center py-4">
-      <div class="glass-card rounded-2xl p-6 md:p-10 w-full max-w-xl flex flex-col items-center gap-2 relative">
-        
-        <!-- Stage 1 -->
-        <div class="flex flex-col items-center gap-2 z-10">
-          <div class="bg-primary/20 p-4 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-3xl">sensors</span></div>
-          <div class="text-center"><p class="text-[10px] font-bold uppercase tracking-widest">Sensors</p><p class="text-[8px] text-on-surface-variant">MQ135 + DHT11</p></div>
-        </div>
-        <span class="material-symbols-outlined text-primary/30 text-base py-1">arrow_downward</span>
+      <div class="flex-1 flex items-center justify-center overflow-hidden">
+      <div class="glass-card rounded-2xl p-6 md:p-8 w-full max-w-2xl relative">
+        <div class="grid grid-cols-3 gap-y-12 gap-x-4 relative">
+          
+          <!-- Stage 1 -->
+          <div class="flex flex-col items-center gap-2">
+            <div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-2xl">sensors</span></div>
+            <p class="text-[9px] font-bold uppercase tracking-tight text-center">Sensors</p>
+          </div>
 
-        <!-- Stage 2 -->
-        <div class="flex flex-col items-center gap-2 z-10">
-          <div class="bg-secondary/20 p-4 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-3xl">developer_board</span></div>
-          <div class="text-center"><p class="text-[10px] font-bold uppercase tracking-widest">Edge Core</p><p class="text-[8px] text-on-surface-variant">Arduino Processing</p></div>
-        </div>
-        <span class="material-symbols-outlined text-primary/30 text-base py-1">arrow_downward</span>
+          <!-- Connection 1-2 -->
+          <div class="absolute top-8 left-[16.6%] w-[33.3%] h-[1px] bg-primary/20 -z-10"></div>
 
-        <!-- Stage 3 -->
-        <div class="flex flex-col items-center gap-2 z-10">
-          <div class="bg-primary/20 p-4 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-3xl">terminal</span></div>
-          <div class="text-center"><p class="text-[10px] font-bold uppercase tracking-widest">Data Link</p><p class="text-[8px] text-on-surface-variant">Serial CSV Stream</p></div>
-        </div>
-        <span class="material-symbols-outlined text-primary/30 text-base py-1">arrow_downward</span>
+          <!-- Stage 2 -->
+          <div class="flex flex-col items-center gap-2">
+            <div class="bg-secondary/20 p-3 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-2xl">developer_board</span></div>
+            <p class="text-[9px] font-bold uppercase tracking-tight text-center">Edge</p>
+          </div>
 
-        <!-- Stage 4 -->
-        <div class="flex flex-col items-center gap-2 z-10">
-          <div class="bg-secondary/20 p-4 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-3xl">psychology</span></div>
-          <div class="text-center"><p class="text-[10px] font-bold uppercase tracking-widest">AI Engine</p><p class="text-[8px] text-on-surface-variant">Attention-LSTM</p></div>
-        </div>
-        <span class="material-symbols-outlined text-primary/30 text-base py-1">arrow_downward</span>
+          <!-- Connection 2-3 -->
+          <div class="absolute top-8 left-[50%] w-[33.3%] h-[1px] bg-primary/20 -z-10"></div>
 
-        <!-- Stage 5 -->
-        <div class="flex flex-col items-center gap-2 z-10">
-          <div class="bg-primary/20 p-4 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-3xl">cloud_sync</span></div>
-          <div class="text-center"><p class="text-[10px] font-bold uppercase tracking-widest">Cloud UI</p><p class="text-[8px] text-on-surface-variant">HF Spaces Live</p></div>
-        </div>
+          <!-- Stage 3 -->
+          <div class="flex flex-col items-center gap-2">
+            <div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-2xl">terminal</span></div>
+            <p class="text-[9px] font-bold uppercase tracking-tight text-center">Data Link</p>
+          </div>
 
+          <!-- Vertical Connection 3-4 -->
+          <div class="absolute top-8 right-[16.6%] h-24 w-[1px] bg-primary/20 -z-10"></div>
+
+          <!-- Stage 5 (Cloud) - Placed in Col 1 Row 2 -->
+          <div class="flex flex-col items-center gap-2">
+            <div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-2xl">cloud_sync</span></div>
+            <p class="text-[9px] font-bold uppercase tracking-tight text-center">Cloud UI</p>
+          </div>
+
+          <!-- Connection 4-5 -->
+          <div class="absolute bottom-8 left-[16.6%] w-[33.3%] h-[1px] bg-primary/20 -z-10"></div>
+
+          <!-- Stage 4 (AI) - Placed in Col 2 Row 2 -->
+          <div class="flex flex-col items-center gap-2">
+            <div class="bg-secondary/20 p-3 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-2xl">psychology</span></div>
+            <p class="text-[9px] font-bold uppercase tracking-tight text-center">AI Engine</p>
+          </div>
+
+          <!-- Empty Col 3 Row 2 -->
+          <div></div>
+
+        </div>
       </div>
     </div>
     </div>
