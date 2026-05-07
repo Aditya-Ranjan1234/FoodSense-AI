@@ -66,18 +66,21 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
         <div><p class="text-[10px] uppercase text-on-surface opacity-80 mb-1">Est. Shelf Life</p><p id="lstm-pred" class="text-2xl font-bold text-primary">44h</p></div>
       </div>
     </div>
-  </div>
-
-  <!-- Evaluation Tab -->
+  </div  <!-- Evaluation Tab -->
   <div id="tab-content-insights" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
     <div class="max-w-5xl w-full grid grid-cols-2 gap-6">
       <div class="glass-card rounded-3xl p-8">
-        <p class="text-xs font-bold text-primary mb-6">MLP CLASSIFIER</p>
-        <div class="space-y-4 text-sm"><div class="flex justify-between border-b border-outline-variant pb-2"><span>Accuracy</span><b>99.75%</b></div><div class="flex justify-between"><span>F1-Score</span><b class="text-primary">98.93%</b></div></div>
+        <p class="text-xs font-bold text-primary mb-6 tracking-widest">MLP CLASSIFIER PERFORMANCE</p>
+        <div class="space-y-4 text-sm">
+          <div class="flex justify-between border-b border-outline-variant pb-2"><span class="text-on-surface font-semibold">Test Accuracy</span><b class="text-on-surface">99.75%</b></div>
+          <div class="flex justify-between border-b border-outline-variant pb-2"><span class="text-on-surface font-semibold">Precision Score</span><b class="text-on-surface">99.08%</b></div>
+          <div class="flex justify-between border-b border-outline-variant pb-2"><span class="text-on-surface font-semibold">Recall Score</span><b class="text-on-surface">98.78%</b></div>
+          <div class="flex justify-between"><span class="text-on-surface font-semibold">F1-Score (Balanced)</span><b class="text-primary">98.93%</b></div>
+        </div>
       </div>
-      <div class="glass-card rounded-3xl p-8 flex flex-col justify-center items-center">
-        <p class="text-5xl font-bold text-primary mb-2">4.0h</p>
-        <p class="text-[10px] uppercase opacity-50 font-bold tracking-widest">LSTM Regressor MAE</p>
+      <div class="glass-card rounded-3xl p-8 flex flex-col justify-center items-center text-center">
+        <p class="text-5xl font-bold text-primary mb-2 drop-shadow-[0_0_15px_rgba(78,222,163,0.3)]">4.0h</p>
+        <p class="text-[10px] uppercase text-on-surface font-bold tracking-widest">LSTM Regressor Mean Error</p>
       </div>
     </div>
   </div>
@@ -90,45 +93,47 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
         
         <!-- Column 1: Sensors -->
         <div class="flex flex-col gap-8 z-10">
-          <div class="flex flex-col items-center gap-2"><div class="bg-primary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-primary text-2xl">sensors</span></div><p class="text-[9px] font-bold uppercase text-on-surface">MQ135</p></div>
-          <div class="flex flex-col items-center gap-2"><div class="bg-secondary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-secondary text-2xl">water_drop</span></div><p class="text-[9px] font-bold uppercase text-on-surface">DHT11</p></div>
+          <div class="flex flex-col items-center gap-2"><div class="bg-primary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-white text-2xl">sensors</span></div><p class="text-[10px] font-bold uppercase text-on-surface">MQ135</p></div>
+          <div class="flex flex-col items-center gap-2"><div class="bg-secondary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-white text-2xl">water_drop</span></div><p class="text-[10px] font-bold uppercase text-on-surface">DHT11</p></div>
         </div>
 
         <!-- Column 2: Edge -->
         <div class="flex flex-col items-center z-10">
-          <div class="bg-primary/10 p-5 rounded-2xl border border-primary/20"><span class="material-symbols-outlined text-primary text-4xl">developer_board</span></div>
-          <p class="text-[10px] font-bold uppercase mt-3 text-on-surface">Arduino Uno</p>
+          <div class="bg-primary/10 p-5 rounded-2xl border border-primary/20"><span class="material-symbols-outlined text-white text-4xl">developer_board</span></div>
+          <p class="text-[11px] font-bold uppercase mt-3 text-on-surface">Arduino Uno</p>
         </div>
 
         <!-- Column 3: Data -->
         <div class="flex flex-col items-center z-10">
-          <div class="bg-secondary/10 p-5 rounded-2xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-4xl">terminal</span></div>
-          <p class="text-[10px] font-bold uppercase mt-3 text-on-surface">Serial CSV</p>
+          <div class="bg-secondary/10 p-5 rounded-2xl border border-secondary/20"><span class="material-symbols-outlined text-white text-4xl">terminal</span></div>
+          <p class="text-[11px] font-bold uppercase mt-3 text-on-surface">Serial CSV</p>
         </div>
 
         <!-- Column 4: AI Models -->
         <div class="flex flex-col gap-8 z-10">
-          <div class="flex flex-col items-center gap-2"><div class="bg-primary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-primary text-2xl">account_tree</span></div><p class="text-[9px] font-bold uppercase text-on-surface">MLP Class</p></div>
-          <div class="flex flex-col items-center gap-2"><div class="bg-secondary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-secondary text-2xl">timeline</span></div><p class="text-[9px] font-bold uppercase text-on-surface">LSTM Reg</p></div>
+          <div class="flex flex-col items-center gap-2"><div class="bg-primary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-white text-2xl">account_tree</span></div><p class="text-[10px] font-bold uppercase text-on-surface">MLP Class</p></div>
+          <div class="flex flex-col items-center gap-2"><div class="bg-secondary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-white text-2xl">timeline</span></div><p class="text-[10px] font-bold uppercase text-on-surface">LSTM Reg</p></div>
         </div>
 
         <!-- Column 5: Output -->
         <div class="flex flex-col items-center z-10">
-          <div class="bg-primary/30 p-6 rounded-3xl border border-primary/50 shadow-xl shadow-primary/10"><span class="material-symbols-outlined text-primary text-5xl">cloud_sync</span></div>
-          <p class="text-[11px] font-bold uppercase mt-4 tracking-widest text-primary drop-shadow-[0_0_8px_rgba(78,222,163,0.4)]">Live UI</p>
+          <div class="bg-primary/30 p-6 rounded-3xl border border-primary/50 shadow-xl shadow-primary/10"><span class="material-symbols-outlined text-white text-5xl">cloud_sync</span></div>
+          <p class="text-[12px] font-bold uppercase mt-4 tracking-widest text-primary drop-shadow-[0_0_8px_rgba(78,222,163,0.4)]">Live UI</p>
         </div>
 
         <!-- Dynamic Flow Lines (Absolute) -->
-        <div class="flow-line top-[32%] left-[10%] w-[12%] h-[1px]"></div>
-        <div class="flow-line bottom-[32%] left-[10%] w-[12%] h-[1px]"></div>
-        <div class="flow-line top-[50%] left-[30%] w-[10%] h-[1px]"></div>
-        <div class="flow-line top-[50%] left-[50%] w-[10%] h-[1px]"></div>
-        <div class="flow-line top-[32%] right-[10%] w-[12%] h-[1px]"></div>
-        <div class="flow-line bottom-[32%] right-[10%] w-[12%] h-[1px]"></div>
+        <style>
+          .flow-line { background: rgba(255, 255, 255, 0.4) !important; }
+        </style>
+        <div class="flow-line top-[32%] left-[10%] w-[12%] h-[1.5px]"></div>
+        <div class="flow-line bottom-[32%] left-[10%] w-[12%] h-[1.5px]"></div>
+        <div class="flow-line top-[50%] left-[30%] w-[10%] h-[1.5px]"></div>
+        <div class="flow-line top-[50%] left-[50%] w-[10%] h-[1.5px]"></div>
+        <div class="flow-line top-[32%] right-[10%] w-[12%] h-[1.5px]"></div>
+        <div class="flow-line bottom-[32%] right-[10%] w-[12%] h-[1.5px]"></div>
       </div>
-
     </div>
-  </div>
+  </div>iv>
 
 </main>
 
