@@ -98,12 +98,5 @@ python train_mlp.py
 python train_lstm.py
 ```
 
----
-
-## 🔮 Future Scope: Vision Integration
-Phase 2 will introduce the **Vision Branch** using MobileViTv2. This will allow the system to perform **Late Fusion**, combining chemical (gas) and visual (camera) features for 100% fail-safe spoilage verification.
 
 ---
-
-**Developed for 6th Sem Interdisciplinary Project (IDP)**  
-*Aditya Ranjan (1RV21AI004)*
