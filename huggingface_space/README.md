@@ -2,7 +2,7 @@
 title: FoodSense AI
 emoji: 🥦
 colorFrom: green
-colorTo: teal
+colorTo: green
 sdk: static
 pinned: true
 license: mit
