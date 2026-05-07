@@ -115,42 +115,69 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
 
   <!-- Pipeline Tab -->
   <div id="tab-content-pipeline" class="tab-content animate-in fade-in zoom-in-95 duration-500 px-6">
-    <div class="max-w-3xl w-full glass-card rounded-3xl p-10 relative">
-      <div class="grid grid-cols-3 gap-y-16 gap-x-4 relative">
+    <div class="max-w-4xl w-full glass-card rounded-3xl p-10 relative overflow-hidden">
+      <h3 class="text-sm uppercase tracking-widest text-on-surface/50 mb-12 font-bold text-center">Multimodal System Architecture</h3>
+      
+      <div class="grid grid-cols-5 gap-y-12 relative">
         
-        <!-- Row 1: Sensors -> Edge -> Data Link -->
-        <div class="flex flex-col items-center z-10">
-          <div class="bg-primary/20 p-4 rounded-2xl mb-3"><span class="material-symbols-outlined text-primary text-3xl">sensors</span></div>
-          <p class="text-[10px] font-bold uppercase">Sensors</p>
+        <!-- Row 1: Inputs -->
+        <div class="flex flex-col items-center col-start-2">
+          <div class="bg-primary/10 p-3 rounded-xl mb-2 border border-primary/20"><span class="material-symbols-outlined text-primary text-xl">gas_meter</span></div>
+          <p class="text-[8px] font-bold uppercase">MQ135 Gas</p>
         </div>
-        <div class="flex flex-col items-center z-10">
-          <div class="bg-secondary/20 p-4 rounded-2xl mb-3"><span class="material-symbols-outlined text-secondary text-3xl">developer_board</span></div>
-          <p class="text-[10px] font-bold uppercase">Edge</p>
+        <div class="col-start-3 flex items-center justify-center">
+          <span class="material-symbols-outlined text-primary/30 rotate-45">arrow_downward</span>
+          <span class="material-symbols-outlined text-primary/30 -rotate-45">arrow_downward</span>
         </div>
-        <div class="flex flex-col items-center z-10">
-          <div class="bg-primary/20 p-4 rounded-2xl mb-3"><span class="material-symbols-outlined text-primary text-3xl">terminal</span></div>
-          <p class="text-[10px] font-bold uppercase">Data Link</p>
+        <div class="flex flex-col items-center col-start-4">
+          <div class="bg-secondary/10 p-3 rounded-xl mb-2 border border-secondary/20"><span class="material-symbols-outlined text-secondary text-xl">thermostat</span></div>
+          <p class="text-[8px] font-bold uppercase">DHT11 Env</p>
         </div>
 
-        <!-- Connection: Horiz Row 1 -->
-        <div class="s-path top-[44px] left-[16.6%] w-[66.6%] h-0"></div>
-
-        <!-- Connection: Vertical Drop -->
-        <div class="s-path top-[44px] right-[16.6%] w-0 h-32"></div>
-
-        <!-- Row 2: Cloud <- AI Engine -->
-        <div class="flex flex-col items-center z-10">
-          <div class="bg-primary/20 p-4 rounded-2xl mb-3"><span class="material-symbols-outlined text-primary text-3xl">cloud_sync</span></div>
-          <p class="text-[10px] font-bold uppercase">Cloud UI</p>
+        <!-- Row 2: Edge Processing -->
+        <div class="col-span-5 flex flex-col items-center">
+          <div class="bg-surface-container-high p-4 rounded-2xl mb-2 border border-outline-variant/30 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary">developer_board</span>
+            <div class="text-left"><p class="text-[9px] font-bold uppercase">Arduino Edge Core</p><p class="text-[7px] text-on-surface/50">Real-time Compensation</p></div>
+          </div>
+          <span class="material-symbols-outlined text-primary/30">arrow_downward</span>
         </div>
-        <div class="flex flex-col items-center z-10">
-          <div class="bg-secondary/20 p-4 rounded-2xl mb-3"><span class="material-symbols-outlined text-secondary text-3xl">psychology</span></div>
-          <p class="text-[10px] font-bold uppercase">AI Engine</p>
-        </div>
-        <div class="flex flex-col items-center opacity-0"></div>
 
-        <!-- Connection: Horiz Row 2 -->
-        <div class="s-path bottom-[44px] left-[16.6%] w-[33.3%] h-0"></div>
+        <!-- Row 3: PC / Link -->
+        <div class="col-span-5 flex flex-col items-center">
+          <div class="bg-primary/5 p-3 rounded-xl mb-2 border border-primary/10 flex items-center gap-2">
+            <span class="material-symbols-outlined text-xs">terminal</span>
+            <p class="text-[8px] font-bold uppercase">Local Data Link (Serial CSV)</p>
+          </div>
+        </div>
+
+        <!-- Row 4: Neural Branches -->
+        <div class="col-start-2 flex flex-col items-center">
+          <span class="material-symbols-outlined text-primary/30 -rotate-45">arrow_downward</span>
+          <div class="bg-surface-container p-3 rounded-xl mb-1 border border-outline-variant/30 mt-2">
+            <p class="text-[8px] font-bold uppercase text-primary">MLP Classifier</p>
+          </div>
+        </div>
+        <div class="col-start-3 flex items-center justify-center pt-8">
+          <div class="w-12 h-[1px] bg-outline-variant/30"></div>
+          <div class="bg-primary p-1 rounded-full shadow-[0_0_10px_#4edea3]"></div>
+          <div class="w-12 h-[1px] bg-outline-variant/30"></div>
+        </div>
+        <div class="col-start-4 flex flex-col items-center">
+          <span class="material-symbols-outlined text-primary/30 rotate-45">arrow_downward</span>
+          <div class="bg-surface-container p-3 rounded-xl mb-1 border border-outline-variant/30 mt-2">
+            <p class="text-[8px] font-bold uppercase text-secondary">LSTM Attention</p>
+          </div>
+        </div>
+
+        <!-- Row 5: Cloud -->
+        <div class="col-span-5 flex flex-col items-center mt-4">
+          <span class="material-symbols-outlined text-primary/30 mb-2">arrow_downward</span>
+          <div class="bg-primary/20 p-4 rounded-full border border-primary/40 flex items-center gap-3">
+            <span class="material-symbols-outlined text-primary">cloud_done</span>
+            <p class="text-[10px] font-bold uppercase tracking-widest">FoodSense Cloud UI</p>
+          </div>
+        </div>
 
       </div>
     </div>
