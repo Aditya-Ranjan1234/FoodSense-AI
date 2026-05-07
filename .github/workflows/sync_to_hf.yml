@@ -7,6 +7,8 @@ on:
 jobs:
   sync-to-hub:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
     steps:
       - uses: actions/checkout@v4
         with:
@@ -17,25 +19,31 @@ jobs:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           if [ -z "$HF_TOKEN" ]; then
-            echo "Error: HF_TOKEN secret is not set. Please add it to your GitHub repository secrets."
+            echo "::error::HF_TOKEN is missing! Go to GitHub Settings > Secrets > Actions and add 'HF_TOKEN' with your Hugging Face Write Token."
             exit 1
           fi
           
           git config --global user.email "aditya-ranjan1234@users.noreply.github.com"
           git config --global user.name "Aditya Ranjan"
           
-          # Clone with the token in the URL for authentication
+          echo "Checking if Hugging Face Space exists..."
+          if ! git ls-remote https://huggingface.co/spaces/aditya-ranjan1234/foodsense-ai > /dev/null 2>&1; then
+            echo "::error::Space 'aditya-ranjan1234/foodsense-ai' not found! Please create it first at https://huggingface.co/new-space (Select Static SDK)."
+            exit 1
+          fi
+
+          echo "Cloning Hugging Face Space..."
           git clone https://aditya-ranjan1234:$HF_TOKEN@huggingface.co/spaces/aditya-ranjan1234/foodsense-ai hf_space_repo
           
-          # Sync the contents of huggingface_space to the repo
+          echo "Syncing files..."
           cp -r huggingface_space/* hf_space_repo/
           
           cd hf_space_repo
           git add .
-          # Only commit if there are changes
           if git diff --staged --quiet; then
-            echo "No changes to sync."
+            echo "No changes detected. Skipping push."
           else
             git commit -m "Sync from GitHub: ${{ github.event.head_commit.message }}"
             git push origin main
+            echo "Successfully synced to Hugging Face!"
           fi
