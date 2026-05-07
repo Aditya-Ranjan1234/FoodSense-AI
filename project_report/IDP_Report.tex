@@ -97,19 +97,25 @@
 \addbibresource{./AuxFiles/ProjectBib.bib}%Add bib file with extention
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%%WaterMark%%%%%%%%%%%%%%%%%%%%%
-%% Use it only after Biblatex
-%% Uncomment the following lines for watermarking and run it more than 2 times for proper alignment
-%\usepackage{background}
-%\backgroundsetup{scale=1, angle=0, firstpage = false, opacity=0.5, contents={
-%\begin{tikzpicture}[remember picture, overlay]
-%\node at ([yshift=0pt, xshift=0pt]current page.center){\includegraphics[width=0.6\textwidth]{Figures/RVlogoVecW}};
-%\end{tikzpicture}
-%}}
+%%%%%%%%%%%%%%%% Page Background %%%%%%%%%%%%%%%%%%%%%
+%% Override the default "Draft" background from the template package.
+\backgroundsetup{
+	scale=1,
+	angle=0,
+	firstpage=true,
+	opacity=0.08,
+	contents={
+		\begin{tikzpicture}[remember picture, overlay]
+			\node at (current page.center){\includegraphics[width=0.45\textwidth]{Figures/RV_logoVec}};
+		\end{tikzpicture}
+	}
+}
 
 \begin{document}
-\NoBgThispage% Don't remove this command, even if you want logo on the first page.	
+\begingroup
+\let\NoBgThispage\relax
 \maketitle
+\endgroup
 %\pagestyle{empty}
 \newpage
 \ifDrf
