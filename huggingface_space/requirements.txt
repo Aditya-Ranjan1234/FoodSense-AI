@@ -1,7 +1,7 @@
-gradio>=5.28.0
-numpy<2.0,>=1.23
+gradio==5.28.0
+numpy==1.26.4
 pillow>=10.0.0
-tensorflow==2.15.1
+tensorflow-cpu==2.15.1
 torch>=2.1.0
 transformers>=4.40.0
 safetensors>=0.4.3

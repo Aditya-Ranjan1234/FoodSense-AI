@@ -6,6 +6,8 @@ colorTo: green
 sdk: gradio
 sdk_version: 5.28.0
 app_file: app.py
+python_version: 3.10
+suggested_hardware: cpu-upgrade
 pinned: true
 license: mit
 short_description: Multimodal AI for Early Food Spoilage Prediction
