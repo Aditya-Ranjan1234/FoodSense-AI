@@ -13,9 +13,7 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        "surface-bright": "#343b36", "error-container": "#93000a",
-        "surface-container": "#1a211d", "on-background": "#dde4dd",
-        "background": "#0e1511", "primary": "#4edea3", "secondary": "#adc6ff",
+        "surface-container": "#1a211d", "background": "#0e1511", "primary": "#4edea3", "secondary": "#adc6ff",
         "on-surface": "#dde4dd", "outline-variant": "#3c4a42", "error": "#ffb4ab"
       }
     }
@@ -23,181 +21,123 @@ tailwind.config = {
 }
 </script>
 <style>
-.glass-card { background-color: rgba(26, 33, 29, 0.6); border: 1px solid rgba(134, 148, 138, 0.15); backdrop-filter: blur(16px); }
-body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width: 100vw; margin: 0; padding: 0; }
-.tab-content { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
-.s-path { position: absolute; border: 1.5px dashed rgba(78, 222, 163, 0.2); pointer-events: none; }
+.glass-card { background-color: rgba(26, 33, 29, 0.7); border: 1px solid rgba(134, 148, 138, 0.15); backdrop-filter: blur(16px); }
+body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width: 100vw; margin: 0; }
+.tab-content { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 2rem; }
+.flow-line { position: absolute; background: rgba(78, 222, 163, 0.15); pointer-events: none; }
 </style>
 </head>
 <body class="bg-background text-on-background">
 
-<!-- Mobile Menu Overlay -->
-<div id="mobile-overlay" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
-<div id="mobile-sidebar" class="fixed left-0 top-0 h-full w-72 bg-surface-container z-[70] transition-transform -translate-x-full md:hidden flex flex-col py-8 px-6">
-  <div class="flex justify-between items-center mb-10">
-    <span class="text-2xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">FoodSense</span>
-    <button onclick="toggleMobileMenu()" class="material-symbols-outlined">close</button>
-  </div>
-  <nav class="flex-1 space-y-4">
-    <button onclick="showTab('dashboard'); toggleMobileMenu()" class="w-full text-left p-2">Dashboard</button>
-    <button onclick="showTab('insights'); toggleMobileMenu()" class="w-full text-left p-2">Insights</button>
-    <button onclick="showTab('pipeline'); toggleMobileMenu()" class="w-full text-left p-2">Pipeline</button>
-  </nav>
-</div>
-
-<header class="fixed top-0 w-full h-16 z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-6">
+<header class="fixed top-0 w-full h-16 z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-8">
   <div class="flex items-center gap-4">
-    <button onclick="toggleMobileMenu()" class="md:hidden material-symbols-outlined text-primary">menu</button>
     <span class="text-xl font-bold text-primary tracking-tight" style="font-family:'Space Grotesk',sans-serif">FoodSense AI</span>
   </div>
   <div class="hidden md:flex gap-8 items-center h-full">
     <button onclick="showTab('dashboard')" id="tab-dashboard" class="text-sm transition-all">Dashboard</button>
     <button onclick="showTab('insights')" id="tab-insights" class="text-sm transition-all">Evaluation</button>
-    <button onclick="showTab('pipeline')" id="tab-pipeline" class="text-sm transition-all">Architecture</button>
+    <button onclick="showTab('pipeline')" id="tab-pipeline" class="text-sm transition-all">Multiflow Arch</button>
   </div>
-  <div class="flex items-center gap-3">
-    <div class="flex items-center gap-2 px-2.5 py-0.5 bg-primary/10 border border-primary/20 rounded-full">
-      <div class="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></div>
-      <span class="text-[9px] font-bold text-primary uppercase">Live</span>
-    </div>
-  </div>
+  <div class="flex items-center gap-3"><div class="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_8px_#4edea3]"></div></div>
 </header>
 
 <main class="h-screen pt-16 flex flex-col overflow-hidden items-center justify-center">
   
   <!-- Dashboard Tab -->
-  <div id="tab-content-dashboard" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden px-6">
-    <div class="max-w-4xl w-full">
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
-          <p class="text-[10px] uppercase font-bold text-on-surface/60 mb-2">Temperature</p>
-          <div class="flex items-baseline gap-1"><span id="sim-temp" class="text-3xl font-bold">25.3</span><span class="text-sm">°C</span></div>
-        </div>
-        <div class="glass-card rounded-2xl p-5 border-l-4 border-l-secondary">
-          <p class="text-[10px] uppercase font-bold text-on-surface/60 mb-2">Humidity</p>
-          <div class="flex items-baseline gap-1"><span id="sim-hum" class="text-3xl font-bold">62.1</span><span class="text-sm">%</span></div>
-        </div>
-        <div class="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
-          <p class="text-[10px] uppercase font-bold text-on-surface/60 mb-2">NH₃ Gas</p>
-          <div class="flex items-baseline gap-1"><span id="sim-nh3" class="text-3xl font-bold">2.8</span><span class="text-sm">ppm</span></div>
-        </div>
+  <div id="tab-content-dashboard" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
+    <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+      <div class="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
+        <p class="text-[10px] uppercase font-bold opacity-60 mb-2">Temp</p>
+        <p class="text-3xl font-bold"><span id="sim-temp">25.3</span>°C</p>
       </div>
-      <div class="glass-card rounded-3xl p-8 text-center relative overflow-hidden">
-        <div class="absolute top-0 right-0 p-4"><span id="status-badge" class="bg-primary/20 text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase">Normal</span></div>
-        <h3 class="text-sm uppercase tracking-widest text-on-surface/50 mb-8 font-bold">Fusion Model Inference</h3>
-        <div class="grid grid-cols-3 gap-8">
-          <div><p class="text-[10px] uppercase mb-1 font-bold">Spoilage</p><p id="mlp-class" class="text-2xl font-bold text-primary">Safe</p></div>
-          <div><p class="text-[10px] uppercase mb-1 font-bold">Accuracy</p><p id="mlp-conf" class="text-2xl font-bold">98%</p></div>
-          <div><p class="text-[10px] uppercase mb-1 font-bold">Shelf Life</p><p id="lstm-pred" class="text-2xl font-bold text-primary">44h</p></div>
-        </div>
+      <div class="glass-card rounded-2xl p-5 border-l-4 border-l-secondary">
+        <p class="text-[10px] uppercase font-bold opacity-60 mb-2">Hum</p>
+        <p class="text-3xl font-bold"><span id="sim-hum">62.1</span>%</p>
+      </div>
+      <div class="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
+        <p class="text-[10px] uppercase font-bold opacity-60 mb-2">Gas</p>
+        <p class="text-3xl font-bold"><span id="sim-nh3">2.8</span>ppm</p>
+      </div>
+    </div>
+    <div class="glass-card rounded-3xl p-8 w-full max-w-4xl border border-primary/20">
+      <div class="grid grid-cols-3 gap-8 text-center">
+        <div><p class="text-[10px] uppercase opacity-50 mb-1">Status</p><p id="mlp-class" class="text-2xl font-bold text-primary">Safe</p></div>
+        <div><p class="text-[10px] uppercase opacity-50 mb-1">Conf</p><p id="mlp-conf" class="text-2xl font-bold">98%</p></div>
+        <div><p class="text-[10px] uppercase opacity-50 mb-1">Shelf Life</p><p id="lstm-pred" class="text-2xl font-bold text-primary">44h</p></div>
       </div>
     </div>
   </div>
 
-  <!-- Insights Tab -->
-  <div id="tab-content-insights" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden px-6">
-    <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+  <!-- Evaluation Tab -->
+  <div id="tab-content-insights" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
+    <div class="max-w-5xl w-full grid grid-cols-2 gap-6">
       <div class="glass-card rounded-3xl p-8">
-        <h4 class="text-xs uppercase font-bold text-primary mb-6">MLP Gas Classifier</h4>
-        <div class="space-y-6">
-          <div class="flex justify-between border-b border-outline-variant pb-2"><span class="text-sm">Precision</span><span class="text-xl font-bold">99.08%</span></div>
-          <div class="flex justify-between border-b border-outline-variant pb-2"><span class="text-sm">Recall</span><span class="text-xl font-bold">98.78%</span></div>
-          <div class="flex justify-between"><span class="text-sm">F1-Score</span><span class="text-xl font-bold text-primary">98.93%</span></div>
-        </div>
+        <p class="text-xs font-bold text-primary mb-6">MLP CLASSIFIER</p>
+        <div class="space-y-4 text-sm"><div class="flex justify-between border-b border-outline-variant pb-2"><span>Accuracy</span><b>99.75%</b></div><div class="flex justify-between"><span>F1-Score</span><b class="text-primary">98.93%</b></div></div>
       </div>
-      <div class="glass-card rounded-3xl p-8 flex flex-col justify-center items-center text-center">
-        <h4 class="text-xs uppercase font-bold text-secondary mb-4">Regression Performance</h4>
-        <div class="flex items-baseline gap-2 mb-2"><span class="text-5xl font-bold text-primary">4.0</span><span class="text-lg">hours</span></div>
-        <p class="text-[10px] uppercase text-on-surface/50 font-bold">Mean Absolute Error</p>
+      <div class="glass-card rounded-3xl p-8 flex flex-col justify-center items-center">
+        <p class="text-5xl font-bold text-primary mb-2">4.0h</p>
+        <p class="text-[10px] uppercase opacity-50 font-bold tracking-widest">LSTM Regressor MAE</p>
       </div>
     </div>
   </div>
 
-  <!-- Pipeline Tab -->
-  <div id="tab-content-pipeline" class="tab-content animate-in fade-in zoom-in-95 duration-500 px-6">
-    <div class="max-w-4xl w-full glass-card rounded-3xl p-10 relative overflow-hidden">
-      <h3 class="text-sm uppercase tracking-widest text-on-surface/50 mb-12 font-bold text-center">Multimodal System Architecture</h3>
+  <!-- Multiflow Architecture Tab -->
+  <div id="tab-content-pipeline" class="tab-content animate-in fade-in zoom-in-95 duration-500">
+    <div class="max-w-5xl w-full glass-card rounded-3xl p-8 md:p-12 relative overflow-hidden">
       
-      <div class="grid grid-cols-5 gap-y-12 relative">
+      <div class="grid grid-cols-5 items-center justify-items-center gap-y-16 relative">
         
-        <!-- Row 1: Inputs -->
-        <div class="flex flex-col items-center col-start-2">
-          <div class="bg-primary/10 p-3 rounded-xl mb-2 border border-primary/20"><span class="material-symbols-outlined text-primary text-xl">gas_meter</span></div>
-          <p class="text-[8px] font-bold uppercase">MQ135 Gas</p>
-        </div>
-        <div class="col-start-3 flex items-center justify-center">
-          <span class="material-symbols-outlined text-primary/30 rotate-45">arrow_downward</span>
-          <span class="material-symbols-outlined text-primary/30 -rotate-45">arrow_downward</span>
-        </div>
-        <div class="flex flex-col items-center col-start-4">
-          <div class="bg-secondary/10 p-3 rounded-xl mb-2 border border-secondary/20"><span class="material-symbols-outlined text-secondary text-xl">thermostat</span></div>
-          <p class="text-[8px] font-bold uppercase">DHT11 Env</p>
+        <!-- Column 1: Sensors -->
+        <div class="flex flex-col gap-8 z-10">
+          <div class="flex flex-col items-center gap-2"><div class="bg-primary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-primary text-2xl">sensors</span></div><p class="text-[8px] font-bold uppercase">MQ135</p></div>
+          <div class="flex flex-col items-center gap-2"><div class="bg-secondary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-secondary text-2xl">water_drop</span></div><p class="text-[8px] font-bold uppercase">DHT11</p></div>
         </div>
 
-        <!-- Row 2: Edge Processing -->
-        <div class="col-span-5 flex flex-col items-center">
-          <div class="bg-surface-container-high p-4 rounded-2xl mb-2 border border-outline-variant/30 flex items-center gap-3">
-            <span class="material-symbols-outlined text-primary">developer_board</span>
-            <div class="text-left"><p class="text-[9px] font-bold uppercase">Arduino Edge Core</p><p class="text-[7px] text-on-surface/50">Real-time Compensation</p></div>
-          </div>
-          <span class="material-symbols-outlined text-primary/30">arrow_downward</span>
+        <!-- Column 2: Edge -->
+        <div class="flex flex-col items-center z-10">
+          <div class="bg-primary/10 p-5 rounded-2xl border border-primary/20"><span class="material-symbols-outlined text-primary text-4xl">developer_board</span></div>
+          <p class="text-[9px] font-bold uppercase mt-3">Arduino Uno</p>
         </div>
 
-        <!-- Row 3: PC / Link -->
-        <div class="col-span-5 flex flex-col items-center">
-          <div class="bg-primary/5 p-3 rounded-xl mb-2 border border-primary/10 flex items-center gap-2">
-            <span class="material-symbols-outlined text-xs">terminal</span>
-            <p class="text-[8px] font-bold uppercase">Local Data Link (Serial CSV)</p>
-          </div>
+        <!-- Column 3: Data -->
+        <div class="flex flex-col items-center z-10">
+          <div class="bg-secondary/10 p-5 rounded-2xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-4xl">terminal</span></div>
+          <p class="text-[9px] font-bold uppercase mt-3">Serial CSV</p>
         </div>
 
-        <!-- Row 4: Neural Branches -->
-        <div class="col-start-2 flex flex-col items-center">
-          <span class="material-symbols-outlined text-primary/30 -rotate-45">arrow_downward</span>
-          <div class="bg-surface-container p-3 rounded-xl mb-1 border border-outline-variant/30 mt-2">
-            <p class="text-[8px] font-bold uppercase text-primary">MLP Classifier</p>
-          </div>
-        </div>
-        <div class="col-start-3 flex items-center justify-center pt-8">
-          <div class="w-12 h-[1px] bg-outline-variant/30"></div>
-          <div class="bg-primary p-1 rounded-full shadow-[0_0_10px_#4edea3]"></div>
-          <div class="w-12 h-[1px] bg-outline-variant/30"></div>
-        </div>
-        <div class="col-start-4 flex flex-col items-center">
-          <span class="material-symbols-outlined text-primary/30 rotate-45">arrow_downward</span>
-          <div class="bg-surface-container p-3 rounded-xl mb-1 border border-outline-variant/30 mt-2">
-            <p class="text-[8px] font-bold uppercase text-secondary">LSTM Attention</p>
-          </div>
+        <!-- Column 4: AI Models -->
+        <div class="flex flex-col gap-8 z-10">
+          <div class="flex flex-col items-center gap-2"><div class="bg-primary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-primary text-2xl">account_tree</span></div><p class="text-[8px] font-bold uppercase">MLP Class</p></div>
+          <div class="flex flex-col items-center gap-2"><div class="bg-secondary/20 p-3 rounded-xl"><span class="material-symbols-outlined text-secondary text-2xl">timeline</span></div><p class="text-[8px] font-bold uppercase">LSTM Reg</p></div>
         </div>
 
-        <!-- Row 5: Cloud -->
-        <div class="col-span-5 flex flex-col items-center mt-4">
-          <span class="material-symbols-outlined text-primary/30 mb-2">arrow_downward</span>
-          <div class="bg-primary/20 p-4 rounded-full border border-primary/40 flex items-center gap-3">
-            <span class="material-symbols-outlined text-primary">cloud_done</span>
-            <p class="text-[10px] font-bold uppercase tracking-widest">FoodSense Cloud UI</p>
-          </div>
+        <!-- Column 5: Output -->
+        <div class="flex flex-col items-center z-10">
+          <div class="bg-primary/30 p-6 rounded-3xl border border-primary/50 shadow-xl shadow-primary/10"><span class="material-symbols-outlined text-primary text-5xl">cloud_sync</span></div>
+          <p class="text-[10px] font-bold uppercase mt-4 tracking-widest text-primary">Live UI</p>
         </div>
 
+        <!-- Dynamic Flow Lines (Absolute) -->
+        <div class="flow-line top-[32%] left-[10%] w-[12%] h-[1px]"></div>
+        <div class="flow-line bottom-[32%] left-[10%] w-[12%] h-[1px]"></div>
+        <div class="flow-line top-[50%] left-[30%] w-[10%] h-[1px]"></div>
+        <div class="flow-line top-[50%] left-[50%] w-[10%] h-[1px]"></div>
+        <div class="flow-line top-[32%] right-[10%] w-[12%] h-[1px]"></div>
+        <div class="flow-line bottom-[32%] right-[10%] w-[12%] h-[1px]"></div>
       </div>
+
     </div>
   </div>
 
 </main>
 
 <script>
-function toggleMobileMenu() {
-  const sidebar = document.getElementById('mobile-sidebar');
-  const overlay = document.getElementById('mobile-overlay');
-  const isHidden = sidebar.classList.contains('-translate-x-full');
-  sidebar.classList.toggle('-translate-x-full', !isHidden);
-  overlay.classList.toggle('hidden', !isHidden);
-}
 function showTab(tab) {
   ['dashboard','insights','pipeline'].forEach(t => {
     document.getElementById('tab-content-' + t).classList.add('hidden');
     const btn = document.getElementById('tab-' + t);
-    if(btn) btn.className = "text-sm text-on-surface/50 hover:text-primary transition-all pb-1";
+    if(btn) btn.className = "text-sm text-on-surface/40 hover:text-primary transition-all";
   });
   document.getElementById('tab-content-' + tab).classList.remove('hidden');
   const btn = document.getElementById('tab-' + tab);
@@ -209,8 +149,6 @@ function simulate() {
   document.getElementById('sim-hum').textContent = (60 + Math.random() * 4).toFixed(1);
   document.getElementById('sim-nh3').textContent = n;
   const safe = parseFloat(n) < 5;
-  document.getElementById('status-badge').textContent = safe ? 'Normal' : 'Caution';
-  document.getElementById('status-badge').className = safe ? 'bg-primary/20 text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase' : 'bg-error/20 text-error text-[10px] font-bold px-3 py-1 rounded-full uppercase';
   document.getElementById('mlp-class').textContent = safe ? 'Safe' : 'Caution';
   document.getElementById('mlp-conf').textContent = (96+Math.random()*3).toFixed(0)+'%';
   document.getElementById('lstm-pred').textContent = (45-parseFloat(n)*2.5).toFixed(0)+'h';
