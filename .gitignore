@@ -1,0 +1,14 @@
+# Python
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# Data
+dataset/
+*.csv
+*.pth
+
+# IDE
+.vscode/
+*.swp

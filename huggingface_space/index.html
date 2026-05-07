@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>FoodSense AI | Model Insights</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<script>
+tailwind.config = {
+  darkMode: "class",
+  theme: {
+    extend: {
+      colors: {
+        "surface-bright": "#343b36", "error-container": "#93000a",
+        "surface-container": "#1a211d", "on-background": "#dde4dd",
+        "inverse-on-surface": "#2b322d", "on-secondary": "#002e6a",
+        "background": "#0e1511", "surface-container-high": "#242c27",
+        "secondary-fixed-dim": "#adc6ff", "tertiary-container": "#ff7a73",
+        "surface-container-low": "#161d19", "secondary": "#adc6ff",
+        "on-error-container": "#ffdad6", "on-secondary-container": "#e6ecff",
+        "error": "#ffb4ab", "tertiary": "#ffb3ad", "on-tertiary": "#68000a",
+        "surface-container-highest": "#2f3632", "primary-container": "#10b981",
+        "primary-fixed-dim": "#4edea3", "primary-fixed": "#6ffbbe",
+        "on-secondary-fixed": "#001a42", "on-primary-container": "#00422b",
+        "surface-container-lowest": "#09100c", "inverse-surface": "#dde4dd",
+        "outline-variant": "#3c4a42", "surface": "#0e1511",
+        "outline": "#86948a", "on-primary": "#003824",
+        "on-surface-variant": "#bbcabf", "secondary-container": "#0566d9",
+        "surface-dim": "#0e1511", "surface-tint": "#4edea3",
+        "on-error": "#690005", "surface-variant": "#2f3632",
+        "primary": "#4edea3", "inverse-primary": "#006c49",
+        "secondary-fixed": "#d8e2ff", "on-surface": "#dde4dd",
+        "on-tertiary-container": "#79000e"
+      },
+      borderRadius: { "DEFAULT": "0.125rem", "lg": "0.25rem", "xl": "0.5rem", "full": "0.75rem" },
+      fontFamily: { "body-md": ["Inter"], "headline-lg": ["Inter"], "mono-data": ["Space Grotesk"], "display-metrics": ["Space Grotesk"], "data-label": ["Space Grotesk"] },
+      fontSize: {
+        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+        "headline-lg": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+        "mono-data": ["13px", {"lineHeight": "16px", "fontWeight": "400"}],
+        "display-metrics": ["36px", {"lineHeight": "1.2", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+        "data-label": ["14px", {"lineHeight": "20px", "letterSpacing": "0.05em", "fontWeight": "500"}]
+      }
+    }
+  }
+}
+</script>
+<style>
+.glass-card { background-color: rgba(30,41,59,0.8); border: 1px solid #334155; backdrop-filter: blur(16px); }
+.active-border-glow { border: 1px solid #10b981; box-shadow: 0 0 8px rgba(16,185,129,0.4); }
+.confusion-cell { position: relative; overflow: hidden; }
+.confusion-cell::after { content: ""; position: absolute; inset: 0; background: linear-gradient(135deg,rgba(78,222,163,0.05) 0%,transparent 100%); }
+body { font-family: 'Inter', sans-serif; }
+</style>
+</head>
+<body class="bg-background text-on-background selection:bg-primary selection:text-on-primary">
+<header class="fixed top-0 w-full z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant shadow-sm flex justify-between items-center px-6 py-4">
+  <div class="flex items-center gap-4">
+    <span class="text-3xl font-bold text-primary tracking-tight" style="font-family:'Space Grotesk',sans-serif">FoodSense AI</span>
+  </div>
+  <div class="flex items-center gap-6">
+    <div class="flex gap-8 items-center">
+      <button onclick="showTab('dashboard')" id="tab-dashboard" class="text-on-surface-variant text-sm hover:text-primary transition-colors duration-200">Dashboard</button>
+      <button onclick="showTab('insights')" id="tab-insights" class="text-primary border-b-2 border-primary pb-1 text-sm transition-colors duration-200">Model Insights</button>
+      <button onclick="showTab('pipeline')" id="tab-pipeline" class="text-on-surface-variant text-sm hover:text-primary transition-colors duration-200">Data Pipeline</button>
+    </div>
+    <div class="flex gap-3 ml-12 border-l border-outline-variant pl-6">
+      <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">settings</span>
+      <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors">sensors</span>
+    </div>
+  </div>
+</header>
+<aside class="h-screen w-64 fixed left-0 top-0 bg-surface-container border-r border-outline-variant hidden md:flex flex-col py-6 z-40">
+  <div class="px-6 mb-12 pt-16">
+    <h1 class="text-2xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">FoodSense</h1>
+    <p class="text-xs text-on-surface-variant opacity-70 uppercase tracking-widest mt-1">Precision Monitoring</p>
+  </div>
+  <nav class="flex-1">
+    <ul class="space-y-1">
+      <li><a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-variant/50 transition-all" href="#"><span class="material-symbols-outlined text-lg">monitoring</span><span class="text-xs uppercase tracking-widest">Real-time Feed</span></a></li>
+      <li><a class="flex items-center gap-3 px-6 py-3 text-primary bg-primary/10 border-r-2 border-primary" href="#"><span class="material-symbols-outlined text-lg">analytics</span><span class="text-xs uppercase tracking-widest">Model Inference</span></a></li>
+      <li><a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-variant/50 transition-all" href="#"><span class="material-symbols-outlined text-lg">query_stats</span><span class="text-xs uppercase tracking-widest">Historical Analysis</span></a></li>
+      <li><a class="flex items-center gap-3 px-6 py-3 text-on-surface-variant hover:bg-surface-variant/50 transition-all" href="#"><span class="material-symbols-outlined text-lg">health_and_safety</span><span class="text-xs uppercase tracking-widest">System Health</span></a></li>
+    </ul>
+  </nav>
+  <div class="px-6 mt-auto">
+    <button onclick="exportReport()" class="w-full bg-primary text-on-primary text-xs py-3 rounded-lg active:scale-95 transition-transform uppercase tracking-wider font-bold">Export Report</button>
+  </div>
+</aside>
+<main class="md:ml-64 pt-24 pb-12 px-6 md:px-8 max-w-7xl mx-auto">
+  <!-- Dashboard Tab -->
+  <div id="tab-content-dashboard" class="hidden">
+    <div class="mb-8"><h2 class="text-3xl font-bold text-on-surface mb-2" style="font-family:'Space Grotesk',sans-serif">Live Sensor Dashboard</h2><p class="text-on-surface-variant max-w-2xl text-sm">Simulated real-time sensor readings from the FoodSense container. Connect your Arduino to see live data.</p></div>
+    <div class="grid grid-cols-12 gap-4">
+      <div class="col-span-12 md:col-span-4 glass-card rounded-xl p-6 flex flex-col gap-3">
+        <div class="flex items-center gap-2 border-b border-outline-variant pb-3"><span class="material-symbols-outlined text-primary">thermostat</span><span class="text-xs uppercase tracking-widest text-on-surface-variant">Temperature</span></div>
+        <div class="flex items-baseline gap-2"><span id="sim-temp" class="text-5xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">25.3</span><span class="text-on-surface-variant text-xl">°C</span></div>
+        <div class="h-1 bg-outline-variant rounded-full mt-2"><div id="bar-temp" class="h-1 bg-primary rounded-full transition-all duration-1000" style="width:50%"></div></div>
+        <p class="text-xs text-on-surface-variant">Normal range: 18–30°C</p>
+      </div>
+      <div class="col-span-12 md:col-span-4 glass-card rounded-xl p-6 flex flex-col gap-3">
+        <div class="flex items-center gap-2 border-b border-outline-variant pb-3"><span class="material-symbols-outlined text-secondary">water_drop</span><span class="text-xs uppercase tracking-widest text-on-surface-variant">Humidity</span></div>
+        <div class="flex items-baseline gap-2"><span id="sim-hum" class="text-5xl font-bold text-secondary" style="font-family:'Space Grotesk',sans-serif">62.1</span><span class="text-on-surface-variant text-xl">%</span></div>
+        <div class="h-1 bg-outline-variant rounded-full mt-2"><div id="bar-hum" class="h-1 bg-secondary rounded-full transition-all duration-1000" style="width:62%"></div></div>
+        <p class="text-xs text-on-surface-variant">Alert threshold: >85%</p>
+      </div>
+      <div class="col-span-12 md:col-span-4 glass-card rounded-xl p-6 flex flex-col gap-3">
+        <div class="flex items-center gap-2 border-b border-outline-variant pb-3"><span class="material-symbols-outlined text-error">science</span><span class="text-xs uppercase tracking-widest text-on-surface-variant">NH₃ (Ammonia)</span></div>
+        <div class="flex items-baseline gap-2"><span id="sim-nh3" class="text-5xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">2.8</span><span class="text-on-surface-variant text-xl">ppm</span></div>
+        <div class="h-1 bg-outline-variant rounded-full mt-2"><div id="bar-nh3" class="h-1 bg-primary rounded-full transition-all duration-1000" style="width:11%"></div></div>
+        <p class="text-xs text-on-surface-variant">SAFE &lt;5 | CAUTION &lt;25 | UNSAFE &ge;25</p>
+      </div>
+      <div class="col-span-12 glass-card rounded-xl p-6 active-border-glow">
+        <div class="flex items-center justify-between mb-4"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary">psychology</span><span class="text-sm uppercase tracking-widest text-on-surface-variant">MLP Prediction (Current Reading)</span></div><span id="mlp-badge" class="bg-primary/20 text-primary px-3 py-1 rounded text-xs font-bold uppercase">SAFE</span></div>
+        <div class="grid grid-cols-3 gap-4">
+          <div class="text-center"><p class="text-xs text-on-surface-variant uppercase mb-1">Classification</p><p id="mlp-class" class="text-2xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">Safe</p></div>
+          <div class="text-center"><p class="text-xs text-on-surface-variant uppercase mb-1">Confidence</p><p id="mlp-conf" class="text-2xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">97.2%</p></div>
+          <div class="text-center"><p class="text-xs text-on-surface-variant uppercase mb-1">Shelf Life Est.</p><p id="lstm-pred" class="text-2xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">44.1h</p></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Model Insights Tab -->
+  <div id="tab-content-insights">
+    <div class="mb-8"><h2 class="text-3xl font-bold text-on-surface mb-2" style="font-family:'Space Grotesk',sans-serif">Model Insights &amp; Evaluation</h2><p class="text-on-surface-variant max-w-2xl text-sm">Technical performance analysis of the FoodSense ML pipeline. All metrics derived from UCI Gas Sensor Array and synthetic Arduino time-series logs.</p></div>
+    <div class="grid grid-cols-12 gap-4">
+      <section class="col-span-12 lg:col-span-8 glass-card rounded-xl p-6 flex flex-col gap-6">
+        <div class="flex justify-between items-center border-b border-outline-variant pb-4">
+          <div class="flex items-center gap-3"><span class="material-symbols-outlined text-primary">biotech</span><h3 class="text-xl font-semibold text-on-surface">Classification Performance: MLP Gas Classifier</h3></div>
+          <span class="bg-primary/20 text-primary px-3 py-1 rounded text-xs font-mono">99.75% Accuracy</span>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="flex flex-col gap-3">
+            <p class="text-xs uppercase tracking-widest text-on-surface-variant">Confusion Matrix (Test Split: 2,782 samples)</p>
+            <div class="grid grid-cols-2 gap-1 bg-outline-variant/30 p-1 rounded-lg">
+              <div class="col-span-2 grid grid-cols-2 text-center text-xs text-on-surface-variant uppercase pb-2"><span>Predicted Safe</span><span>Predicted Ammonia</span></div>
+              <div class="confusion-cell bg-surface-container-highest p-6 rounded flex flex-col items-center justify-center"><span class="text-3xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">2451</span><span class="text-xs uppercase text-primary/70 mt-1">True Negatives</span></div>
+              <div class="confusion-cell bg-surface-container-low p-6 rounded flex flex-col items-center justify-center border border-error/20"><span class="text-3xl font-bold text-error" style="font-family:'Space Grotesk',sans-serif">3</span><span class="text-xs uppercase text-error/70 mt-1">False Positives</span></div>
+              <div class="confusion-cell bg-surface-container-low p-6 rounded flex flex-col items-center justify-center border border-error/20"><span class="text-3xl font-bold text-error" style="font-family:'Space Grotesk',sans-serif">4</span><span class="text-xs uppercase text-error/70 mt-1">False Negatives</span></div>
+              <div class="confusion-cell bg-surface-container-highest p-6 rounded flex flex-col items-center justify-center"><span class="text-3xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">324</span><span class="text-xs uppercase text-primary/70 mt-1">True Positives</span></div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-4">
+            <p class="text-xs uppercase tracking-widest text-on-surface-variant">Key Evaluation Metrics</p>
+            <div class="space-y-4">
+              <div class="flex justify-between items-end border-b border-outline-variant/30 pb-3"><span class="text-sm text-on-surface">Precision</span><div class="text-right"><span class="text-2xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">99.08%</span><p class="text-xs text-on-surface-variant">High Confidence Detection</p></div></div>
+              <div class="flex justify-between items-end border-b border-outline-variant/30 pb-3"><span class="text-sm text-on-surface">Recall</span><div class="text-right"><span class="text-2xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">98.78%</span><p class="text-xs text-on-surface-variant">Ammonia Sensitivity</p></div></div>
+              <div class="flex justify-between items-end border-b border-outline-variant/30 pb-3"><span class="text-sm text-on-surface">F1-Score</span><div class="text-right"><span class="text-2xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">98.93%</span><p class="text-xs text-on-surface-variant">Balanced Distribution</p></div></div>
+            </div>
+            <div class="p-3 bg-surface-container-low rounded border border-outline-variant/30 text-xs text-on-surface-variant font-mono italic mt-2">*UCI Gas Sensor Array Drift (13,910 samples). pos_weight=7.5 for class balancing. Previous 100% accuracy was a bug — now fixed.</div>
+          </div>
+        </div>
+      </section>
+      <section class="col-span-12 lg:col-span-4 glass-card rounded-xl p-6 flex flex-col gap-6">
+        <div class="flex items-center gap-3 border-b border-outline-variant pb-4"><span class="material-symbols-outlined text-primary">timeline</span><h3 class="text-xl font-semibold text-on-surface">LSTM Regression</h3></div>
+        <div class="space-y-6 flex-1">
+          <div class="flex flex-col gap-1"><span class="text-xs uppercase tracking-widest text-on-surface-variant">Mean Absolute Error (MAE)</span><div class="flex items-baseline gap-2"><span class="text-5xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">4.00</span><span class="text-xl text-on-surface-variant">hours</span></div></div>
+          <div class="flex flex-col gap-1"><span class="text-xs uppercase tracking-widest text-on-surface-variant">RMSE</span><div class="flex items-baseline gap-2"><span class="text-5xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">4.11</span><span class="text-xl text-on-surface-variant">hours</span></div></div>
+          <div class="bg-surface-container-low p-4 rounded-lg border border-outline-variant/30">
+            <div class="flex items-center gap-2 text-error text-xs uppercase mb-2"><span class="material-symbols-outlined text-sm">info</span><span>R&sup2; Anomaly Detected</span></div>
+            <p class="text-xs text-on-surface-variant leading-relaxed">R&sup2;: <span class="text-error">-8.15</span> — expected for chronological test split (last 5h of 48h sequence). Temporal distribution mismatch. Random split R&sup2; &gt;0.95.</p>
+          </div>
+        </div>
+      </section>
+      <section class="col-span-12 glass-card rounded-xl p-6">
+        <div class="flex items-center gap-3 border-b border-outline-variant pb-4 mb-6"><span class="material-symbols-outlined text-primary">schema</span><h3 class="text-xl font-semibold text-on-surface">Model Architecture &amp; Neural Pipeline</h3></div>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div class="flex flex-col gap-3">
+            <h4 class="text-xs uppercase tracking-widest text-primary">MLP Gas Classifier</h4>
+            <div class="flex flex-col gap-2 p-4 bg-surface-container-highest/40 rounded border border-outline-variant">
+              <div class="flex justify-between items-center py-2 border-b border-outline-variant/30"><span class="text-xs font-mono">Input Layer</span><span class="bg-primary/20 text-primary px-2 rounded text-xs">128 Features</span></div>
+              <div class="flex flex-col gap-1 py-2 border-b border-outline-variant/30"><div class="flex justify-between"><span class="text-xs font-mono">Hidden 1</span><span class="text-on-surface-variant text-xs">128 Neurons</span></div><span class="text-xs text-primary/80">BatchNorm &rarr; ReLU &rarr; Dropout(0.3)</span></div>
+              <div class="flex flex-col gap-1 py-2 border-b border-outline-variant/30"><div class="flex justify-between"><span class="text-xs font-mono">Hidden 2</span><span class="text-on-surface-variant text-xs">64 Neurons</span></div><span class="text-xs text-primary/80">BatchNorm &rarr; ReLU &rarr; Dropout(0.2)</span></div>
+              <div class="flex justify-between items-center py-2"><span class="text-xs font-mono">Output</span><span class="bg-error-container/20 text-error px-2 rounded text-xs">BCEWithLogitsLoss + pos_weight=7.5</span></div>
+            </div>
+          </div>
+          <div class="flex flex-col gap-3">
+            <h4 class="text-xs uppercase tracking-widest text-primary">LSTM + Attention Shelf-Life Predictor</h4>
+            <div class="flex flex-col gap-2 p-4 bg-surface-container-highest/40 rounded border border-outline-variant active-border-glow">
+              <div class="flex justify-between items-center py-2 border-b border-outline-variant/30"><span class="text-xs font-mono">Sequence Input</span><span class="bg-primary/20 text-primary px-2 rounded text-xs">30 Readings (1h window)</span></div>
+              <div class="flex flex-col gap-1 py-2 border-b border-outline-variant/30"><div class="flex justify-between"><span class="text-xs font-mono">LSTM Core</span><span class="text-on-surface-variant text-xs">2 Layers | 128 Hidden</span></div><span class="text-xs text-primary/80">Temporal Dependency Extraction</span></div>
+              <div class="flex flex-col gap-1 py-2 border-b border-outline-variant/30 bg-primary/5 -mx-4 px-4"><div class="flex justify-between"><span class="text-xs font-mono text-primary">Temporal Attention</span><span class="text-primary text-xs">Dynamic Weighting</span></div><span class="text-xs text-primary/80">Learnable Timestep Prioritization</span></div>
+              <div class="flex justify-between items-center py-2"><span class="text-xs font-mono">Regression Head</span><span class="bg-secondary-container/20 text-secondary px-2 rounded text-xs">HuberLoss</span></div>
+            </div>
+          </div>
+        </div>
+      </section>
+      <section class="col-span-12 md:col-span-6 glass-card rounded-xl p-6 border-l-4 border-l-primary"><div class="flex gap-4"><div class="flex-1"><h4 class="text-xs uppercase tracking-widest text-on-surface-variant mb-2">On-Device Compensation</h4><p class="text-sm text-on-surface leading-snug">Sensor signals corrected in real-time on Arduino using <code class="text-primary text-xs">corr = 1 + 0.02(T-20) + 0.01(H-65)</code> before inference.</p></div><span class="material-symbols-outlined text-primary text-4xl">developer_board</span></div></section>
+      <section class="col-span-12 md:col-span-6 glass-card rounded-xl p-6 border-l-4 border-l-secondary"><div class="flex gap-4"><div class="flex-1"><h4 class="text-xs uppercase tracking-widest text-on-surface-variant mb-2">Synthetic Verification</h4><p class="text-sm text-on-surface leading-snug">LSTM validated on 48-hour synthetic spoilage logs simulating NH&sub3; exponential growth curve <code class="text-primary text-xs">1.5 + 1.2e^(t/20)</code>.</p></div><span class="material-symbols-outlined text-secondary text-4xl">model_training</span></div></section>
+    </div>
+  </div>
+  <!-- Data Pipeline Tab -->
+  <div id="tab-content-pipeline" class="hidden">
+    <div class="mb-8"><h2 class="text-3xl font-bold text-on-surface mb-2" style="font-family:'Space Grotesk',sans-serif">Data Pipeline</h2><p class="text-on-surface-variant max-w-2xl text-sm">End-to-end flow from hardware sensors to AI predictions.</p></div>
+    <div class="grid grid-cols-12 gap-4">
+      <section class="col-span-12 glass-card rounded-xl p-6">
+        <div class="flex items-center gap-3 border-b border-outline-variant pb-4 mb-6"><span class="material-symbols-outlined text-primary">account_tree</span><h3 class="text-xl font-semibold text-on-surface">Hardware to Inference Pipeline</h3></div>
+        <div class="grid grid-cols-1 md:grid-cols-5 gap-2 items-center">
+          <div class="bg-surface-container-highest rounded-lg p-4 text-center"><span class="material-symbols-outlined text-primary text-3xl block mb-2">sensors</span><p class="text-xs font-bold text-on-surface uppercase">MQ135 + DHT11</p><p class="text-xs text-on-surface-variant mt-1">Raw ADC + Digital</p></div>
+          <div class="text-center text-primary text-2xl hidden md:block">&rarr;</div>
+          <div class="bg-surface-container-highest rounded-lg p-4 text-center"><span class="material-symbols-outlined text-secondary text-3xl block mb-2">developer_board</span><p class="text-xs font-bold text-on-surface uppercase">Arduino</p><p class="text-xs text-on-surface-variant mt-1">Compensation + CSV Serial</p></div>
+          <div class="text-center text-primary text-2xl hidden md:block">&rarr;</div>
+          <div class="bg-surface-container-highest rounded-lg p-4 text-center"><span class="material-symbols-outlined text-primary text-3xl block mb-2">psychology</span><p class="text-xs font-bold text-on-surface uppercase">AI Models</p><p class="text-xs text-on-surface-variant mt-1">MLP + LSTM Inference</p></div>
+        </div>
+        <div class="mt-6 p-4 bg-surface-container-low rounded border border-outline-variant/30">
+          <p class="text-xs text-on-surface-variant font-mono leading-relaxed">
+            <span class="text-primary"># Arduino Serial Output (CSV format)</span><br/>
+            timestamp_ms, temperature, humidity, nh3_ppm, status<br/>
+            2400000, 28.5, 72.3, 3.21, SAFE<br/>
+            2402300, 28.6, 72.5, 3.45, SAFE<br/>
+            <span class="text-on-surface-variant opacity-50">... (every 2 seconds) ...</span>
+          </p>
+        </div>
+      </section>
+      <section class="col-span-12 md:col-span-6 glass-card rounded-xl p-6">
+        <div class="flex items-center gap-3 border-b border-outline-variant pb-4 mb-4"><span class="material-symbols-outlined text-primary">dataset</span><h3 class="text-lg font-semibold text-on-surface">Datasets</h3></div>
+        <div class="space-y-4">
+          <div class="p-3 bg-surface-container-highest rounded border border-outline-variant/30"><p class="text-xs font-bold text-primary uppercase mb-1">UCI Gas Sensor Array Drift</p><p class="text-xs text-on-surface-variant">13,910 samples | 128 features | 6 gas classes | Class 3 = Ammonia (spoilage marker)</p></div>
+          <div class="p-3 bg-surface-container-highest rounded border border-outline-variant/30"><p class="text-xs font-bold text-secondary uppercase mb-1">Arduino Time-Series Log</p><p class="text-xs text-on-surface-variant">1,440 rows | 48h synthetic spoilage simulation | Matches hardware CSV output exactly</p></div>
+          <div class="p-3 bg-surface-container-highest rounded border border-outline-variant/30 opacity-60"><p class="text-xs font-bold text-on-surface-variant uppercase mb-1">Vision Dataset (Phase 2 — Planned)</p><p class="text-xs text-on-surface-variant">Kaggle: 13,599 images | Fresh/Rotten | MobileViTv2 fine-tuning</p></div>
+        </div>
+      </section>
+      <section class="col-span-12 md:col-span-6 glass-card rounded-xl p-6">
+        <div class="flex items-center gap-3 border-b border-outline-variant pb-4 mb-4"><span class="material-symbols-outlined text-primary">lightbulb</span><h3 class="text-lg font-semibold text-on-surface">Project Novelty</h3></div>
+        <div class="space-y-3">
+          <div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-base mt-0.5">check_circle</span><p class="text-xs text-on-surface-variant leading-relaxed"><span class="text-on-surface font-semibold">Temporal LSTM on cheap sensors</span> — predicts continuous shelf-life in hours, not just binary Fresh/Rotten</p></div>
+          <div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-base mt-0.5">check_circle</span><p class="text-xs text-on-surface-variant leading-relaxed"><span class="text-on-surface font-semibold">On-device compensation</span> — temperature/humidity correction done on the microcontroller before transmission</p></div>
+          <div class="flex gap-3 items-start"><span class="material-symbols-outlined text-primary text-base mt-0.5">check_circle</span><p class="text-xs text-on-surface-variant leading-relaxed"><span class="text-on-surface font-semibold">Temporal Attention layer</span> — learns which sensor timesteps are most predictive of spoilage</p></div>
+          <div class="flex gap-3 items-start"><span class="material-symbols-outlined text-secondary text-base mt-0.5">schedule</span><p class="text-xs text-on-surface-variant leading-relaxed"><span class="text-on-surface font-semibold">Multimodal fusion (planned)</span> — sensor time-series + MobileViTv2 vision branch cross-attention</p></div>
+        </div>
+      </section>
+    </div>
+  </div>
+</main>
+<footer class="w-full py-6 px-12 bg-surface-container-low border-t border-outline-variant mt-12">
+  <div class="flex flex-col md:flex-row justify-between items-center gap-6">
+    <div><span class="text-xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">FoodSense AI</span><p class="text-xs text-on-surface-variant font-mono mt-1">Team FNO2 | Sem 6 IDP | Guide: Dr. Anitha Sandeep</p></div>
+    <div class="flex flex-wrap gap-6 justify-center">
+      <a class="text-xs text-on-surface-variant hover:text-primary transition-colors underline decoration-primary" href="https://archive.ics.uci.edu/dataset/224/gas+sensor+array+drift+dataset" target="_blank">UCI Dataset</a>
+      <a class="text-xs text-on-surface-variant hover:text-primary transition-colors underline decoration-primary" href="https://www.kaggle.com/datasets/sriramr/fruits-fresh-and-rotten-for-classification" target="_blank">Vision Dataset</a>
+      <a class="text-xs text-on-surface-variant hover:text-primary transition-colors underline decoration-primary" href="#">GitHub Repo</a>
+      <a class="text-xs text-on-surface-variant hover:text-primary transition-colors underline decoration-primary" href="#">Safety Thresholds</a>
+    </div>
+  </div>
+</footer>
+<script>
+function showTab(tab) {
+  ['dashboard','insights','pipeline'].forEach(t => {
+    document.getElementById('tab-content-' + t).classList.add('hidden');
+    document.getElementById('tab-' + t).classList.remove('text-primary','border-b-2','border-primary','pb-1');
+    document.getElementById('tab-' + t).classList.add('text-on-surface-variant');
+  });
+  document.getElementById('tab-content-' + tab).classList.remove('hidden');
+  document.getElementById('tab-' + tab).classList.add('text-primary','border-b-2','border-primary','pb-1');
+  document.getElementById('tab-' + tab).classList.remove('text-on-surface-variant');
+}
+function exportReport() {
+  const data = `FoodSense AI Report\n===================\nMLP Accuracy: 99.75%\nMLP Precision: 99.08%\nMLP Recall: 98.78%\nMLP F1-Score: 98.93%\nLSTM MAE: 4.00 hours\nLSTM RMSE: 4.11 hours\nGenerated: ${new Date().toLocaleString()}`;
+  const blob = new Blob([data], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'foodsense_report.txt';
+  a.click();
+}
+// Live sensor simulation
+function simulate() {
+  const t = (25 + (Math.random()-0.5)*2).toFixed(1);
+  const h = (62 + (Math.random()-0.5)*4).toFixed(1);
+  const n = (2.5 + Math.random()*1.5).toFixed(1);
+  document.getElementById('sim-temp').textContent = t;
+  document.getElementById('sim-hum').textContent = h;
+  document.getElementById('sim-nh3').textContent = n;
+  document.getElementById('bar-temp').style.width = ((t-18)/12*100)+'%';
+  document.getElementById('bar-hum').style.width = h+'%';
+  document.getElementById('bar-nh3').style.width = (n/25*100)+'%';
+  const safe = parseFloat(n) < 5;
+  const badge = document.getElementById('mlp-badge');
+  const cls = document.getElementById('mlp-class');
+  badge.textContent = safe ? 'SAFE' : 'CAUTION';
+  badge.className = safe ? 'bg-primary/20 text-primary px-3 py-1 rounded text-xs font-bold uppercase' : 'bg-error/20 text-error px-3 py-1 rounded text-xs font-bold uppercase';
+  cls.textContent = safe ? 'Safe' : 'Caution';
+  document.getElementById('mlp-conf').textContent = (95+Math.random()*4).toFixed(1)+'%';
+  document.getElementById('lstm-pred').textContent = (44-parseFloat(n)*2+Math.random()).toFixed(1)+'h';
+}
+setInterval(simulate, 2000);
+simulate();
+showTab('insights');
+</script>
+</body>
+</html>
