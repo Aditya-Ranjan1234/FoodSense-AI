@@ -15,218 +15,147 @@ tailwind.config = {
       colors: {
         "surface-bright": "#343b36", "error-container": "#93000a",
         "surface-container": "#1a211d", "on-background": "#dde4dd",
-        "inverse-on-surface": "#2b322d", "on-secondary": "#002e6a",
-        "background": "#0e1511", "surface-container-high": "#242c27",
-        "secondary-fixed-dim": "#adc6ff", "tertiary-container": "#ff7a73",
-        "surface-container-low": "#161d19", "secondary": "#adc6ff",
-        "on-error-container": "#ffdad6", "on-secondary-container": "#e6ecff",
-        "error": "#ffb4ab", "tertiary": "#ffb3ad", "on-tertiary": "#68000a",
-        "surface-container-highest": "#2f3632", "primary-container": "#10b981",
-        "primary-fixed-dim": "#4edea3", "primary-fixed": "#6ffbbe",
-        "on-secondary-fixed": "#001a42", "on-primary-container": "#00422b",
-        "surface-container-lowest": "#09100c", "inverse-surface": "#dde4dd",
-        "outline-variant": "#3c4a42", "surface": "#0e1511",
-        "outline": "#86948a", "on-primary": "#003824",
-        "on-surface-variant": "#bbcabf", "secondary-container": "#0566d9",
-        "surface-dim": "#0e1511", "surface-tint": "#4edea3",
-        "on-error": "#690005", "surface-variant": "#2f3632",
-        "primary": "#4edea3", "inverse-primary": "#006c49",
-        "secondary-fixed": "#d8e2ff", "on-surface": "#dde4dd",
-        "on-tertiary-container": "#79000e"
+        "background": "#0e1511", "primary": "#4edea3", "secondary": "#adc6ff",
+        "on-surface": "#dde4dd", "outline-variant": "#3c4a42", "error": "#ffb4ab"
       }
     }
   }
 }
 </script>
 <style>
-.glass-card { background-color: rgba(14, 21, 17, 0.7); border: 1px solid rgba(134, 148, 138, 0.2); backdrop-filter: blur(12px); }
-.active-border-glow { border: 1px solid #4edea3; box-shadow: 0 0 15px rgba(78, 222, 163, 0.3); }
-body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; }
-.custom-scroll::-webkit-scrollbar { width: 4px; }
-.custom-scroll::-webkit-scrollbar-track { background: transparent; }
-.custom-scroll::-webkit-scrollbar-thumb { background: #2f3632; border-radius: 10px; }
-.custom-scroll::-webkit-scrollbar-thumb:hover { background: #4edea3; }
+.glass-card { background-color: rgba(26, 33, 29, 0.6); border: 1px solid rgba(134, 148, 138, 0.15); backdrop-filter: blur(16px); }
+body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width: 100vw; margin: 0; padding: 0; }
+.tab-content { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; }
+.s-path { position: absolute; border: 1.5px dashed rgba(78, 222, 163, 0.2); pointer-events: none; }
 </style>
 </head>
-<body class="bg-background text-on-background selection:bg-primary selection:text-on-primary">
+<body class="bg-background text-on-background">
 
-<!-- Mobile Menu -->
+<!-- Mobile Menu Overlay -->
 <div id="mobile-overlay" class="fixed inset-0 bg-black/60 z-[60] hidden backdrop-blur-sm" onclick="toggleMobileMenu()"></div>
 <div id="mobile-sidebar" class="fixed left-0 top-0 h-full w-72 bg-surface-container z-[70] transition-transform -translate-x-full md:hidden flex flex-col py-8 px-6">
   <div class="flex justify-between items-center mb-10">
     <span class="text-2xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">FoodSense</span>
-    <button onclick="toggleMobileMenu()" class="material-symbols-outlined text-on-surface-variant">close</button>
+    <button onclick="toggleMobileMenu()" class="material-symbols-outlined">close</button>
   </div>
   <nav class="flex-1 space-y-4">
-    <button onclick="showTab('dashboard'); toggleMobileMenu()" class="flex items-center gap-4 w-full text-left p-2"><span class="material-symbols-outlined">monitoring</span><span>Dashboard</span></button>
-    <button onclick="showTab('insights'); toggleMobileMenu()" class="flex items-center gap-4 w-full text-left p-2"><span class="material-symbols-outlined">analytics</span><span>Insights</span></button>
-    <button onclick="showTab('pipeline'); toggleMobileMenu()" class="flex items-center gap-4 w-full text-left p-2"><span class="material-symbols-outlined">account_tree</span><span>Pipeline</span></button>
+    <button onclick="showTab('dashboard'); toggleMobileMenu()" class="w-full text-left p-2">Dashboard</button>
+    <button onclick="showTab('insights'); toggleMobileMenu()" class="w-full text-left p-2">Insights</button>
+    <button onclick="showTab('pipeline'); toggleMobileMenu()" class="w-full text-left p-2">Pipeline</button>
   </nav>
 </div>
 
-<header class="fixed top-0 w-full h-16 z-50 bg-surface/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-4 md:px-8">
+<header class="fixed top-0 w-full h-16 z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-6">
   <div class="flex items-center gap-4">
-    <button onclick="toggleMobileMenu()" class="md:hidden material-symbols-outlined text-primary p-1">menu</button>
-    <span class="text-xl md:text-2xl font-bold text-primary tracking-tight" style="font-family:'Space Grotesk',sans-serif">FoodSense AI</span>
+    <button onclick="toggleMobileMenu()" class="md:hidden material-symbols-outlined text-primary">menu</button>
+    <span class="text-xl font-bold text-primary tracking-tight" style="font-family:'Space Grotesk',sans-serif">FoodSense AI</span>
   </div>
   <div class="hidden md:flex gap-8 items-center h-full">
-    <button onclick="showTab('dashboard')" id="tab-dashboard" class="text-sm transition-all duration-200">Dashboard</button>
-    <button onclick="showTab('insights')" id="tab-insights" class="text-sm transition-all duration-200">Model Insights</button>
-    <button onclick="showTab('pipeline')" id="tab-pipeline" class="text-sm transition-all duration-200">Data Pipeline</button>
+    <button onclick="showTab('dashboard')" id="tab-dashboard" class="text-sm transition-all">Dashboard</button>
+    <button onclick="showTab('insights')" id="tab-insights" class="text-sm transition-all">Evaluation</button>
+    <button onclick="showTab('pipeline')" id="tab-pipeline" class="text-sm transition-all">Architecture</button>
   </div>
-  <div class="flex items-center gap-4">
-    <div class="flex items-center gap-2 px-3 py-1 bg-primary/10 border border-primary/20 rounded-full">
+  <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2 px-2.5 py-0.5 bg-primary/10 border border-primary/20 rounded-full">
       <div class="w-1.5 h-1.5 bg-primary rounded-full animate-pulse"></div>
-      <span class="text-[9px] font-bold text-primary uppercase tracking-widest">Streaming</span>
+      <span class="text-[9px] font-bold text-primary uppercase">Live</span>
     </div>
-    <span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary transition-colors text-xl">settings</span>
   </div>
 </header>
 
-<aside class="hidden md:flex h-screen w-64 fixed left-0 top-0 bg-surface-container border-r border-outline-variant flex-col py-6 z-40">
-  <div class="px-6 mb-8 pt-20">
-    <h1 class="text-xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">FoodSense</h1>
-    <p class="text-[9px] text-on-surface-variant opacity-70 uppercase tracking-widest mt-1">Edge Intelligence</p>
-  </div>
-  <nav class="flex-1 px-2">
-    <button onclick="showTab('dashboard')" class="flex items-center gap-3 w-full px-4 py-3 text-on-surface-variant hover:bg-surface-variant/30 rounded-lg transition-all mb-1"><span class="material-symbols-outlined text-lg">monitoring</span><span class="text-xs uppercase tracking-widest">Live Feed</span></button>
-    <button onclick="showTab('insights')" class="flex items-center gap-3 w-full px-4 py-3 text-on-surface-variant hover:bg-surface-variant/30 rounded-lg transition-all mb-1"><span class="material-symbols-outlined text-lg">analytics</span><span class="text-xs uppercase tracking-widest">Analysis</span></button>
-    <button onclick="showTab('pipeline')" class="flex items-center gap-3 w-full px-4 py-3 text-on-surface-variant hover:bg-surface-variant/30 rounded-lg transition-all"><span class="material-symbols-outlined text-lg">query_stats</span><span class="text-xs uppercase tracking-widest">Metrics</span></button>
-  </nav>
-  <div class="px-4 mt-auto">
-    <button onclick="exportReport()" class="w-full bg-primary text-on-primary text-xs py-2.5 rounded-lg active:scale-95 transition-transform uppercase tracking-wider font-bold shadow-lg shadow-primary/10">Export PDF</button>
-  </div>
-</aside>
-
-<main class="md:ml-64 pt-16 h-screen flex flex-col w-full overflow-hidden">
-  <div class="flex-1 custom-scroll overflow-y-auto px-4 md:px-10 py-8 max-w-7xl mx-auto w-full">
-    
-    <!-- Dashboard Tab -->
-    <div id="tab-content-dashboard" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div class="mb-6">
-        <h2 class="text-2xl md:text-3xl font-bold text-on-surface mb-2" style="font-family:'Space Grotesk',sans-serif">Real-time Dashboard</h2>
-        <p class="text-on-surface-variant text-xs leading-relaxed">Continuous sensor tracking with AI-inferred spoilage probability.</p>
-      </div>
-
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-        <div class="glass-card rounded-xl p-5 flex flex-col gap-3">
-          <div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-lg">thermostat</span><span class="text-[9px] uppercase font-bold text-on-surface-variant">Temperature</span></div></div>
-          <div class="flex items-baseline gap-1"><span id="sim-temp" class="text-4xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">25.3</span><span class="text-on-surface-variant text-base">°C</span></div>
-          <div class="h-1 bg-outline-variant/20 rounded-full"><div id="bar-temp" class="h-full bg-primary rounded-full transition-all duration-1000" style="width:50%"></div></div>
+<main class="h-screen pt-16 flex flex-col overflow-hidden items-center justify-center">
+  
+  <!-- Dashboard Tab -->
+  <div id="tab-content-dashboard" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden px-6">
+    <div class="max-w-4xl w-full">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
+          <p class="text-[10px] uppercase font-bold text-on-surface/60 mb-2">Temperature</p>
+          <div class="flex items-baseline gap-1"><span id="sim-temp" class="text-3xl font-bold">25.3</span><span class="text-sm">°C</span></div>
         </div>
-        <div class="glass-card rounded-xl p-5 flex flex-col gap-3">
-          <div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-secondary text-lg">water_drop</span><span class="text-[9px] uppercase font-bold text-on-surface-variant">Humidity</span></div></div>
-          <div class="flex items-baseline gap-1"><span id="sim-hum" class="text-4xl font-bold text-secondary" style="font-family:'Space Grotesk',sans-serif">62.1</span><span class="text-on-surface-variant text-base">%</span></div>
-          <div class="h-1 bg-outline-variant/20 rounded-full"><div id="bar-hum" class="h-full bg-secondary rounded-full transition-all duration-1000" style="width:62%"></div></div>
+        <div class="glass-card rounded-2xl p-5 border-l-4 border-l-secondary">
+          <p class="text-[10px] uppercase font-bold text-on-surface/60 mb-2">Humidity</p>
+          <div class="flex items-baseline gap-1"><span id="sim-hum" class="text-3xl font-bold">62.1</span><span class="text-sm">%</span></div>
         </div>
-        <div class="glass-card rounded-xl p-5 flex flex-col gap-3">
-          <div class="flex items-center justify-between"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-error text-lg">science</span><span class="text-[9px] uppercase font-bold text-on-surface-variant">NH₃ Level</span></div></div>
-          <div class="flex items-baseline gap-1"><span id="sim-nh3" class="text-4xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">2.8</span><span class="text-on-surface-variant text-base">ppm</span></div>
-          <div class="h-1 bg-outline-variant/20 rounded-full"><div id="bar-nh3" class="h-full bg-primary rounded-full transition-all duration-1000" style="width:11%"></div></div>
+        <div class="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
+          <p class="text-[10px] uppercase font-bold text-on-surface/60 mb-2">NH₃ Gas</p>
+          <div class="flex items-baseline gap-1"><span id="sim-nh3" class="text-3xl font-bold">2.8</span><span class="text-sm">ppm</span></div>
         </div>
       </div>
-
-      <div class="glass-card rounded-xl p-6 active-border-glow">
-        <div class="flex items-center gap-3 mb-6">
-          <div class="bg-primary/20 p-2 rounded-lg"><span class="material-symbols-outlined text-primary text-2xl">psychology</span></div>
-          <div><h3 class="font-bold">Neural Inference</h3><p class="text-[10px] text-on-surface-variant">MLP + Attention-LSTM Fusion</p></div>
-          <div class="ml-auto"><span id="mlp-badge" class="bg-primary/20 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest">Safe</span></div>
-        </div>
-        <div class="grid grid-cols-3 gap-4 text-center border-t border-outline-variant/20 pt-6">
-          <div><p class="text-[9px] text-on-surface-variant uppercase mb-1 font-bold">Class</p><p id="mlp-class" class="text-xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">Safe</p></div>
-          <div><p class="text-[9px] text-on-surface-variant uppercase mb-1 font-bold">Confidence</p><p id="mlp-conf" class="text-xl font-bold text-on-surface" style="font-family:'Space Grotesk',sans-serif">97%</p></div>
-          <div><p class="text-[9px] text-on-surface-variant uppercase mb-1 font-bold">Shelf Life</p><p id="lstm-pred" class="text-xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif">44h</p></div>
+      <div class="glass-card rounded-3xl p-8 text-center relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4"><span id="status-badge" class="bg-primary/20 text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase">Normal</span></div>
+        <h3 class="text-sm uppercase tracking-widest text-on-surface/50 mb-8 font-bold">Fusion Model Inference</h3>
+        <div class="grid grid-cols-3 gap-8">
+          <div><p class="text-[10px] uppercase mb-1 font-bold">Spoilage</p><p id="mlp-class" class="text-2xl font-bold text-primary">Safe</p></div>
+          <div><p class="text-[10px] uppercase mb-1 font-bold">Accuracy</p><p id="mlp-conf" class="text-2xl font-bold">98%</p></div>
+          <div><p class="text-[10px] uppercase mb-1 font-bold">Shelf Life</p><p id="lstm-pred" class="text-2xl font-bold text-primary">44h</p></div>
         </div>
       </div>
-    </div>
-
-    <!-- Insights Tab -->
-    <div id="tab-content-insights" class="animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div class="mb-6"><h2 class="text-2xl md:text-3xl font-bold text-on-surface mb-2" style="font-family:'Space Grotesk',sans-serif">Model Evaluation</h2><p class="text-on-surface-variant text-xs">Technical performance analysis of the FoodSense pipeline.</p></div>
-      <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-        <div class="lg:col-span-8 glass-card rounded-xl p-6 flex flex-col gap-6">
-          <div class="flex justify-between items-center border-b border-outline-variant/20 pb-4"><div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary">biotech</span><h3 class="font-bold">MLP Gas Classifier</h3></div><span class="text-[10px] text-primary font-bold">99.75% Accuracy</span></div>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-            <div class="grid grid-cols-2 gap-1 bg-surface-container-low p-1 rounded-lg">
-              <div class="bg-surface-container-highest/40 p-3 rounded flex flex-col items-center"><span class="text-xl font-bold text-primary">2451</span><span class="text-[8px] uppercase">TN</span></div>
-              <div class="bg-surface-container-highest/40 p-3 rounded flex flex-col items-center border border-error/20"><span class="text-xl font-bold text-error">3</span><span class="text-[8px] uppercase">FP</span></div>
-              <div class="bg-surface-container-highest/40 p-3 rounded flex flex-col items-center border border-error/20"><span class="text-xl font-bold text-error">4</span><span class="text-[8px] uppercase">FN</span></div>
-              <div class="bg-surface-container-highest/40 p-3 rounded flex flex-col items-center"><span class="text-xl font-bold text-primary">324</span><span class="text-[8px] uppercase">TP</span></div>
-            </div>
-            <div class="flex flex-col justify-center gap-3">
-              <div class="flex justify-between items-end border-b border-outline-variant/10 pb-2"><span class="text-[10px] font-bold">Precision</span><span class="text-xl font-bold text-primary">99.08%</span></div>
-              <div class="flex justify-between items-end border-b border-outline-variant/10 pb-2"><span class="text-[10px] font-bold">Recall</span><span class="text-xl font-bold text-primary">98.78%</span></div>
-              <div class="flex justify-between items-end"><span class="text-[10px] font-bold">F1-Score</span><span class="text-xl font-bold text-primary">98.93%</span></div>
-            </div>
-          </div>
-        </div>
-        <div class="lg:col-span-4 glass-card rounded-xl p-6 flex flex-col gap-6">
-          <div class="flex items-center gap-2 border-b border-outline-variant/20 pb-4"><span class="material-symbols-outlined text-primary">timeline</span><h3 class="font-bold">LSTM Predictor</h3></div>
-          <div class="space-y-4">
-            <div><p class="text-[9px] uppercase font-bold text-on-surface-variant">MAE</p><div class="flex items-baseline gap-1"><span class="text-4xl font-bold text-primary">4.0</span><span class="text-xs text-on-surface-variant">h</span></div></div>
-            <div><p class="text-[9px] uppercase font-bold text-on-surface-variant">RMSE</p><div class="flex items-baseline gap-1"><span class="text-4xl font-bold text-primary">4.1</span><span class="text-xs text-on-surface-variant">h</span></div></div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Pipeline Tab -->
-    <div id="tab-content-pipeline" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500">
-      <div class="mb-6"><h2 class="text-2xl md:text-3xl font-bold text-on-surface mb-2" style="font-family:'Space Grotesk',sans-serif">System Pipeline</h2><p class="text-on-surface-variant text-xs">Detailed architecture of the IoT-to-ML data flow.</p></div>
-      <div class="flex-1 flex items-center justify-center overflow-hidden">
-      <div class="glass-card rounded-2xl p-6 md:p-8 w-full max-w-2xl relative">
-        <div class="grid grid-cols-3 gap-y-12 gap-x-4 relative">
-          
-          <!-- Stage 1 -->
-          <div class="flex flex-col items-center gap-2">
-            <div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-2xl">sensors</span></div>
-            <p class="text-[9px] font-bold uppercase tracking-tight text-center">Sensors</p>
-          </div>
-
-          <!-- Connection 1-2 -->
-          <div class="absolute top-8 left-[16.6%] w-[33.3%] h-[1px] bg-primary/20 -z-10"></div>
-
-          <!-- Stage 2 -->
-          <div class="flex flex-col items-center gap-2">
-            <div class="bg-secondary/20 p-3 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-2xl">developer_board</span></div>
-            <p class="text-[9px] font-bold uppercase tracking-tight text-center">Edge</p>
-          </div>
-
-          <!-- Connection 2-3 -->
-          <div class="absolute top-8 left-[50%] w-[33.3%] h-[1px] bg-primary/20 -z-10"></div>
-
-          <!-- Stage 3 -->
-          <div class="flex flex-col items-center gap-2">
-            <div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-2xl">terminal</span></div>
-            <p class="text-[9px] font-bold uppercase tracking-tight text-center">Data Link</p>
-          </div>
-
-          <!-- Vertical Connection 3-4 -->
-          <div class="absolute top-8 right-[16.6%] h-24 w-[1px] bg-primary/20 -z-10"></div>
-
-          <!-- Stage 5 (Cloud) - Placed in Col 1 Row 2 -->
-          <div class="flex flex-col items-center gap-2">
-            <div class="bg-primary/20 p-3 rounded-xl border border-primary/20"><span class="material-symbols-outlined text-primary text-2xl">cloud_sync</span></div>
-            <p class="text-[9px] font-bold uppercase tracking-tight text-center">Cloud UI</p>
-          </div>
-
-          <!-- Connection 4-5 -->
-          <div class="absolute bottom-8 left-[16.6%] w-[33.3%] h-[1px] bg-primary/20 -z-10"></div>
-
-          <!-- Stage 4 (AI) - Placed in Col 2 Row 2 -->
-          <div class="flex flex-col items-center gap-2">
-            <div class="bg-secondary/20 p-3 rounded-xl border border-secondary/20"><span class="material-symbols-outlined text-secondary text-2xl">psychology</span></div>
-            <p class="text-[9px] font-bold uppercase tracking-tight text-center">AI Engine</p>
-          </div>
-
-          <!-- Empty Col 3 Row 2 -->
-          <div></div>
-
-        </div>
-      </div>
-    </div>
     </div>
   </div>
+
+  <!-- Insights Tab -->
+  <div id="tab-content-insights" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden px-6">
+    <div class="max-w-5xl w-full grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div class="glass-card rounded-3xl p-8">
+        <h4 class="text-xs uppercase font-bold text-primary mb-6">MLP Gas Classifier</h4>
+        <div class="space-y-6">
+          <div class="flex justify-between border-b border-outline-variant pb-2"><span class="text-sm">Precision</span><span class="text-xl font-bold">99.08%</span></div>
+          <div class="flex justify-between border-b border-outline-variant pb-2"><span class="text-sm">Recall</span><span class="text-xl font-bold">98.78%</span></div>
+          <div class="flex justify-between"><span class="text-sm">F1-Score</span><span class="text-xl font-bold text-primary">98.93%</span></div>
+        </div>
+      </div>
+      <div class="glass-card rounded-3xl p-8 flex flex-col justify-center items-center text-center">
+        <h4 class="text-xs uppercase font-bold text-secondary mb-4">Regression Performance</h4>
+        <div class="flex items-baseline gap-2 mb-2"><span class="text-5xl font-bold text-primary">4.0</span><span class="text-lg">hours</span></div>
+        <p class="text-[10px] uppercase text-on-surface/50 font-bold">Mean Absolute Error</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Pipeline Tab -->
+  <div id="tab-content-pipeline" class="tab-content animate-in fade-in zoom-in-95 duration-500 px-6">
+    <div class="max-w-3xl w-full glass-card rounded-3xl p-10 relative">
+      <div class="grid grid-cols-3 gap-y-16 gap-x-4 relative">
+        
+        <!-- Row 1: Sensors -> Edge -> Data Link -->
+        <div class="flex flex-col items-center z-10">
+          <div class="bg-primary/20 p-4 rounded-2xl mb-3"><span class="material-symbols-outlined text-primary text-3xl">sensors</span></div>
+          <p class="text-[10px] font-bold uppercase">Sensors</p>
+        </div>
+        <div class="flex flex-col items-center z-10">
+          <div class="bg-secondary/20 p-4 rounded-2xl mb-3"><span class="material-symbols-outlined text-secondary text-3xl">developer_board</span></div>
+          <p class="text-[10px] font-bold uppercase">Edge</p>
+        </div>
+        <div class="flex flex-col items-center z-10">
+          <div class="bg-primary/20 p-4 rounded-2xl mb-3"><span class="material-symbols-outlined text-primary text-3xl">terminal</span></div>
+          <p class="text-[10px] font-bold uppercase">Data Link</p>
+        </div>
+
+        <!-- Connection: Horiz Row 1 -->
+        <div class="s-path top-[44px] left-[16.6%] w-[66.6%] h-0"></div>
+
+        <!-- Connection: Vertical Drop -->
+        <div class="s-path top-[44px] right-[16.6%] w-0 h-32"></div>
+
+        <!-- Row 2: Cloud <- AI Engine -->
+        <div class="flex flex-col items-center z-10">
+          <div class="bg-primary/20 p-4 rounded-2xl mb-3"><span class="material-symbols-outlined text-primary text-3xl">cloud_sync</span></div>
+          <p class="text-[10px] font-bold uppercase">Cloud UI</p>
+        </div>
+        <div class="flex flex-col items-center z-10">
+          <div class="bg-secondary/20 p-4 rounded-2xl mb-3"><span class="material-symbols-outlined text-secondary text-3xl">psychology</span></div>
+          <p class="text-[10px] font-bold uppercase">AI Engine</p>
+        </div>
+        <div class="flex flex-col items-center opacity-0"></div>
+
+        <!-- Connection: Horiz Row 2 -->
+        <div class="s-path bottom-[44px] left-[16.6%] w-[33.3%] h-0"></div>
+
+      </div>
+    </div>
+  </div>
+
 </main>
 
 <script>
@@ -241,26 +170,20 @@ function showTab(tab) {
   ['dashboard','insights','pipeline'].forEach(t => {
     document.getElementById('tab-content-' + t).classList.add('hidden');
     const btn = document.getElementById('tab-' + t);
-    if(btn) btn.className = "text-sm text-on-surface-variant hover:text-primary transition-all duration-200";
+    if(btn) btn.className = "text-sm text-on-surface/50 hover:text-primary transition-all pb-1";
   });
-  const content = document.getElementById('tab-content-' + tab);
-  if(content) content.classList.remove('hidden');
+  document.getElementById('tab-content-' + tab).classList.remove('hidden');
   const btn = document.getElementById('tab-' + tab);
   if(btn) btn.className = "text-sm text-primary border-b-2 border-primary pb-1 font-bold";
 }
 function simulate() {
-  const t = (24.5 + Math.random() * 1.5).toFixed(1);
-  const h = (60 + Math.random() * 4).toFixed(1);
   const n = (2.1 + Math.random() * 1.4).toFixed(1);
-  document.getElementById('sim-temp').textContent = t;
-  document.getElementById('sim-hum').textContent = h;
+  document.getElementById('sim-temp').textContent = (24.5 + Math.random() * 1.5).toFixed(1);
+  document.getElementById('sim-hum').textContent = (60 + Math.random() * 4).toFixed(1);
   document.getElementById('sim-nh3').textContent = n;
-  document.getElementById('bar-temp').style.width = ((t-15)/20*100)+'%';
-  document.getElementById('bar-hum').style.width = h+'%';
-  document.getElementById('bar-nh3').style.width = (n/10*100)+'%';
   const safe = parseFloat(n) < 5;
-  document.getElementById('mlp-badge').textContent = safe ? 'Safe' : 'Caution';
-  document.getElementById('mlp-badge').className = safe ? 'bg-primary/20 text-primary px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest' : 'bg-error/20 text-error px-3 py-1 rounded-full text-[10px] font-bold uppercase tracking-widest';
+  document.getElementById('status-badge').textContent = safe ? 'Normal' : 'Caution';
+  document.getElementById('status-badge').className = safe ? 'bg-primary/20 text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase' : 'bg-error/20 text-error text-[10px] font-bold px-3 py-1 rounded-full uppercase';
   document.getElementById('mlp-class').textContent = safe ? 'Safe' : 'Caution';
   document.getElementById('mlp-conf').textContent = (96+Math.random()*3).toFixed(0)+'%';
   document.getElementById('lstm-pred').textContent = (45-parseFloat(n)*2.5).toFixed(0)+'h';
