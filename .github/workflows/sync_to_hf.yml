@@ -14,36 +14,44 @@ jobs:
         with:
           fetch-depth: 0
           lfs: true
+
       - name: Push to hub
         env:
           HF_TOKEN: ${{ secrets.HF_TOKEN }}
         run: |
           if [ -z "$HF_TOKEN" ]; then
-            echo "::error::HF_TOKEN is missing! Go to GitHub Settings > Secrets > Actions and add 'HF_TOKEN' with your Hugging Face Write Token."
+            echo "::error::HF_TOKEN is missing! Please ensure 'HF_TOKEN' is added to GitHub Secrets."
             exit 1
           fi
           
+          # Setup git config
           git config --global user.email "aditya-ranjan1234@users.noreply.github.com"
           git config --global user.name "Aditya Ranjan"
           
-          echo "Checking if Hugging Face Space exists..."
-          if ! git ls-remote https://huggingface.co/spaces/aditya-ranjan1234/foodsense-ai > /dev/null 2>&1; then
-            echo "::error::Space 'aditya-ranjan1234/foodsense-ai' not found! Please create it first at https://huggingface.co/new-space (Select Static SDK)."
-            exit 1
-          fi
-
-          echo "Cloning Hugging Face Space..."
-          git clone https://aditya-ranjan1234:$HF_TOKEN@huggingface.co/spaces/aditya-ranjan1234/foodsense-ai hf_space_repo
+          echo "Starting Sync Process..."
           
-          echo "Syncing files..."
-          cp -r huggingface_space/* hf_space_repo/
+          # Use the token to clone the repository
+          # We use a temporary directory to avoid conflicts
+          git clone "https://aditya-ranjan1234:${HF_TOKEN}@huggingface.co/spaces/aditya-ranjan1234/foodsense-ai" hf_repo
           
-          cd hf_space_repo
+          echo "Current files in huggingface_space/:"
+          ls -la huggingface_space/
+          
+          # Copy files from our local repo's huggingface_space folder to the HF repo
+          cp -rv huggingface_space/* hf_repo/
+          
+          cd hf_repo
+          
+          # Check for changes
           git add .
           if git diff --staged --quiet; then
-            echo "No changes detected. Skipping push."
+            echo "No changes to sync. Everything is up to date."
           else
+            echo "Changes detected. Committing..."
             git commit -m "Sync from GitHub: ${{ github.event.head_commit.message }}"
-            git push origin main
-            echo "Successfully synced to Hugging Face!"
+            
+            echo "Pushing to Hugging Face..."
+            # Force push to ensure the Space matches the GitHub folder exactly
+            git push origin main --force
+            echo "Sync complete!"
           fi
