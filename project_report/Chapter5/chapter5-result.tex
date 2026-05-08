@@ -26,7 +26,7 @@ F1-Score & 98.93\% \\
 \end{tabular}
 \end{table}
 
-The MLP model achieved excellent performance on the test set, with an accuracy of 99.75\%, precision of 99.08\%, recall of 98.78\%, and F1‑score of 98.93\%. These results demonstrate the model's ability to accurately classify ammonia, a primary marker of food spoilage.
+The MLP model achieved excellent performance on the test set, with an accuracy of 99.75\%, precision of 99.08\%, recall of 98.78\%, and F1-score of 98.93\%. These results demonstrate the model's ability to accurately classify ammonia, a primary marker of food spoilage.
 
 \subsection{Confusion Matrix}
 Table \ref{tab:mlp_confusion} shows the confusion matrix of the MLP gas classifier on the test set.
@@ -49,10 +49,10 @@ Table \ref{tab:mlp_confusion} shows the confusion matrix of the MLP gas classifi
 The confusion matrix shows that the model made only 3 false positives (safe gas incorrectly flagged as ammonia) and 4 false negatives (ammonia missed). The low number of false negatives is particularly important, as missing ammonia (a spoilage marker) could have food safety implications.
 
 \section{LSTM Shelf-Life Predictor Results}
-The LSTM with temporal attention was trained on a synthetic 48‑hour spoilage time‑series dataset, which consists of 1,440 samples (one reading every 2 minutes). The test set consisted of the last 10 % of the sequence (144 samples), which corresponds to the last ~5 hours before full spoilage.
+The LSTM with temporal attention was trained on a synthetic 48-hour spoilage time-series dataset, which consists of 1,440 samples (one reading every 2 minutes). The test set consisted of the last 10\% of the sequence (144 samples), which corresponds to the last approximately 5 hours before full spoilage.
 
 \subsection{Performance Metrics}
-Table \ref{tab:lstm_results} summarizes the performance metrics of the LSTM shelf‑life predictor on the test set.
+Table \ref{tab:lstm_results} summarizes the performance metrics of the LSTM shelf-life predictor on the test set.
 \begin{table}[htb]
 \fontsize{10}{12}\selectfont
 \centering
@@ -62,28 +62,28 @@ Table \ref{tab:lstm_results} summarizes the performance metrics of the LSTM shel
 \hline
 \textbf{Metric} & \textbf{Score} \\
 \hline
-Mean Absolute Error (MAE) & ±4.00 hours \\
+Mean Absolute Error (MAE) & $\pm$4.00 hours \\
 \hline
 Root Mean Squared Error (RMSE) & 4.11 hours \\
 \hline
 \end{tabular}
 \end{table}
 
-The LSTM model achieved a mean absolute error of ±4.00 hours and a root mean squared error of 4.11 hours on the test set. These results indicate that the model can predict the remaining shelf life with reasonable accuracy.
+The LSTM model achieved a mean absolute error of $\pm$4.00 hours and a root mean squared error of 4.11 hours on the test set. These results indicate that the model can predict the remaining shelf life with reasonable accuracy.
 
-\subsection{Note on R²}
-The R² score on the final test segment was negative, which is expected. The test set covers the last chronological 5 hours of a 48‑hour sequence, so the model is asked to predict a near‑zero shelf life from only the most extreme data. The temporal distribution mismatch between training (hours 4–48) and testing (hours 0–4) explains this. On a proper random split, R² would be well above 0.95. When real hardware data is collected, time‑series cross‑validation (walk‑forward) should be used to get a fair R² estimate.
+\subsection{Note on R\textsuperscript{2}}
+The R\textsuperscript{2} score on the final test segment was negative, which is expected. The test set covers the last chronological 5 hours of a 48-hour sequence, so the model is asked to predict a near-zero shelf life from only the most extreme data. The temporal distribution mismatch between training (hours 4--48) and testing (hours 0--4) explains this. On a proper random split, R\textsuperscript{2} would be well above 0.95. When real hardware data is collected, time-series cross-validation (walk-forward) should be used to get a fair R\textsuperscript{2} estimate.
 
 \section{Discussion}
-The results demonstrate the effectiveness of the FoodSense AI system for early food spoilage detection. The MLP model accurately classifies ammonia, while the LSTM model provides continuous shelf‑life prediction.
+The results demonstrate the effectiveness of the FoodSense AI system for early food spoilage detection. The MLP model accurately classifies ammonia, while the LSTM model provides continuous shelf-life prediction.
 
 The key novelties of the system include:
 \begin{itemize}
-    \item On‑device temperature and humidity compensation for the MQ135 sensor
-    \item Continuous shelf‑life regression instead of binary classification
-    \item Temporal attention‑augmented LSTM for capturing spoilage dynamics
-    \item Low‑cost hardware using a single MQ135 sensor instead of expensive sensor arrays
+    \item On-device temperature and humidity compensation for the MQ135 sensor
+    \item Continuous shelf-life regression instead of binary classification
+    \item Temporal attention-augmented LSTM for capturing spoilage dynamics
+    \item Low-cost hardware using a single MQ135 sensor instead of expensive sensor arrays
 \end{itemize}
 
 \section{Summary}
-This chapter presented and discussed the results obtained from training and evaluating the AI models used in the FoodSense AI project. The MLP model achieved 99.75 % accuracy on ammonia classification, and the LSTM model achieved a mean absolute error of ±4.00 hours on shelf‑life prediction. The next chapter discusses the conclusion and future work.
+This chapter presented and discussed the results obtained from training and evaluating the AI models used in the FoodSense AI project. The MLP model achieved 99.75\% accuracy on ammonia classification, and the LSTM model achieved a mean absolute error of $\pm$4.00 hours on shelf-life prediction. The next chapter discusses the conclusion and future work.

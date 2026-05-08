@@ -2,30 +2,30 @@
 This chapter summarizes the work done in the FoodSense AI project, discusses the future scope of the project, and outlines the learning outcomes.
 
 \section{Conclusion}
-Food waste is a critical global issue, with approximately 19 % of all food produced annually being discarded before consumption. Traditional methods of food spoilage detection rely on manual inspection, which is subjective, labor‑intensive, and prone to errors. Existing automated systems often use expensive electronic noses or provide only binary “fresh vs rotten” classifications without temporal context.
+Food waste is a critical global issue, with approximately 19\% of all food produced annually being discarded before consumption. Traditional methods of food spoilage detection rely on manual inspection, which is subjective, labor-intensive, and prone to errors. Existing automated systems often use expensive electronic noses or provide only binary ``fresh vs rotten'' classifications without temporal context.
 
-The FoodSense AI project addresses these limitations by developing a low‑cost IoT + AI system for early food spoilage detection. The system uses a combination of MQ135 gas sensor, DHT11 temperature and humidity sensor, Arduino microcontroller, and two AI models: an MLP for ammonia classification and an LSTM with temporal attention for continuous shelf‑life prediction.
+The FoodSense AI project addresses these limitations by developing a low-cost IoT + AI system for early food spoilage detection. The system uses a combination of MQ135 gas sensor, DHT11 temperature and humidity sensor, Arduino microcontroller, and two AI models: an MLP for ammonia classification and an LSTM with temporal attention for continuous shelf-life prediction.
 
-The MLP model was trained on the UCI Gas Sensor Array Drift Dataset (13,910 real sensor samples), achieving 99.75 % accuracy, 99.08 % precision, and 98.78 % recall. The LSTM model was trained on a synthetic 48‑hour spoilage time‑series dataset, achieving a mean absolute error of ±4.00 hours. The system also includes on‑device temperature and humidity compensation for the MQ135 sensor, performed directly on the Arduino microcontroller.
+The MLP model was trained on the UCI Gas Sensor Array Drift Dataset (13,910 real sensor samples), achieving 99.75\% accuracy, 99.08\% precision, and 98.78\% recall. The LSTM model was trained on a synthetic 48-hour spoilage time-series dataset, achieving a mean absolute error of $\pm$4.00 hours. The system also includes on-device temperature and humidity compensation for the MQ135 sensor, performed directly on the Arduino microcontroller.
 
-The proposed system successfully meets all the objectives of the project: it develops a low‑cost IoT system, implements on‑device sensor compensation, and trains and evaluates AI models for classification and regression. The results demonstrate the effectiveness of the system for early food spoilage detection.
+The proposed system successfully meets all the objectives of the project: it develops a low-cost IoT system, implements on-device sensor compensation, and trains and evaluates AI models for classification and regression. The results demonstrate the effectiveness of the system for early food spoilage detection.
 
 \section{Future Scope}
 There are several opportunities for extending the FoodSense AI project in the future:
 \begin{itemize}
-    \item Implement the vision branch using a pre‑trained model like MobileViTv2 or Graviton17/vit‑fruit‑veg‑quality‑predictor for image‑based spoilage detection
+    \item Implement the vision branch using a pre-trained model like MobileViTv2 or Graviton17/vit-fruit-veg-quality-predictor for image-based spoilage detection
     \item Collect real hardware data from the Arduino sensors and retrain the LSTM model on this data
-    \item Implement multi‑modal fusion combining sensor time‑series and vision data for more accurate spoilage detection
+    \item Implement multi-modal fusion combining sensor time-series and vision data for more accurate spoilage detection
     \item Deploy the system on a Raspberry Pi for edge computing
-    \item Develop a mobile application for real‑time spoilage detection
+    \item Develop a mobile application for real-time spoilage detection
     \item Test the system on a wider variety of food types
 \end{itemize}
 
 \section{Learning Outcomes of the Project}
 The learning outcomes of the FoodSense AI project include:
 \begin{itemize}
-    \item Gained hands‑on experience with IoT hardware, including Arduino, MQ135, and DHT11 sensors
-    \item Learned how to implement on‑device sensor compensation for improved accuracy
+    \item Gained hands-on experience with IoT hardware, including Arduino, MQ135, and DHT11 sensors
+    \item Learned how to implement on-device sensor compensation for improved accuracy
     \item Gained practical experience with machine learning, including training MLPs and LSTMs with PyTorch
     \item Learned how to handle class imbalance in machine learning datasets
     \item Gained experience with web development using HTML, CSS, and JavaScript

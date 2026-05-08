@@ -5,7 +5,7 @@ This chapter covers the fundamental concepts and technologies used in the FoodSe
 The FoodSense AI system uses two main sensors and an Arduino microcontroller for data acquisition.
 
 \subsection{MQ135 Gas Sensor}
-The MQ135 is a low-cost metal-oxide gas sensor sensitive to ammonia, sulfide, benzene vapor, and other harmful gases. It operates by measuring the change in resistance of a tin dioxide (SnO₂) layer when exposed to target gases. The sensor requires a load resistor (typically 10 kΩ) and operates at 5V DC.
+The MQ135 is a low-cost metal-oxide gas sensor sensitive to ammonia, sulfide, benzene vapor, and other harmful gases. It operates by measuring the change in resistance of a tin dioxide (SnO\textsubscript{2}) layer when exposed to target gases. The sensor requires a load resistor (typically 10 k$\Omega$) and operates at 5V DC.
 
 The resistance of the MQ135 sensor decreases as the concentration of target gases increases. The relationship between sensor resistance and gas concentration follows a power-law:
 \[
@@ -14,7 +14,7 @@ C = A \times \left( \frac{R_s}{R_0} \right)^B
 where \(C\) is the gas concentration, \(R_s\) is the sensor resistance, \(R_0\) is the sensor resistance in clean air, and \(A\) and \(B\) are calibration constants.
 
 \subsection{DHT11 Temperature and Humidity Sensor}
-The DHT11 is a basic, ultra-low-cost digital temperature and humidity sensor. It uses a capacitive humidity sensor and a thermistor to measure the surrounding air, and outputs a digital signal on the data pin. The sensor provides temperature readings in the range of 0-50°C with ±2°C accuracy, and humidity readings in the range of 20-90\% RH with ±5\% accuracy.
+The DHT11 is a basic, ultra-low-cost digital temperature and humidity sensor. It uses a capacitive humidity sensor and a thermistor to measure the surrounding air, and outputs a digital signal on the data pin. The sensor provides temperature readings in the range of 0--50$^\circ$C with $\pm$2$^\circ$C accuracy, and humidity readings in the range of 20--90\% RH with $\pm$5\% accuracy.
 
 \subsection{Arduino Microcontroller}
 Arduino is an open-source electronics platform based on easy-to-use hardware and software. The FoodSense AI system uses an Arduino Uno, which is based on the ATmega328P microcontroller. The Arduino reads data from the MQ135 and DHT11 sensors, performs on-device compensation, and transmits the data via serial communication in CSV format.
@@ -31,7 +31,7 @@ The MLP used in this project has the following architecture:
     \item Hidden layer 1: Linear(128) + BatchNorm + ReLU + Dropout(0.3)
     \item Hidden layer 2: Linear(64) + BatchNorm + ReLU + Dropout(0.2)
     \item Hidden layer 3: Linear(32) + ReLU
-    \item Output layer: Linear(1) → BCEWithLogitsLoss
+    \item Output layer: Linear(1) to BCEWithLogitsLoss
 \end{itemize}
 
 \subsection{Long Short-Term Memory (LSTM)}

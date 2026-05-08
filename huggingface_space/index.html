@@ -23,11 +23,12 @@ tailwind.config = {
 <style>
 .glass-card { background-color: rgba(26, 33, 29, 0.7); border: 1px solid rgba(134, 148, 138, 0.15); backdrop-filter: blur(16px); }
 body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width: 100vw; margin: 0; }
-.tab-content { height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 1.5rem; }
+.tab-content { min-height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; width: 100%; padding: 1.5rem; }
 .camera-view { aspect-ratio: 4/3; background: #000; border-radius: 1rem; overflow: hidden; position: relative; }
 .progress-bar { height: 6px; border-radius: 3px; background: rgba(255,255,255,0.1); overflow: hidden; }
 .progress-fill { height: 100%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); }
 .flow-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
+.link-pill { display: inline-flex; align-items: center; gap: 0.35rem; color: #4edea3; font-weight: 700; font-size: 0.72rem; }
 </style>
 </head>
 <body class="bg-background text-[#dde4dd]">
@@ -40,6 +41,8 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
     <button onclick="showTab('dashboard')" id="tab-dashboard" class="text-[13px] transition-all text-[#dde4dd]">Dashboard</button>
     <button onclick="showTab('insights')" id="tab-insights" class="text-[13px] transition-all text-[#dde4dd]">Evaluation</button>
     <button onclick="showTab('vision')" id="tab-vision" class="text-[13px] transition-all text-[#dde4dd]">Image Analysis</button>
+    <button onclick="showTab('modeldata')" id="tab-modeldata" class="text-[13px] transition-all text-[#dde4dd]">Datasets & Models</button>
+    <button onclick="showTab('comparison')" id="tab-comparison" class="text-[13px] transition-all text-[#dde4dd]">Comparison</button>
     <button onclick="showTab('pipeline')" id="tab-pipeline" class="text-[13px] transition-all text-[#dde4dd]">Architecture</button>
   </div>
   <div class="flex items-center gap-3">
@@ -47,14 +50,14 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
   </div>
 </header>
 
-<main class="h-screen pt-16 flex flex-col overflow-hidden items-center justify-center">
+<main class="h-screen pt-16 flex flex-col overflow-y-auto items-center">
   
   <!-- 1. Dashboard Tab -->
   <div id="tab-content-dashboard" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
     <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
       <div class="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
         <p class="text-[10px] uppercase font-bold text-[#dde4dd] opacity-80 mb-1">Temperature</p>
-        <p class="text-2xl font-bold text-[#dde4dd]"><span id="sim-temp">25.3</span>°C</p>
+        <p class="text-2xl font-bold text-[#dde4dd]"><span id="sim-temp">25.3</span>&deg;C</p>
       </div>
       <div class="glass-card rounded-2xl p-5 border-l-4 border-l-secondary">
         <p class="text-[10px] uppercase font-bold text-[#dde4dd] opacity-80 mb-1">Humidity</p>
@@ -147,7 +150,131 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
     </div>
   </div>
 
-  <!-- 4. Architecture Tab -->
+  <!-- 4. Datasets and Models Tab -->
+  <div id="tab-content-modeldata" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
+    <div class="max-w-6xl w-full space-y-5">
+      <div>
+        <p class="text-xs font-bold text-primary tracking-widest uppercase mb-2">Training Sources</p>
+        <h1 class="text-3xl font-bold tracking-tight" style="font-family:'Space Grotesk',sans-serif">Datasets and model branches</h1>
+      </div>
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <p class="text-[10px] uppercase font-bold text-primary tracking-widest">MLP Gas Classifier</p>
+              <h2 class="text-xl font-bold mt-1">UCI Gas Sensor Array Drift Dataset</h2>
+            </div>
+            <span class="material-symbols-outlined text-primary">account_tree</span>
+          </div>
+          <p class="text-sm leading-6 text-[#dde4dd]/80 mb-4">Used to train the MLP branch for ammonia/gas classification. The dataset contains long-running chemical sensor array readings, which helps the model learn gas signatures and sensor drift patterns before applying the same decision logic to the MQ135-based FoodSense pipeline.</p>
+          <a class="link-pill" href="https://archive.ics.uci.edu/dataset/224/gas+sensor+array+drift+dataset" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">open_in_new</span> Dataset link</a>
+        </div>
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <p class="text-[10px] uppercase font-bold text-secondary tracking-widest">LSTM Shelf-Life Regressor</p>
+              <h2 class="text-xl font-bold mt-1">FoodSense time-series logs</h2>
+            </div>
+            <span class="material-symbols-outlined text-secondary">timeline</span>
+          </div>
+          <p class="text-sm leading-6 text-[#dde4dd]/80 mb-4">Used for the temporal branch that estimates remaining shelf life. The LSTM reads recent temperature, humidity, and ammonia trends, applies temporal attention, and predicts a continuous hour estimate instead of only a fresh/spoiled label.</p>
+          <div class="flex flex-wrap gap-4">
+            <a class="link-pill" href="https://github.com/Aditya-Ranjan1234/FoodSense-AI/blob/main/dataset/arduino_timeseries_log.csv" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">open_in_new</span> Time-series data</a>
+            <a class="link-pill" href="https://github.com/Aditya-Ranjan1234/FoodSense-AI/blob/main/models/src/train_lstm.py" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">code</span> Training code</a>
+          </div>
+        </div>
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <p class="text-[10px] uppercase font-bold text-primary tracking-widest">Vision Model 1</p>
+              <h2 class="text-xl font-bold mt-1">Food Spoilage Detection CNN</h2>
+            </div>
+            <span class="material-symbols-outlined text-primary">image_search</span>
+          </div>
+          <p class="text-sm leading-6 text-[#dde4dd]/80 mb-4">Classifies uploaded produce images as fresh or spoiled. This branch provides the direct visual spoilage signal used by the Image Analysis tab and complements the sensor stream when gas data is not available.</p>
+          <div class="flex flex-wrap gap-4">
+            <a class="link-pill" href="https://huggingface.co/datasets/Chanereach/Food_Spoilage_Detection" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">open_in_new</span> Dataset</a>
+            <a class="link-pill" href="https://huggingface.co/spaces/Chanereach/Food_Spoilage_Detection" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">open_in_new</span> Model Space</a>
+          </div>
+        </div>
+        <div class="glass-card rounded-2xl p-6">
+          <div class="flex items-start justify-between gap-4 mb-4">
+            <div>
+              <p class="text-[10px] uppercase font-bold text-secondary tracking-widest">Vision Model 2</p>
+              <h2 class="text-xl font-bold mt-1">ViT Fruit and Vegetable Quality Predictor</h2>
+            </div>
+            <span class="material-symbols-outlined text-secondary">psychology</span>
+          </div>
+          <p class="text-sm leading-6 text-[#dde4dd]/80 mb-4">Predicts produce type and visual quality score from images. FoodSense uses this branch to add quality context to the spoilage result, producing a clearer recommendation and shelf-life estimate.</p>
+          <a class="link-pill" href="https://huggingface.co/Graviton17/vit-fruit-veg-quality-predictor" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">open_in_new</span> Model link</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Comparison Tab -->
+  <div id="tab-content-comparison" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
+    <div class="max-w-6xl w-full space-y-5">
+      <div>
+        <p class="text-xs font-bold text-primary tracking-widest uppercase mb-2">Novelty Matrix</p>
+        <h1 class="text-3xl font-bold tracking-tight" style="font-family:'Space Grotesk',sans-serif">FoodSense against existing use cases</h1>
+      </div>
+      <div class="glass-card rounded-2xl overflow-hidden">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-sm">
+            <thead class="bg-primary/10 text-[#dde4dd]">
+              <tr>
+                <th class="p-4 font-bold">System / use case</th>
+                <th class="p-4 font-bold">Primary input</th>
+                <th class="p-4 font-bold">Typical output</th>
+                <th class="p-4 font-bold">Limitation</th>
+                <th class="p-4 font-bold">FoodSense novelty</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-outline-variant">
+              <tr>
+                <td class="p-4 font-semibold text-primary">Manual inspection</td>
+                <td class="p-4 text-[#dde4dd]/80">Human smell, color, texture</td>
+                <td class="p-4 text-[#dde4dd]/80">Subjective fresh/spoiled decision</td>
+                <td class="p-4 text-[#dde4dd]/80">Late detection and inconsistent judgment</td>
+                <td class="p-4 text-[#dde4dd]/90">Adds sensor evidence, AI confidence, and repeatable shelf-life estimation.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-semibold text-primary">Electronic nose systems</td>
+                <td class="p-4 text-[#dde4dd]/80">Multi-sensor gas arrays</td>
+                <td class="p-4 text-[#dde4dd]/80">Gas class or odor pattern</td>
+                <td class="p-4 text-[#dde4dd]/80">Higher cost, calibration complexity, bulky deployments</td>
+                <td class="p-4 text-[#dde4dd]/90">Uses low-cost MQ135 + DHT11 compensation while retaining ML-based gas reasoning.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-semibold text-primary">Vision-only freshness apps</td>
+                <td class="p-4 text-[#dde4dd]/80">Phone or webcam image</td>
+                <td class="p-4 text-[#dde4dd]/80">Freshness class or quality score</td>
+                <td class="p-4 text-[#dde4dd]/80">Misses invisible gas changes before visual spoilage appears</td>
+                <td class="p-4 text-[#dde4dd]/90">Combines visual spoilage/quality with gas and environment trends.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-semibold text-primary">Cold-chain temperature loggers</td>
+                <td class="p-4 text-[#dde4dd]/80">Temperature history</td>
+                <td class="p-4 text-[#dde4dd]/80">Threshold alert or excursion log</td>
+                <td class="p-4 text-[#dde4dd]/80">No direct spoilage marker and limited food-specific inference</td>
+                <td class="p-4 text-[#dde4dd]/90">Adds humidity, ammonia, and learned shelf-life regression.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-semibold text-primary">Binary IoT spoilage alarms</td>
+                <td class="p-4 text-[#dde4dd]/80">Single sensor threshold</td>
+                <td class="p-4 text-[#dde4dd]/80">Safe / unsafe alert</td>
+                <td class="p-4 text-[#dde4dd]/80">No time-to-spoilage prediction or multimodal confirmation</td>
+                <td class="p-4 text-[#dde4dd]/90">Reports status, confidence, visual evidence, and estimated remaining hours.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 6. Architecture Tab -->
   <div id="tab-content-pipeline" class="tab-content animate-in fade-in zoom-in-95 duration-500">
     <div class="max-w-5xl w-full glass-card rounded-3xl p-10 relative overflow-hidden">
       <svg id="flow-svg" class="flow-svg"></svg>
@@ -206,7 +333,7 @@ let stream = null;
 let currentImageData = null;
 
 function showTab(tab) {
-  ['dashboard','insights','vision','pipeline'].forEach(t => {
+  ['dashboard','insights','vision','modeldata','comparison','pipeline'].forEach(t => {
     document.getElementById('tab-content-' + t).classList.add('hidden');
     const btn = document.getElementById('tab-' + t);
     if(btn) btn.className = "text-[13px] text-[#dde4dd]/40 hover:text-primary transition-all";
