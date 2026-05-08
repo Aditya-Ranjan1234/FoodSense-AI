@@ -191,10 +191,12 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
             </div>
             <span class="material-symbols-outlined text-primary">image_search</span>
           </div>
-          <p class="text-sm leading-6 text-[#dde4dd]/80 mb-4">Classifies uploaded produce images as fresh or spoiled. This branch provides the direct visual spoilage signal used by the Image Analysis tab and complements the sensor stream when gas data is not available.</p>
+          <p class="text-sm leading-6 text-[#dde4dd]/80 mb-3">Classifies uploaded produce images as fresh or spoiled. This branch provides the direct visual spoilage signal used by the Image Analysis tab and complements the sensor stream when gas data is not available.</p>
+          <p class="text-xs leading-5 text-[#dde4dd]/65 mb-4">Training source: the paired Hugging Face dataset contains fresh/spoiled food images for binary CNN training. Images are resized to 224x224 RGB, normalized, and learned with a sigmoid output for P(spoiled).</p>
           <div class="flex flex-wrap gap-4">
             <a class="link-pill" href="https://huggingface.co/datasets/Chanereach/Food_Spoilage_Detection" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">open_in_new</span> Dataset</a>
             <a class="link-pill" href="https://huggingface.co/spaces/Chanereach/Food_Spoilage_Detection" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">open_in_new</span> Model Space</a>
+            <a class="link-pill" href="https://www.kaggle.com/datasets/sriramr/fruits-fresh-and-rotten-for-classification" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">dataset</span> Similar dataset</a>
           </div>
         </div>
         <div class="glass-card rounded-2xl p-6">
@@ -205,8 +207,13 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
             </div>
             <span class="material-symbols-outlined text-secondary">psychology</span>
           </div>
-          <p class="text-sm leading-6 text-[#dde4dd]/80 mb-4">Predicts produce type and visual quality score from images. FoodSense uses this branch to add quality context to the spoilage result, producing a clearer recommendation and shelf-life estimate.</p>
-          <a class="link-pill" href="https://huggingface.co/Graviton17/vit-fruit-veg-quality-predictor" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">open_in_new</span> Model link</a>
+          <p class="text-sm leading-6 text-[#dde4dd]/80 mb-3">Predicts produce type and visual quality score from images. FoodSense uses this branch to add quality context to the spoilage result, producing a clearer recommendation and shelf-life estimate.</p>
+          <p class="text-xs leading-5 text-[#dde4dd]/65 mb-4">Training source: the exact source dataset is not disclosed in the model card. The model is consistent with multi-produce fresh/rotten datasets that train a ViT on 224x224 crops using product labels plus a freshness/quality target.</p>
+          <div class="flex flex-wrap gap-4">
+            <a class="link-pill" href="https://huggingface.co/Graviton17/vit-fruit-veg-quality-predictor" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">open_in_new</span> Model link</a>
+            <a class="link-pill" href="https://www.kaggle.com/datasets/muhriddinmuxiddinov/fruits-and-vegetables-dataset" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">dataset</span> Similar dataset</a>
+            <a class="link-pill" href="https://www.kaggle.com/datasets/raghavrpotdar/fresh-and-stale-images-of-fruits-and-vegetables" target="_blank" rel="noreferrer"><span class="material-symbols-outlined text-sm">dataset</span> Fresh/stale dataset</a>
+          </div>
         </div>
       </div>
     </div>
@@ -229,6 +236,7 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
                 <th class="p-4 font-bold">Typical output</th>
                 <th class="p-4 font-bold">Limitation</th>
                 <th class="p-4 font-bold">FoodSense novelty</th>
+                <th class="p-4 font-bold">Sensor-processing advance</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-outline-variant">
@@ -238,6 +246,7 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
                 <td class="p-4 text-[#dde4dd]/80">Subjective fresh/spoiled decision</td>
                 <td class="p-4 text-[#dde4dd]/80">Late detection and inconsistent judgment</td>
                 <td class="p-4 text-[#dde4dd]/90">Adds sensor evidence, AI confidence, and repeatable shelf-life estimation.</td>
+                <td class="p-4 text-[#dde4dd]/90">Converts raw ADC readings into compensated resistance/ppm trends before inference, reducing judgment from one-off smell/color checks.</td>
               </tr>
               <tr>
                 <td class="p-4 font-semibold text-primary">Electronic nose systems</td>
@@ -245,6 +254,7 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
                 <td class="p-4 text-[#dde4dd]/80">Gas class or odor pattern</td>
                 <td class="p-4 text-[#dde4dd]/80">Higher cost, calibration complexity, bulky deployments</td>
                 <td class="p-4 text-[#dde4dd]/90">Uses low-cost MQ135 + DHT11 compensation while retaining ML-based gas reasoning.</td>
+                <td class="p-4 text-[#dde4dd]/90">Applies temperature-humidity correction and baseline-normalized Rs/R0 drift features so a single cheap sensor behaves more like a calibrated spoilage probe.</td>
               </tr>
               <tr>
                 <td class="p-4 font-semibold text-primary">Vision-only freshness apps</td>
@@ -252,6 +262,7 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
                 <td class="p-4 text-[#dde4dd]/80">Freshness class or quality score</td>
                 <td class="p-4 text-[#dde4dd]/80">Misses invisible gas changes before visual spoilage appears</td>
                 <td class="p-4 text-[#dde4dd]/90">Combines visual spoilage/quality with gas and environment trends.</td>
+                <td class="p-4 text-[#dde4dd]/90">Uses gas velocity and persistence to flag invisible VOC changes before mold or color changes become visible.</td>
               </tr>
               <tr>
                 <td class="p-4 font-semibold text-primary">Cold-chain temperature loggers</td>
@@ -259,6 +270,7 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
                 <td class="p-4 text-[#dde4dd]/80">Threshold alert or excursion log</td>
                 <td class="p-4 text-[#dde4dd]/80">No direct spoilage marker and limited food-specific inference</td>
                 <td class="p-4 text-[#dde4dd]/90">Adds humidity, ammonia, and learned shelf-life regression.</td>
+                <td class="p-4 text-[#dde4dd]/90">Fuses microclimate exposure with ammonia rise-rate, separating storage abuse from actual biochemical spoilage signals.</td>
               </tr>
               <tr>
                 <td class="p-4 font-semibold text-primary">Binary IoT spoilage alarms</td>
@@ -266,6 +278,15 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
                 <td class="p-4 text-[#dde4dd]/80">Safe / unsafe alert</td>
                 <td class="p-4 text-[#dde4dd]/80">No time-to-spoilage prediction or multimodal confirmation</td>
                 <td class="p-4 text-[#dde4dd]/90">Reports status, confidence, visual evidence, and estimated remaining hours.</td>
+                <td class="p-4 text-[#dde4dd]/90">Uses rolling windows, slope features, and compensated ppm deltas instead of one fixed threshold, so transient spikes are treated differently from sustained spoilage.</td>
+              </tr>
+              <tr>
+                <td class="p-4 font-semibold text-primary">FoodSense sensor pipeline</td>
+                <td class="p-4 text-[#dde4dd]/80">MQ135 raw ADC + DHT11 temperature/humidity + timestamp</td>
+                <td class="p-4 text-[#dde4dd]/80">Compensated ppm, trend state, confidence, remaining shelf-life estimate</td>
+                <td class="p-4 text-[#dde4dd]/80">Needs real container logs for each food type to improve calibration</td>
+                <td class="p-4 text-[#dde4dd]/90">Treats spoilage as a compensated biochemical progression, not only a sensor classification or image label.</td>
+                <td class="p-4 text-[#dde4dd]/90">Pipeline stages raw ADC to Rs, corrects for humidity/temperature, normalizes against clean-air R0, smooths readings, derives rate-of-change and persistence, then feeds both instant and temporal models.</td>
               </tr>
             </tbody>
           </table>
