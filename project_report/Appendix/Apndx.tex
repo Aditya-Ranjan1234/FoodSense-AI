@@ -2,6 +2,15 @@
 
 This appendix contains the firmware for the DIY visible spectrophotometer module and the PyTorch model definition used for sensor calibration.
 
+\lstset{
+  breaklines=true,
+  basicstyle=\fontsize{9}{10.5}\ttfamily,
+  columns=flexible,
+  keepspaces=true,
+  breakatwhitespace=false,
+  showstringspaces=false
+}
+
 \section{Arduino Spectrophotometer Firmware}
 The following C++ code runs on the Arduino microcontroller to control the multi-wavelength RGB LED emitter and read the analog light intensity values from the LDR sensor.
 
@@ -81,5 +90,72 @@ class CalibrationMLP(nn.Module):
         
     def forward(self, x):
         return self.network(x)
+\end{lstlisting}
+\end{tcolorbox}
+
+\newpage
+\section{PyTorch Pigment Degradation Classifier}
+The Python code below defines the Multi-Layer Perceptron (MLP) architecture used to classify food ripeness and spoilage states (Fresh, Ripe, and Spoiled) by scanning absorption levels at blue ($430\,\text{nm}$), yellow ($540\,\text{nm}$), and red ($660\,\text{nm}$) wavelength peaks.
+
+\begin{tcolorbox}[colback=gray!5,colframe=gray!30,title=PyTorch Pigment Classifier NN (Python),breakable]
+\begin{lstlisting}[language=Python]
+class PigmentClassifierNN(nn.Module):
+    def __init__(self, input_dim=3, num_classes=3):
+        """
+        Input features: [Abs_430, Abs_540, Abs_660]
+        Output classes: [Fresh, Ripe, Spoiled]
+        """
+        super(PigmentClassifierNN, self).__init__()
+        self.network = nn.Sequential(
+            nn.Linear(input_dim, 32),
+            nn.BatchNorm1d(32),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            nn.Linear(32, 16),
+            nn.BatchNorm1d(16),
+            nn.ReLU(),
+            nn.Linear(16, num_classes)
+        )
+        
+    def forward(self, x):
+        return self.network(x)
+\end{lstlisting}
+\end{tcolorbox}
+
+\newpage
+\section{PyTorch Spoilage LSTM with Temporal Attention}
+The Python code below defines the attention-augmented LSTM recurrent network architecture utilized for continuous time-series shelf-life regression over a 30-step historical context window.
+
+\begin{tcolorbox}[colback=gray!5,colframe=gray!30,title=PyTorch Temporal Attention LSTM (Python),breakable]
+\begin{lstlisting}[language=Python]
+class TemporalAttention(nn.Module):
+    def __init__(self, hidden_dim):
+        super(TemporalAttention, self).__init__()
+        self.attn_weights = nn.Linear(hidden_dim, 1)
+
+    def forward(self, lstm_out):
+        # lstm_out shape: [batch, seq_len, hidden_dim]
+        attn_scores = self.attn_weights(lstm_out) # [batch, seq_len, 1]
+        attn_weights = torch.softmax(attn_scores, dim=1)
+        context = torch.sum(lstm_out * attn_weights, dim=1) # [batch, hidden_dim]
+        return context, attn_weights
+
+class SpoilageLSTM(nn.Module):
+    def __init__(self, input_dim=4, hidden_dim=64, num_layers=2):
+        super(SpoilageLSTM, self).__init__()
+        self.lstm = nn.LSTM(input_dim, hidden_dim, num_layers, batch_first=True, dropout=0.2)
+        self.attention = TemporalAttention(hidden_dim)
+        self.fc = nn.Sequential(
+            nn.Linear(hidden_dim, 32),
+            nn.ReLU(),
+            nn.Linear(32, 1) # Outputs remaining shelf life in hours
+        )
+
+    def forward(self, x):
+        # x shape: [batch, seq_len, input_dim]
+        lstm_out, _ = self.lstm(x)
+        context, attn_weights = self.attention(lstm_out)
+        out = self.fc(context)
+        return out, attn_weights
 \end{lstlisting}
 \end{tcolorbox}

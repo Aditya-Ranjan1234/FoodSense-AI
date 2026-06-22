@@ -123,6 +123,55 @@ Spoiled & 1.00 & 1.00 & 1.00 \\
 
 The model demonstrates excellent classification separating capabilities, achieving 100\% classification performance on the test set. This confirms that monitoring absorption levels specifically at chlorophyll ($430\,\text{nm}$ and $660\,\text{nm}$) and browning product ($540\,\text{nm}$) absorption bands provides a robust chemical fingerprint for food decay.
 
+\section{Web Dashboard Demonstration}
+The live dashboard is deployed on Hugging Face Spaces and visualizes the sensor readings, AI predictions, image analyses, calibration models, and pigment classification results. Figures \ref{fig:demo_dash} through \ref{fig:demo_pig} show the interfaces for the respective tabs.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figures/demo_dashboard}
+        \caption{Main Dashboard showing real-time sensor metrics and estimated shelf life.}
+        \label{fig:demo_dash}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figures/demo_evaluation}
+        \caption{Evaluation tab displaying model performance metrics (Accuracy, Precision, MAE).}
+        \label{fig:demo_eval}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figures/demo_image_analysis}
+        \caption{Image Analysis tab showing spoilage risk evaluation for produce.}
+        \label{fig:demo_img}
+    \end{minipage}\hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figures/demo_ai_calibration}
+        \caption{AI Calibration tab showing virtual spectrometer wavelength mapping.}
+        \label{fig:demo_cal}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Figures/demo_pigment_classifier}
+    \caption{Pigment Degradation Classifier scanning ripeness states (Fresh, Ripe, Spoiled).}
+    \label{fig:demo_pig}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.85\textwidth]{Figures/demo_architecture}
+    \caption{Interactive System Architecture flow diagram tab on the web dashboard.}
+    \label{fig:demo_arch}
+\end{figure}
+
 \section{Discussion}
 The results demonstrate the effectiveness of the FoodSense AI system for early food spoilage detection. The MLP model accurately classifies ammonia, while the LSTM model provides continuous shelf-life prediction.
 

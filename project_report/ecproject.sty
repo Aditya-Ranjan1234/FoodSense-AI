@@ -276,6 +276,9 @@
 %%%%%% Title Page %%%%%%%%%%%
 \renewcommand*{\maketitle}{%
 \begin{titlepage}
+\begin{tikzpicture}[remember picture, overlay]
+  \fill[fill={rgb,255:red,170;green,211;blue,177}] (current page.north west) rectangle (current page.south east);
+\end{tikzpicture}
 %Added in Ver 3.6 [13/08/2023]
 \NoBgThispage
 \ifDrf

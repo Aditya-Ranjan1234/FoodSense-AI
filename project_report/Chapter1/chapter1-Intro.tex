@@ -20,6 +20,24 @@ Visible spectroscopy provides a non-destructive method for food quality assessme
 \subsection{Multimodal Deep Learning and Temporal Modeling}
 Traditional AI systems for food quality rely on single-mode point-in-time classification. For visual assessments, Palakodati et al. \cite{Palakodati2020} used CNN architectures for fresh vs. rotten fruit classification, achieving 97.82\% accuracy. However, static images and gas snapshots lack temporal context. Spoilage is a sequential process characterized by progressive VOC releases. While standard LSTMs have been used for time-series forecasting, attention mechanisms are critical for identifying key transient events in sensor readings. FoodSense AI introduces a multimodal architecture that runs parallel MLP and attention-augmented LSTM branches, allowing both instant state classification and continuous shelf-life prediction.
 
+Table \ref{tab:lit_review_summary} provides a comparative summary of the papers reviewed, identifying their main contributions and technical limitations.
+
+\begin{table}[htbp]
+\centering
+\caption{Summary of Literature Review}
+\label{tab:lit_review_summary}
+\fontsize{9}{11}\selectfont
+\begin{tabular}{|p{2.5cm}|p{2cm}|p{4.5cm}|p{4.5cm}|}
+\hline
+\textbf{Paper} & \textbf{Authors} & \textbf{Contribution} & \textbf{Limitation} \\ \hline
+Gas Sensor Array Drift Dataset \cite{UCI2016} & Vergara et al. & Established 36-month drift benchmark for oxide sensors. & Focused on static drift database; lacks edge implementation. \\ \hline
+Drift compensation in open systems \cite{Fonollosa2015} & Fonollosa et al. & Modeled temp/humidity impacts on sensor response. & Compensation done offline; no real-time embedded feedback. \\ \hline
+Vis-NIR spectroscopy review \cite{Sun2018} & Sun et al. & Linked specific light absorption peaks to chlorophyll decay. & Requires expensive commercial lab spectrophotometers. \\ \hline
+Arduino Spectrophotometer \cite{Albert2019} & Albert et al. & Created DIY spectrometer using RGB LED and LDR sensor. & Simple colorimeter measurements without AI calibration. \\ \hline
+Fruit Freshness CNN Classifier \cite{Palakodati2020} & Palakodati et al. & Achieved 97.82\% accuracy in CNN-based image classification. & Static snapshots only; completely lacks time-series context. \\ \hline
+\end{tabular}
+\end{table}
+
 \section[Motivation]{\textbf{Motivation}}
 The motivation for developing FoodSense AI stems from several key factors:
 \begin{itemize}
