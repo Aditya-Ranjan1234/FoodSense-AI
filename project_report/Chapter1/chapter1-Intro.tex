@@ -9,17 +9,16 @@ Automated food spoilage detection systems have emerged as a solution to this pro
 The FoodSense AI project addresses these limitations by developing a low-cost IoT + AI pipeline for early food spoilage detection. The system uses a combination of MQ135 gas sensor, DHT11 temperature and humidity sensor, Arduino microcontroller, and two AI models: an MLP for ammonia classification and an LSTM for continuous shelf-life prediction.
 
 \section[Literature Review]{\textbf{Literature Review}}
-A literature review was conducted to understand the current state of research in food spoilage detection and identify gaps that FoodSense AI aims to address.
+A literature review was conducted to understand the current state of research in food spoilage detection and identify technical gaps that FoodSense AI aims to address.
 
-\subsection{Gas Sensor-Based Spoilage Detection}
-Multiple studies have explored the use of gas sensors for food spoilage detection. Ulucan et al. investigated different image feature extractors for produce freshness classification, using a dataset with images of three fruit types. They found that CNN-based feature extractors outperformed traditional methods like gray level co-occurrence matrix and bag of features.
+\subsection{Gas Sensor-Based Spoilage Detection and Drift Compensation}
+Multiple studies have explored the use of metal-oxide gas sensor arrays (electronic noses) for food spoilage detection. Vergara et al. \cite{UCI2016} established a benchmark for analyzing sensor response over a 36-month period, demonstrating that sensor drift is a significant bottleneck in long-term deployment. Traditional methods of drift compensation often rely on batch post-processing in lab settings. However, real-time deployment requires active, localized compensation. Fonollosa et al. \cite{Fonollosa2015} demonstrated that temperature and humidity fluctuations are primary drivers of drift in open-sampling systems, emphasizing the need for mathematical corrections to stabilize gas readings. FoodSense AI builds on this by implementing localized temperature-humidity correction formulas directly on the edge microcontroller.
 
-Palakodati et al. used transfer learning models including VGG16, VGG19, MobileNet, and Xception for fresh vs rotten fruit classification, achieving an impressive accuracy of 97.82%. Miah et al. employed InceptionV3, which achieved the highest accuracy of 97.34% on a diverse dataset.
+\subsection{Visible Spectroscopy and Colorimetric Analysis}
+Visible spectroscopy provides a non-destructive method for food quality assessment by monitoring chemical and pigment alterations. Sun et al. \cite{Sun2018} reviewed the use of visible and near-infrared (Vis-NIR) spectroscopy, showing that absorption at specific wavelengths correlates directly with the degradation of chlorophyll and the formation of brown enzymatic byproducts (melanins). While commercial spectrophotometers are cost-prohibitive for consumer storage, Albert et al. \cite{Albert2019} demonstrated that Arduino-controlled RGB LEDs and photodetectors (such as LDRs) can perform quantitative chemical analysis. FoodSense AI applies a machine learning-based calibration model to map cheap RGB-LDR signals to continuous wavelengths and absorbances, enabling a low-cost virtual spectrometer.
 
-\subsection{Sensor Compensation and Temporal Modeling}
-Most existing systems apply sensor compensation in post-processing, rather than on the microcontroller itself. Chakraborty et al. demonstrated the effectiveness of MobileNetV2 in achieving over 99\% accuracy in both training and validation stages for fruit freshness classification. Amin et al. proposed a fruit freshness classification method using AlexNet with transfer learning, achieving near-perfect accuracies across multiple datasets.
-
-For temporal modeling, recent studies have explored LSTMs and attention mechanisms for time-series data. However, few have applied these techniques to continuous shelf-life prediction for food spoilage.
+\subsection{Multimodal Deep Learning and Temporal Modeling}
+Traditional AI systems for food quality rely on single-mode point-in-time classification. For visual assessments, Palakodati et al. \cite{Palakodati2020} used CNN architectures for fresh vs. rotten fruit classification, achieving 97.82\% accuracy. However, static images and gas snapshots lack temporal context. Spoilage is a sequential process characterized by progressive VOC releases. While standard LSTMs have been used for time-series forecasting, attention mechanisms are critical for identifying key transient events in sensor readings. FoodSense AI introduces a multimodal architecture that runs parallel MLP and attention-augmented LSTM branches, allowing both instant state classification and continuous shelf-life prediction.
 
 \section[Motivation]{\textbf{Motivation}}
 The motivation for developing FoodSense AI stems from several key factors:

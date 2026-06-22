@@ -4,6 +4,8 @@
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
+![FoodSense AI Hardware Setup](images/hardware_setup_internal.png)
+
 FoodSense AI is a state-of-the-art IoT + AI pipeline designed for **early food spoilage detection**. Unlike traditional systems that only provide binary "Fresh vs. Rotten" snapshots, FoodSense uses temporal attention-augmented LSTMs to predict **continuous remaining shelf-life** in hours.
 
 ## 🌟 Key Features
