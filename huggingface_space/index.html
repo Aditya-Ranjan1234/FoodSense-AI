@@ -31,7 +31,6 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
 .link-pill { display: inline-flex; align-items: center; gap: 0.35rem; color: #4edea3; font-weight: 700; font-size: 0.72rem; }
 </style>
 </head>
-</head>
 <body class="bg-background text-[#dde4dd]">
 
 <header class="fixed top-0 w-full h-16 z-50 bg-background/80 backdrop-blur-md border-b border-outline-variant flex justify-between items-center px-8">
@@ -48,13 +47,12 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
     <button onclick="showTab('comparison')" id="tab-comparison" class="text-[13px] transition-all text-[#dde4dd]">Comparison</button>
     <button onclick="showTab('pipeline')" id="tab-pipeline" class="text-[13px] transition-all text-[#dde4dd]">Architecture</button>
   </div>
+  <div class="flex items-center gap-3">
     <div class="w-2 h-2 bg-primary rounded-full animate-pulse shadow-[0_0_8px_#4edea3]"></div>
   </div>
 </header>
 
 <main class="h-screen pt-16 flex flex-col overflow-y-auto items-center">
-  
-  <!-- 1. Dashboard Tab -->
   <div id="tab-content-dashboard" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
     <div class="max-w-4xl w-full grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
       <div class="glass-card rounded-2xl p-5 border-l-4 border-l-primary">
