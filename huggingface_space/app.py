@@ -60,7 +60,10 @@ def health():
 
 @app.get("/")
 def index():
-    return FileResponse(os.path.join(BASE_DIR, "index.html"))
+    return FileResponse(
+        os.path.join(BASE_DIR, "index.html"),
+        headers={"Cache-Control": "no-cache, no-store, must-revalidate", "Pragma": "no-cache", "Expires": "0"}
+    )
 
 
 app.mount("/images", StaticFiles(directory=os.path.join(BASE_DIR, "images")), name="images")
