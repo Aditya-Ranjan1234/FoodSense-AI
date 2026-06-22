@@ -31,6 +31,20 @@
 			}\else{%
 				\ifStuNameEUsed{%
 					\textbf{\printStuNameA } (\textbf{\printStuUSNA}), \textbf{\printStuNameB } (\textbf{\printStuUSNB}), \textbf{\printStuNameC } (\textbf{\printStuUSNC}), \textbf{\printStuNameD } (\textbf{\printStuUSND}) and \textbf{\printStuNameE } (\textbf{\printStuUSNE})  who are bonafide students 
+				}\else{%
+					\ifStuNameDUsed{%
+						\textbf{\printStuNameA } (\textbf{\printStuUSNA}), \textbf{\printStuNameB } (\textbf{\printStuUSNB}), \textbf{\printStuNameC } (\textbf{\printStuUSNC}) and \textbf{\printStuNameD } (\textbf{\printStuUSND})  who are bonafide students 
+					}\else{%
+						\ifStuNameCUsed{%
+							\textbf{\printStuNameA } (\textbf{\printStuUSNA}), \textbf{\printStuNameB } (\textbf{\printStuUSNB}) and \textbf{\printStuNameC } (\textbf{\printStuUSNC})  who are bonafide students 
+						}\else{%
+							\ifStuNameBUsed{%
+								\textbf{\printStuNameA} (\textbf{\printStuUSNA}) and \textbf{\printStuNameB} (\textbf{\printStuUSNB})  who are bonafide students 
+							}\else{%
+								\textbf{\printStuNameA} (\textbf{\printStuUSNA}) who is  bonafide student 
+							}\fi
+						}\fi
+					}\fi
 				}\fi
 			}\fi
 		}\else{%

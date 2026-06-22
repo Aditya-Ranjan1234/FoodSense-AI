@@ -6,7 +6,7 @@ The MLP gas classifier was trained on the UCI Gas Sensor Array Drift Dataset, wh
 
 \subsection{Performance Metrics}
 Table \ref{tab:mlp_results} summarizes the performance metrics of the MLP gas classifier on the test set.
-\begin{table}[htb]
+\begin{table}[H]
 \fontsize{10}{12}\selectfont
 \centering
 \caption{MLP Gas Classifier Performance Metrics}
@@ -30,7 +30,7 @@ The MLP model achieved excellent performance on the test set, with an accuracy o
 
 \subsection{Confusion Matrix}
 Table \ref{tab:mlp_confusion} shows the confusion matrix of the MLP gas classifier on the test set.
-\begin{table}[htb]
+\begin{table}[H]
 \fontsize{10}{12}\selectfont
 \centering
 \caption{MLP Gas Classifier Confusion Matrix}
@@ -53,7 +53,7 @@ The LSTM with temporal attention was trained on a synthetic 48-hour spoilage tim
 
 \subsection{Performance Metrics}
 Table \ref{tab:lstm_results} summarizes the performance metrics of the LSTM shelf-life predictor on the test set.
-\begin{table}[htb]
+\begin{table}[H]
 \fontsize{10}{12}\selectfont
 \centering
 \caption{LSTM Shelf-Life Predictor Performance Metrics}
@@ -80,7 +80,7 @@ The newly integrated spectroscopy AI pipeline consists of two models trained usi
 \subsection{Virtual Spectrometer Calibration Model}
 The Calibration Model maps raw RGB-LDR sensor inputs to the continuous visible wavelength (nm) and absorbance (Abs). The model was trained using the experimental Potassium Permanganate ($\text{KMnO}_4$) scanning dataset. Table \ref{tab:cal_results} details the model performance on the test set.
 
-\begin{table}[htb]
+\begin{table}[H]
 \fontsize{10}{12}\selectfont
 \centering
 \caption{Virtual Spectrometer Calibration Model Metrics}
@@ -101,7 +101,7 @@ The model achieves an $R^2$ of 0.9868 for wavelength prediction, demonstrating t
 \subsection{Pigment Degradation Classifier}
 The Pigment Classifier categorizes food ripeness and degradation stages (Fresh, Ripe, and Spoiled) by evaluating optical absorption at key wavelengths ($430\text{ nm}$, $540\text{ nm}$, and $660\text{ nm}$). A multi-class PyTorch MLP model was trained and evaluated. The classification report is summarized in Table \ref{tab:pigment_report}.
 
-\begin{table}[htb]
+\begin{table}[H]
 \fontsize{10}{12}\selectfont
 \centering
 \caption{Pigment Classifier Performance Report}
@@ -126,7 +126,7 @@ The model demonstrates excellent classification separating capabilities, achievi
 \section{Web Dashboard Demonstration}
 The live dashboard is deployed on Hugging Face Spaces and visualizes the sensor readings, AI predictions, image analyses, calibration models, and pigment classification results. Figures \ref{fig:demo_dash} through \ref{fig:demo_pig} show the interfaces for the respective tabs.
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
@@ -142,7 +142,7 @@ The live dashboard is deployed on Hugging Face Spaces and visualizes the sensor 
     \end{minipage}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \begin{minipage}{0.48\textwidth}
         \centering
@@ -158,18 +158,25 @@ The live dashboard is deployed on Hugging Face Spaces and visualizes the sensor 
     \end{minipage}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.65\textwidth]{Figures/demo_pigment_classifier}
     \caption{Pigment Degradation Classifier scanning ripeness states (Fresh, Ripe, Spoiled).}
     \label{fig:demo_pig}
 \end{figure}
 
-\begin{figure}[htbp]
+\begin{figure}[H]
     \centering
     \includegraphics[width=0.85\textwidth]{Figures/demo_architecture}
     \caption{Interactive System Architecture flow diagram tab on the web dashboard.}
     \label{fig:demo_arch}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.35\textwidth]{Figures/demo_mobile}
+    \caption{FoodSense AI Mobile Phone User Interface displaying real-time sensor streams and shelf-life forecasts.}
+    \label{fig:demo_mobile}
 \end{figure}
 
 \section{Discussion}

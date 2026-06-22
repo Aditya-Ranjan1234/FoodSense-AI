@@ -76,7 +76,7 @@
 \VicePrincipal{Dr. Geetha K S}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%  QRL %%%%%%%%%%%%%%%%%%%%%%%%%%
-\QRurl{https://huggingface.co/spaces/aditya-ranjan1234/foodsense-ai}
+\QRurl{https://drive.google.com/drive/folders/1_TdTUa-qQKzlQW8s3VQF-vxmbFlSl9QT?usp=drive_link}
 %\QRurl{https://drive.google.com/open?id=1jm-POmuq-ZZ1tT5m-xAdCDRnwvLZH8q-}
 
 %%%%%%%%%%%%%%%%%%Draft report%%%%%%%%%%%%%%%%%%
@@ -104,9 +104,11 @@
 	pages=all,
 	opacity=0.4,
 	contents={
+		\ifnum\value{page}>1
 		\begin{tikzpicture}[remember picture, overlay]
 			\node at (current page.center){\includegraphics[width=0.45\textwidth]{Figures/RVlogoVecW}};
 		\end{tikzpicture}
+		\fi
 	}
 }
 

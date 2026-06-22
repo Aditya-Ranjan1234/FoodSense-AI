@@ -11,31 +11,114 @@ FoodSense AI is a multi-modal IoT + AI system for early food spoilage detection.
 
 The hardware pipeline collects sensor data, performs on-device compensation, and transmits the data in CSV format. The AI engine processes this data to detect ammonia and predict remaining shelf life. The web dashboard provides a user interface for visualizing the results.
 
-Figure \ref{fig:system_architecture} illustrates the overall architecture and data flow of the FoodSense AI system.
+Figure \ref{fig:overall_architecture} illustrates the overall end-to-end system architecture, Figure \ref{fig:hardware_pipeline} outlines the edge-hardware data acquisition and compensation pipeline, and Figure \ref{fig:ai_pipelines} details the backend AI inference models.
 
-\begin{figure}[htb]
+\begin{figure}[H]
 \centering
 \begin{tikzpicture}[
-    node distance=1.2cm,
-    block/.style={rectangle, draw, fill=blue!5, text width=2.8cm, text centered, rounded corners, minimum height=1.0cm, font=\fontsize{8}{10}\selectfont},
-    cloud/.style={rectangle, draw, fill=green!5, text width=2.2cm, text centered, rounded corners, minimum height=0.8cm, font=\fontsize{8}{10}\selectfont},
-    arrow/.style={thick,->,>=stealth}
+    node distance=1.0cm,
+    block/.style={rectangle, draw=blue!50!black, fill=blue!10, text width=2.5cm, text centered, rounded corners, minimum height=1.1cm, font=\fontsize{7}{8}\selectfont},
+    cloud/.style={rectangle, draw=green!50!black, fill=green!10, text width=2.0cm, text centered, rounded corners, minimum height=0.9cm, font=\fontsize{7}{8}\selectfont},
+    server/.style={rectangle, draw=orange!50!black, fill=orange!10, text width=2.4cm, text centered, rounded corners, minimum height=1.1cm, font=\fontsize{7}{8}\selectfont},
+    ui/.style={rectangle, draw=purple!50!black, fill=purple!10, text width=2.2cm, text centered, rounded corners, minimum height=1.0cm, font=\fontsize{7}{8}\selectfont},
+    arrow/.style={thick,->,>=stealth,draw=black!70}
 ]
     % Nodes
-    \node (food) [cloud] {Produce \\ \& Spoilage VOCs};
-    \node (sensors) [block, right=of food] {\textbf{Sensor Assembly} \\ MQ135 Gas Sensor \\ DHT11 Temp/Hum \\ RGB-LDR Optical Cell};
-    \node (mcu) [block, right=of sensors] {\textbf{Arduino Edge} \\ Compensation Math \\ Multi-wavelength Cycle};
-    \node (stream) [block, below=of mcu, yshift=-0.5cm] {\textbf{Inference Server} \\ FastAPI Backend \\ PyTorch / TF Models};
-    \node (dashboard) [block, left=of stream, xshift=-1.5cm] {\textbf{Cloud Dashboard} \\ Live Plots \& Metrics \\ Vision Spoilage Status};
+    \node (produce) [cloud] at (0, 0) {Produce \\ (Gases, Colors)};
+    \node (edge) [block] at (3.2, 0) {\textbf{Hardware Node} \\ (MQ135, DHT11, RGB-LDR)};
+    \node (serial) [block] at (6.4, 0) {\textbf{USB/Serial} \\ (CSV Stream)};
+    
+    \node (server) [server] at (6.4, -2.2) {\textbf{FastAPI Backend} \\ (Uvicorn HTTP/WS)};
+    \node (ai) [server] at (3.2, -2.2) {\textbf{AI Engine} \\ (PyTorch, TF Models)};
+    \node (ui) [ui] at (0, -2.2) {\textbf{Frontend UI} \\ (HTML5, Tailwind, JS)};
 
-    % Arrows
-    \draw [arrow] (food) -- (sensors);
-    \draw [arrow] (sensors) -- (mcu);
-    \draw [arrow] (mcu) -- node[right, font=\fontsize{7}{9}\selectfont] {CSV Data} (stream);
-    \draw [arrow] (stream) -- node[above, font=\fontsize{7}{9}\selectfont] {WebSockets / HTTP} (dashboard);
+    % Connections
+    \draw [arrow] (produce) -- (edge);
+    \draw [arrow] (edge) -- (serial);
+    \draw [arrow] (serial) -- node[right, font=\tiny] {CSV Stream} (server);
+    \draw [arrow] (server) -- node[above, font=\tiny] {Inference} (ai);
+    \draw [arrow] (ai) -- node[above, font=\tiny] {Data} (ui);
+    \draw [arrow] (server) to[out=240,in=300] node[below, font=\tiny] {WebSockets / JSON} (ui);
 \end{tikzpicture}
-\caption{Multimodal System Architecture and Data Flow}
-\label{fig:system_architecture}
+\caption{End-to-End System-wide Architecture Flow}
+\label{fig:overall_architecture}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    sensor/.style={rectangle, draw=teal!60!black, fill=teal!10, text width=2.3cm, text centered, rounded corners, minimum height=1.0cm, font=\fontsize{7}{8}\selectfont},
+    mcu/.style={rectangle, draw=blue!60!black, fill=blue!10, text width=3.0cm, text centered, rounded corners, minimum height=1.2cm, font=\fontsize{7}{8}\selectfont},
+    math/.style={rectangle, draw=purple!60!black, fill=purple!10, text width=2.6cm, text centered, rounded corners, minimum height=1.0cm, font=\fontsize{7}{8}\selectfont},
+    arrow/.style={thick,->,>=stealth,draw=black!70}
+]
+    % Sensors Left
+    \node (mq135) [sensor] at (0, 1.4) {\textbf{MQ135 Gas Sensor} \\ (Analog NH3 VOC)};
+    \node (dht11) [sensor] at (0, 0) {\textbf{DHT11 Sensor} \\ (Digital Temp / Hum)};
+    \node (ldr) [sensor] at (0, -1.4) {\textbf{LDR Photoresistor} \\ (Analog Absorbance)};
+
+    % Microcontroller Right
+    \node (arduino) [mcu] at (4.2, 0) {\textbf{Arduino Uno (ATmega328P)} \\ $\bullet$ RGB LED Sequencer \\ $\bullet$ ADC Signal Reader};
+    
+    % Math Right
+    \node (comp) [math] at (8.4, 0) {\textbf{On-Edge Drift Compensation} \\ $\text{corr\_Rs} = \frac{\text{Rs}}{1 + 0.02(T-20) + 0.01(H-65)}$};
+
+    % Connections
+    \draw [arrow] (mq135.east) -- ++(1.0, 0) |- (arduino.160);
+    \draw [arrow] (dht11.east) -- (arduino.west);
+    \draw [arrow] (ldr.east) -- ++(1.0, 0) |- (arduino.200);
+    \draw [arrow] (arduino.east) -- node[above, font=\tiny] {Raw Inputs} (comp.west);
+\end{tikzpicture}
+\caption{Edge Hardware Data Acquisition and Compensation Pipeline}
+\label{fig:hardware_pipeline}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[
+    route/.style={rectangle, draw=orange!60!black, fill=orange!10, text width=2.4cm, text centered, rounded corners, minimum height=1.0cm, font=\fontsize{7}{8}\selectfont},
+    model/.style={rectangle, draw=blue!60!black, fill=blue!10, text width=2.8cm, text centered, rounded corners, minimum height=0.9cm, font=\fontsize{7}{8}\selectfont},
+    output/.style={rectangle, draw=green!60!black, fill=green!10, text width=2.2cm, text centered, rounded corners, minimum height=0.9cm, font=\fontsize{7}{8}\selectfont},
+    arrow/.style={thick,->,>=stealth,draw=black!70}
+]
+    % Column 1: API Routes
+    \node (gas_route) [route] at (0, 2.25) {\textbf{Gas API Route} \\ (Ammonia, Temp, Hum)};
+    \node (spec_route) [route] at (0, -0.75) {\textbf{Spectroscopy API} \\ (RGB LDR Intensities)};
+    \node (vis_route) [route] at (0, -3.75) {\textbf{Vision API Route} \\ (Camera Frame Payload)};
+
+    % Column 2: AI Models (Spread out vertically to prevent overlaps)
+    \node (mlp_gas) [model] at (4.5, 3.0) {\textbf{MLP Gas Classifier} \\ (UCI Drift ML Architecture)};
+    \node (lstm_shelf) [model] at (4.5, 1.5) {\textbf{Attention LSTM} \\ (Shelf-Life Time Series)};
+    
+    \node (mlp_calib) [model] at (4.5, 0.0) {\textbf{Calibration MLP} \\ (Virtual Spectrometer nm)};
+    \node (mlp_pigment) [model] at (4.5, -1.5) {\textbf{Pigment Classifier} \\ (Ripeness Categorization)};
+    
+    \node (cnn_spoil) [model] at (4.5, -3.0) {\textbf{Fine-Tuned CNN} \\ (Produce Decay Classifier)};
+    \node (vit_quality) [model] at (4.5, -4.5) {\textbf{Vision Transformer} \\ (ViT Quality Regression)};
+
+    % Column 3: Unified Outputs
+    \node (out) [output] at (9.0, -0.75) {\textbf{Unified Freshness Score} \\ $\bullet$ Remaining Hours \\ $\bullet$ Spoilage State \\ $\bullet$ Spectral Analysis};
+
+    % Connections from Routes to Models
+    \draw [arrow] (gas_route.east) -- ++(0.5, 0) |- (mlp_gas.west);
+    \draw [arrow] (gas_route.east) -- ++(0.5, 0) |- (lstm_shelf.west);
+    
+    \draw [arrow] (spec_route.east) -- ++(0.5, 0) |- (mlp_calib.west);
+    \draw [arrow] (spec_route.east) -- ++(0.5, 0) |- (mlp_pigment.west);
+    
+    \draw [arrow] (vis_route.east) -- ++(0.5, 0) |- (cnn_spoil.west);
+    \draw [arrow] (vis_route.east) -- ++(0.5, 0) |- (vit_quality.west);
+
+    % Connections from Models to Unified Output
+    \draw [arrow] (mlp_gas.east) -- ++(0.5, 0) |- (out.160);
+    \draw [arrow] (lstm_shelf.east) -- ++(0.3, 0) |- (out.170);
+    \draw [arrow] (mlp_calib.east) -- (out.west);
+    \draw [arrow] (mlp_pigment.east) -- (out.200);
+    \draw [arrow] (cnn_spoil.east) -- ++(0.3, 0) |- (out.190);
+    \draw [arrow] (vit_quality.east) -- ++(0.5, 0) |- (out.180);
+\end{tikzpicture}
+\caption{Backend AI Inference Models and Pipelines}
+\label{fig:ai_pipelines}
 \end{figure}
 
 \section{Sensor Data Pipeline}

@@ -16,7 +16,6 @@ The following C++ code runs on the Arduino microcontroller to control the multi-
 
 \begin{tcolorbox}[colback=gray!5,colframe=gray!30,title=Arduino firmware (C++),breakable]
 \begin{lstlisting}[language=C++]
-// Arduino DIY Spectrophotometer Controller
 const int RED_PIN = 9;
 const int GREEN_PIN = 10;
 const int BLUE_PIN = 11;
@@ -30,7 +29,6 @@ void setup() {
 }
 
 void loop() {
-  // Cycle through channels to read intensity
   readChannel("RED", 255, 0, 0);
   delay(500);
   readChannel("GREEN", 0, 255, 0);
@@ -43,14 +41,13 @@ void readChannel(String name, int r, int g, int b) {
   analogWrite(RED_PIN, r);
   analogWrite(GREEN_PIN, g);
   analogWrite(BLUE_PIN, b);
-  delay(150); // Allow intensity to stabilize
+  delay(150);
   
   int val = analogRead(LDR_PIN);
   Serial.print(name);
   Serial.print(" LDR Raw: ");
   Serial.println(val);
   
-  // Reset outputs
   analogWrite(RED_PIN, 0);
   analogWrite(GREEN_PIN, 0);
   analogWrite(BLUE_PIN, 0);
@@ -69,10 +66,6 @@ import torch.nn as nn
 
 class CalibrationMLP(nn.Module):
     def __init__(self, input_dim=4, output_dim=2):
-        """
-        Input features: [R, G, B, LDR Value]
-        Target outputs: [Wavelength (nm), Absorbance (Abs)]
-        """
         super(CalibrationMLP, self).__init__()
         self.network = nn.Sequential(
             nn.Linear(input_dim, 64),
@@ -101,10 +94,6 @@ The Python code below defines the Multi-Layer Perceptron (MLP) architecture used
 \begin{lstlisting}[language=Python]
 class PigmentClassifierNN(nn.Module):
     def __init__(self, input_dim=3, num_classes=3):
-        """
-        Input features: [Abs_430, Abs_540, Abs_660]
-        Output classes: [Fresh, Ripe, Spoiled]
-        """
         super(PigmentClassifierNN, self).__init__()
         self.network = nn.Sequential(
             nn.Linear(input_dim, 32),
@@ -134,10 +123,9 @@ class TemporalAttention(nn.Module):
         self.attn_weights = nn.Linear(hidden_dim, 1)
 
     def forward(self, lstm_out):
-        # lstm_out shape: [batch, seq_len, hidden_dim]
-        attn_scores = self.attn_weights(lstm_out) # [batch, seq_len, 1]
+        attn_scores = self.attn_weights(lstm_out)
         attn_weights = torch.softmax(attn_scores, dim=1)
-        context = torch.sum(lstm_out * attn_weights, dim=1) # [batch, hidden_dim]
+        context = torch.sum(lstm_out * attn_weights, dim=1)
         return context, attn_weights
 
 class SpoilageLSTM(nn.Module):
@@ -148,11 +136,10 @@ class SpoilageLSTM(nn.Module):
         self.fc = nn.Sequential(
             nn.Linear(hidden_dim, 32),
             nn.ReLU(),
-            nn.Linear(32, 1) # Outputs remaining shelf life in hours
+            nn.Linear(32, 1)
         )
 
     def forward(self, x):
-        # x shape: [batch, seq_len, input_dim]
         lstm_out, _ = self.lstm(x)
         context, attn_weights = self.attention(lstm_out)
         out = self.fc(context)
