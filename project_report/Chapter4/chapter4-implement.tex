@@ -2,22 +2,89 @@
 This chapter describes the implementation details of the FoodSense AI project, including the hardware setup, Arduino code, AI model training, and web dashboard development.
 
 \section{Hardware Setup}
-The hardware setup consists of an Arduino Uno, MQ135 gas sensor, and DHT11 temperature and humidity sensor.
+The FoodSense AI system integrates two distinct hardware configurations to enable multimodal evaluation of food spoilage: the gas-climatic sensor node and the DIY visible spectrophotometer.
 
-\subsection{Wiring Diagram}
-The MQ135 sensor is connected to the Arduino Uno as follows:
+\subsection{Gas and Climatic Sensing Setup}
+The first configuration is a portable gas and climatic sensor node enclosed in a protective casing. The electronics consist of a microcontroller (such as an ESP8266 or Arduino Uno), an MQ135 gas sensor, and a DHT11 temperature and humidity sensor powered by an on-board rechargeable battery pack. The fully assembled hardware node is depicted in Figure \ref{fig:hw_original_node}.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.65\textwidth]{Figures/hardware_original_node}
+    \caption{Original Gas and Climatic Sensor Node Setup}
+    \label{fig:hw_original_node}
+\end{figure}
+
+The MQ135 sensor is connected as follows:
 \begin{itemize}
     \item VCC to 5V
     \item GND to GND
-    \item AO to A0 (analog input)
+    \item AO to Analog Pin A1 (or standard ADC pin)
 \end{itemize}
 
-The DHT11 sensor is connected to the Arduino Uno as follows:
+The DHT11 sensor is connected as follows:
 \begin{itemize}
     \item VCC to 5V
     \item GND to GND
-    \item DATA to Digital pin 2
+    \item DATA to Digital Pin 2 (or standard GPIO pin)
 \end{itemize}
+
+\subsection{DIY Visible Spectrophotometer Setup}
+The second hardware configuration is a DIY visible spectrophotometer enclosed in a custom dark chamber to prevent ambient light interference. It uses an Arduino-controlled common cathode RGB LED as the multi-wavelength light source and a Light Dependent Resistor (LDR) as the photodetector.
+
+The electrical connections for the spectrophotometer are:
+\begin{itemize}
+    \item \textbf{RGB LED}:
+        \begin{itemize}
+            \item Red Pin to Digital Pin 9 (PWM)
+            \item Green Pin to Digital Pin 10 (PWM)
+            \item Blue Pin to Digital Pin 11 (PWM)
+            \item Cathode to GND
+        \end{itemize}
+    \item \textbf{LDR Sensor}:
+        \begin{itemize}
+            \item Connected in a voltage divider network (with a 100\,\(\Omega\) pull-down resistor) to Analog Pin A0.
+        \end{itemize}
+    \item \textbf{Control Switch}:
+        \begin{itemize}
+            \item Input trigger connected to Digital Pin 7.
+        \end{itemize}
+\end{itemize}
+
+The physical assembly of the spectrophotometer chamber is shown in Figures \ref{fig:hw_open} through \ref{fig:hw_top}.
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figures/hardware_setup_open}
+        \caption{Front View of Open Chamber}
+        \label{fig:hw_open}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figures/hardware_setup_internal}
+        \caption{Internal Mounting and Breadboard Wiring}
+        \label{fig:hw_internal}
+    \end{minipage}
+\end{figure}
+
+\begin{figure}[htbp]
+    \centering
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figures/hardware_cuvette_closeup}
+        \caption{Close-up of Cuvette Slot}
+        \label{fig:hw_cuvette}
+    \end{minipage}
+    \hfill
+    \begin{minipage}{0.48\textwidth}
+        \centering
+        \includegraphics[width=\textwidth]{Figures/hardware_setup_top}
+        \caption{Top View of Closed Spectrophotometer Box}
+        \label{fig:hw_top}
+    \end{minipage}
+\end{figure}
 
 \section{Arduino Implementation}
 The Arduino code reads data from the sensors, performs on-device compensation, and transmits the data in CSV format over the serial port.

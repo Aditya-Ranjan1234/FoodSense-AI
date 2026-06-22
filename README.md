@@ -20,12 +20,47 @@ FoodSense AI is a state-of-the-art IoT + AI pipeline designed for **early food s
 The hardware layer performs real-time sampling and **empirical temperature-humidity compensation** for the MQ135 sensor to ensure data integrity before it even reaches the AI models.
 
 ```mermaid
-graph LR
-    A[MQ135 Gas Sensor] --> D[Arduino/ESP32]
-    B[DHT11 Temp/Hum] --> D
-    D --> E[On-Device Compensation]
-    E --> F[CSV Serial Output]
-    F --> G[Python AI Engine]
+graph TD
+    subgraph Hardware Inputs
+        A[MQ135 Gas Sensor]
+        B[DHT11 Temp/Hum]
+        C[RGB LED Wavelength Source]
+        D[LDR Light Detector]
+    end
+
+    subgraph Data Processing
+        E[Arduino Uno / ESP8266]
+        F[On-Device Compensation]
+        G[Dark Spectrophotometer Chamber]
+    end
+
+    subgraph Output Stream
+        H[Serial CSV Output]
+        I[Absorbance curve]
+    end
+
+    subgraph AI Inference Engine
+        J[Gas MLP Classifier]
+        K[Shelf-Life LSTM Regressor]
+        L[Calibration MLP Model]
+        M[Pigment Classifier Model]
+    end
+
+    A --> E
+    B --> E
+    E --> F
+    F --> H
+
+    C --> G
+    D --> G
+    G --> I
+
+    H --> J
+    H --> K
+    I --> L
+    I --> M
+    
+    J & K & L & M --> O[Multimodal Dashboard UI]
 ```
 
 ### 2. AI Model Suite
