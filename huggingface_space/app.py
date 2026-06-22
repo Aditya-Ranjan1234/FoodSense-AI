@@ -63,6 +63,7 @@ def index():
     return FileResponse(os.path.join(BASE_DIR, "index.html"))
 
 
+app.mount("/images", StaticFiles(directory=os.path.join(BASE_DIR, "images")), name="images")
 app.mount("/static", StaticFiles(directory=BASE_DIR), name="static")
 
 

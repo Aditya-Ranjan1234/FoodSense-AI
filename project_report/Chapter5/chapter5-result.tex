@@ -71,7 +71,7 @@ Root Mean Squared Error (RMSE) & 4.11 hours \\
 
 The LSTM model achieved a mean absolute error of $\pm$4.00 hours and a root mean squared error of 4.11 hours on the test set. These results indicate that the model can predict the remaining shelf life with reasonable accuracy.
 
-\subsection{Note on R\textsuperscript{2}}
+\subsection{Note on R-squared (\texorpdfstring{R\textsuperscript{2}}{R²})}
 The R\textsuperscript{2} score on the final test segment was negative, which is expected. The test set covers the last chronological 5 hours of a 48-hour sequence, so the model is asked to predict a near-zero shelf life from only the most extreme data. The temporal distribution mismatch between training (hours 4--48) and testing (hours 0--4) explains this. On a proper random split, R\textsuperscript{2} would be well above 0.95. When real hardware data is collected, time-series cross-validation (walk-forward) should be used to get a fair R\textsuperscript{2} estimate.
 
 \section{Spectroscopy Model Results}
