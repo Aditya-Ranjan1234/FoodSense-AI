@@ -11,6 +11,33 @@ FoodSense AI is a multi-modal IoT + AI system for early food spoilage detection.
 
 The hardware pipeline collects sensor data, performs on-device compensation, and transmits the data in CSV format. The AI engine processes this data to detect ammonia and predict remaining shelf life. The web dashboard provides a user interface for visualizing the results.
 
+Figure \ref{fig:system_architecture} illustrates the overall architecture and data flow of the FoodSense AI system.
+
+\begin{figure}[htb]
+\centering
+\begin{tikzpicture}[
+    node distance=1.2cm,
+    block/.style={rectangle, draw, fill=blue!5, text width=2.8cm, text centered, rounded corners, minimum height=1.0cm, font=\fontsize{8}{10}\selectfont},
+    cloud/.style={rectangle, draw, fill=green!5, text width=2.2cm, text centered, rounded corners, minimum height=0.8cm, font=\fontsize{8}{10}\selectfont},
+    arrow/.style={thick,->,>=stealth}
+]
+    % Nodes
+    \node (food) [cloud] {Produce \\ \& Spoilage VOCs};
+    \node (sensors) [block, right=of food] {\textbf{Sensor Assembly} \\ MQ135 Gas Sensor \\ DHT11 Temp/Hum \\ RGB-LDR Optical Cell};
+    \node (mcu) [block, right=of sensors] {\textbf{Arduino Edge} \\ Compensation Math \\ Multi-wavelength Cycle};
+    \node (stream) [block, below=of mcu, yshift=-0.5cm] {\textbf{Inference Server} \\ FastAPI Backend \\ PyTorch / TF Models};
+    \node (dashboard) [block, left=of stream, xshift=-1.5cm] {\textbf{Cloud Dashboard} \\ Live Plots \& Metrics \\ Vision Spoilage Status};
+
+    % Arrows
+    \draw [arrow] (food) -- (sensors);
+    \draw [arrow] (sensors) -- (mcu);
+    \draw [arrow] (mcu) -- node[right, font=\fontsize{7}{9}\selectfont] {CSV Data} (stream);
+    \draw [arrow] (stream) -- node[above, font=\fontsize{7}{9}\selectfont] {WebSockets / HTTP} (dashboard);
+\end{tikzpicture}
+\caption{Multimodal System Architecture and Data Flow}
+\label{fig:system_architecture}
+\end{figure}
+
 \section{Sensor Data Pipeline}
 The sensor data pipeline is responsible for acquiring, processing, and transmitting data from the sensors.
 

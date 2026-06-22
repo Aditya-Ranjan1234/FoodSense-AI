@@ -8,7 +8,7 @@
 \subCode{XX367P}
 % Note: While using the template for IDP, the \Department cmd is not used (discarded automatically) in IDP. The Certificate page uses \guideDeptA[]{} cmd in IDP.
 \Department[CSE]{Computer Science Engineering}
-\academicYear{2024-25}
+\academicYear{2025-2026}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %% Report Type:
@@ -98,16 +98,14 @@
 \setlength{\headheight}{14.5pt}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%%%%%%%%%%%%%%% Page Background %%%%%%%%%%%%%%%%%%%%%
-%% Override the default "Draft" background from the template package.
 \backgroundsetup{
 	scale=1,
 	angle=0,
-	firstpage=true,
-	opacity=0.08,
+	pages=all,
+	opacity=0.4,
 	contents={
 		\begin{tikzpicture}[remember picture, overlay]
-			\node at (current page.center){\includegraphics[width=0.45\textwidth]{Figures/RV_logoVec}};
+			\node at (current page.center){\includegraphics[width=0.45\textwidth]{Figures/RVlogoVecW}};
 		\end{tikzpicture}
 	}
 }

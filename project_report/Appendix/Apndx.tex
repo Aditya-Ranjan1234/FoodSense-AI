@@ -1,34 +1,85 @@
-\chapter{Code}
-\section{First Appendix}
-You can use \texttt{tcblisting} for creating the code snippets. The following example illustrates how one can customize the \texttt{tcblisting} to achieve the \texttt{tcl} script. Similarly, one can use it for other programming language listing, including HDL.
+\chapter{Source Code Listings}
 
-\begin{tcblisting}{listing only,colback=gray!10!white, breakable, boxsep=0pt,top=1mm,bottom=1mm,left=1mm,right=1mm,
-listing options={
-language= tcl,
-basicstyle=\small\ttfamily, 
-otherkeywords={create_clock, set_clock_latency, set_input_delay, set_output_delay, set_load, set_max_fanout, set_fanout_load},
-keywordstyle=\color{blue}, 
-%keywordstyle=[2]{\color{red}},
-commentstyle=\color{gray},
-backgroundcolor=\color{gray!25},
-%morekeywords=[2]{arg,pos},
-%moredelim=[is][\color{violet}]{''}{''},
-escapechar=!}}
-# Since our design has a clock with name clk, 
-## specify that name under [get_port ]
-create_clock -period 40 -waveform {0 20} [get_ports clk]
+This appendix contains the firmware for the DIY visible spectrophotometer module and the PyTorch model definition used for sensor calibration.
 
-# Setting a 'delay' on the clock:
-set_clock_latency 0.3 clk
+\section{Arduino Spectrophotometer Firmware}
+The following C++ code runs on the Arduino microcontroller to control the multi-wavelength RGB LED emitter and read the analog light intensity values from the LDR sensor.
 
-# Setting up constraints on your I/P and O/P pins
-set_input_delay 2.0 -clock clk [all_inputs]!\tikz[remember picture]\node[](c1){};!
-set_output_delay 1.65 -clock clk [all_outputs]!\tikz[remember picture]\node[](c2){};!
+\begin{tcolorbox}[colback=gray!5,colframe=gray!30,title=Arduino firmware (C++),breakable]
+\begin{lstlisting}[language=C++]
+// Arduino DIY Spectrophotometer Controller
+const int RED_PIN = 9;
+const int GREEN_PIN = 10;
+const int BLUE_PIN = 11;
+const int LDR_PIN = A0;
 
-# Set realistic 'loads' on each output pin
-set_load 0.1 [all_outputs]
+void setup() {
+  pinMode(RED_PIN, OUTPUT);
+  pinMode(GREEN_PIN, OUTPUT);
+  pinMode(BLUE_PIN, OUTPUT);
+  Serial.begin(9600);
+}
 
-# Set 'maximum' fanin and fan-out for the input and output pins 
-set_max_fanout 1 [all_inputs]
-set_fanout_load 8 [all_outputs]      
-\end{tcblisting}
+void loop() {
+  // Cycle through channels to read intensity
+  readChannel("RED", 255, 0, 0);
+  delay(500);
+  readChannel("GREEN", 0, 255, 0);
+  delay(500);
+  readChannel("BLUE", 0, 0, 255);
+  delay(1000);
+}
+
+void readChannel(String name, int r, int g, int b) {
+  analogWrite(RED_PIN, r);
+  analogWrite(GREEN_PIN, g);
+  analogWrite(BLUE_PIN, b);
+  delay(150); // Allow intensity to stabilize
+  
+  int val = analogRead(LDR_PIN);
+  Serial.print(name);
+  Serial.print(" LDR Raw: ");
+  Serial.println(val);
+  
+  // Reset outputs
+  analogWrite(RED_PIN, 0);
+  analogWrite(GREEN_PIN, 0);
+  analogWrite(BLUE_PIN, 0);
+}
+\end{lstlisting}
+\end{tcolorbox}
+
+\newpage
+\section{PyTorch AI Calibration Model}
+The Python code below defines the 3-layer Multilayer Perceptron (MLP) architecture used in the PyTorch pipeline to calibrate raw RGB-LDR readings to exact physical wavelength (nm) and absorbance (Abs) values.
+
+\begin{tcolorbox}[colback=gray!5,colframe=gray!30,title=PyTorch Calibration MLP (Python),breakable]
+\begin{lstlisting}[language=Python]
+import torch
+import torch.nn as nn
+
+class CalibrationMLP(nn.Module):
+    def __init__(self, input_dim=4, output_dim=2):
+        """
+        Input features: [R, G, B, LDR Value]
+        Target outputs: [Wavelength (nm), Absorbance (Abs)]
+        """
+        super(CalibrationMLP, self).__init__()
+        self.network = nn.Sequential(
+            nn.Linear(input_dim, 64),
+            nn.BatchNorm1d(64),
+            nn.ReLU(),
+            nn.Dropout(0.2),
+            
+            nn.Linear(64, 32),
+            nn.BatchNorm1d(32),
+            nn.ReLU(),
+            nn.Dropout(0.1),
+            
+            nn.Linear(32, output_dim)
+        )
+        
+    def forward(self, x):
+        return self.network(x)
+\end{lstlisting}
+\end{tcolorbox}
