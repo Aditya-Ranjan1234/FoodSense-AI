@@ -45,6 +45,7 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
     <button onclick="showTab('pigment')" id="tab-pigment" class="text-[13px] transition-all text-[#dde4dd]">Pigment Classifier</button>
     <button onclick="showTab('modeldata')" id="tab-modeldata" class="text-[13px] transition-all text-[#dde4dd]">Datasets & Models</button>
     <button onclick="showTab('comparison')" id="tab-comparison" class="text-[13px] transition-all text-[#dde4dd]">Comparison</button>
+    <button onclick="showTab('hardware')" id="tab-hardware" class="text-[13px] transition-all text-[#dde4dd]">Hardware Setup</button>
     <button onclick="showTab('pipeline')" id="tab-pipeline" class="text-[13px] transition-all text-[#dde4dd]">Architecture</button>
   </div>
   <div class="flex items-center gap-3">
@@ -228,15 +229,15 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
       </div>
       <div class="glass-card rounded-2xl overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full text-left text-sm">
+          <table class="w-full text-left text-[11px]">
             <thead class="bg-primary/10 text-[#dde4dd]">
               <tr>
-                <th class="p-4 font-bold">System / use case</th>
-                <th class="p-4 font-bold">Primary input</th>
-                <th class="p-4 font-bold">Typical output</th>
-                <th class="p-4 font-bold">Limitation</th>
-                <th class="p-4 font-bold">FoodSense novelty</th>
-                <th class="p-4 font-bold">Sensor-processing advance</th>
+                <th class="p-4 font-bold text-[12px]">System / use case</th>
+                <th class="p-4 font-bold text-[12px]">Primary input</th>
+                <th class="p-4 font-bold text-[12px]">Typical output</th>
+                <th class="p-4 font-bold text-[12px]">Limitation</th>
+                <th class="p-4 font-bold text-[12px]">FoodSense novelty</th>
+                <th class="p-4 font-bold text-[12px]">Sensor-processing advance</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-outline-variant">
@@ -419,6 +420,66 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
     </div>
   </div>
 
+  <!-- 6. Hardware Setup Tab -->
+  <div id="tab-content-hardware" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
+    <div class="max-w-6xl w-full space-y-8">
+      <div>
+        <p class="text-xs font-bold text-primary tracking-widest uppercase mb-2">Chassis and Assembly</p>
+        <h1 class="text-3xl font-bold tracking-tight" style="font-family:'Space Grotesk',sans-serif">Physical Hardware Systems</h1>
+      </div>
+      
+      <!-- Module 1: Gas and Climatic Sensor Node -->
+      <div class="glass-card rounded-3xl p-8 space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-primary">Module 1: Gas and Climatic Sensing Node</h2>
+          <p class="text-xs text-[#dde4dd]/75 mt-1">Enclosed ESP8266/Arduino sensor node with MQ135 gas and DHT11 microclimatic sensors.</p>
+        </div>
+        <div class="flex justify-center items-center">
+          <div class="glass-card rounded-2xl overflow-hidden max-w-lg border border-outline-variant/30 shadow-lg">
+            <img src="images/hardware_original_node.png" alt="Gas Climatic Sensor Node" class="w-full h-auto object-cover max-h-96" />
+            <div class="p-4 bg-background/50 border-t border-outline-variant/20 text-center">
+              <p class="text-xs font-bold text-[#dde4dd]">Assembled Sensor Node with Rechargeable Battery pack</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Module 2: DIY Visible Spectrophotometer Setup -->
+      <div class="glass-card rounded-3xl p-8 space-y-6">
+        <div>
+          <h2 class="text-xl font-bold text-secondary">Module 2: DIY Visible Spectrophotometer</h2>
+          <p class="text-xs text-[#dde4dd]/75 mt-1">Lightproof optical chamber using an Arduino-controlled RGB LED multi-wavelength emitter and an LDR detector.</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div class="glass-card rounded-2xl overflow-hidden border border-outline-variant/30 flex flex-col justify-between">
+            <img src="images/hardware_setup_open.png" alt="Chassis Open View" class="w-full h-48 object-cover" />
+            <div class="p-3 bg-background/50 border-t border-outline-variant/20 text-center flex-grow flex items-center justify-center">
+              <p class="text-[10px] font-bold text-[#dde4dd]">Front View of Open Chamber</p>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl overflow-hidden border border-outline-variant/30 flex flex-col justify-between">
+            <img src="images/hardware_setup_internal.png" alt="Internal Wiring" class="w-full h-48 object-cover" />
+            <div class="p-3 bg-background/50 border-t border-outline-variant/20 text-center flex-grow flex items-center justify-center">
+              <p class="text-[10px] font-bold text-[#dde4dd]">Mounting &amp; Breadboard Connections</p>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl overflow-hidden border border-outline-variant/30 flex flex-col justify-between">
+            <img src="images/hardware_cuvette_closeup.png" alt="Cuvette Slot" class="w-full h-48 object-cover" />
+            <div class="p-3 bg-background/50 border-t border-outline-variant/20 text-center flex-grow flex items-center justify-center">
+              <p class="text-[10px] font-bold text-[#dde4dd]">Sample Cuvette Insertion Slot</p>
+            </div>
+          </div>
+          <div class="glass-card rounded-2xl overflow-hidden border border-outline-variant/30 flex flex-col justify-between">
+            <img src="images/hardware_setup_top.png" alt="Top View" class="w-full h-48 object-cover" />
+            <div class="p-3 bg-background/50 border-t border-outline-variant/20 text-center flex-grow flex items-center justify-center">
+              <p class="text-[10px] font-bold text-[#dde4dd]">Top View of Closed Spectrometer Box</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- 9. Architecture Tab -->
   <div id="tab-content-pipeline" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
     <div class="max-w-6xl w-full glass-card rounded-3xl p-10 relative overflow-hidden">
@@ -506,7 +567,7 @@ let stream = null;
 let currentImageData = null;
 
 function showTab(tab) {
-  ['dashboard','insights','vision','calibration','pigment','modeldata','comparison','pipeline'].forEach(t => {
+  ['dashboard','insights','vision','calibration','pigment','modeldata','comparison','hardware','pipeline'].forEach(t => {
     document.getElementById('tab-content-' + t).classList.add('hidden');
     const btn = document.getElementById('tab-' + t);
     if(btn) btn.className = "text-[13px] text-[#dde4dd]/40 hover:text-primary transition-all";

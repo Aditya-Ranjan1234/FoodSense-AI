@@ -1,6 +1,6 @@
-# FoodSense AI: Multimodal Spoilage Prediction System 🥦
+# FoodSense AI: Multimodal Spoilage Prediction System
 
-[![Hugging Face Space](https://img.shields.pkgs.org/badge/%F0%9F%A4%97%20Hugging%20Face-Space-yellow)](https://huggingface.co/spaces/aditya-ranjan1234/foodsense-ai)
+[![Hugging Face Space](https://img.shields.pkgs.org/badge/Hugging%20Face-Space-yellow)](https://huggingface.co/spaces/aditya-ranjan1234/foodsense-ai)
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/)
 
@@ -8,7 +8,7 @@
 
 FoodSense AI is a state-of-the-art IoT + AI pipeline designed for **early food spoilage detection**. Unlike traditional systems that only provide binary "Fresh vs. Rotten" snapshots, FoodSense uses temporal attention-augmented LSTMs to predict **continuous remaining shelf-life** in hours.
 
-## 🌟 Key Features
+## Key Features
 - **Multimodal Spoilage Tracking**: Combines Gas VOC (Ammonia), Temperature, and Humidity sensors.
 - **On-Device Compensation**: Microcontroller-level correction for sensor drift caused by environmental changes.
 - **Temporal Attention LSTM**: Specifically designed to capture the "velocity of spoilage" over time.
@@ -16,7 +16,7 @@ FoodSense AI is a state-of-the-art IoT + AI pipeline designed for **early food s
 
 ---
 
-## 🏗️ System Architecture
+## System Architecture
 
 ### 1. Hardware Pipeline (Arduino/ESP32)
 The hardware layer performs real-time sampling and **empirical temperature-humidity compensation** for the MQ135 sensor to ensure data integrity before it even reaches the AI models.
@@ -74,7 +74,7 @@ graph TD
 
 ---
 
-## 📊 Model Performance
+## Model Performance
 
 ### Gas Classifier (MLP)
 Validated on the **UCI Gas Sensor Array Drift Dataset** (13,910 samples).
@@ -90,7 +90,7 @@ The model can predict the remaining shelf-life within **±4.0 hours** of accurac
 
 ---
 
-## 🔬 Project Novelty
+## Project Novelty
 FoodSense fills critical gaps in existing food-safety research:
 1. **Low-Cost Precision**: Replaces expensive e-noses with $2 consumer sensors through advanced signal processing.
 2. **Temporal Modeling**: Uses **LSTM with Attention** to prioritize specific spoilage events in the timeline.
@@ -98,7 +98,7 @@ FoodSense fills critical gaps in existing food-safety research:
 
 ---
 
-## 📂 Project Structure
+## Project Structure
 ```
 .
 ├── arduino_code/            # Optimized sketches with on-device compensation
@@ -114,7 +114,7 @@ FoodSense fills critical gaps in existing food-safety research:
 
 ---
 
-## 🏁 Getting Started
+## Getting Started
 
 ### 1. Setup Environment
 ```bash
@@ -134,6 +134,5 @@ python train_mlp.py
 # Train the Temporal Shelf-Life model
 python train_lstm.py
 ```
-
 
 ---
