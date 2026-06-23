@@ -28,23 +28,6 @@ M.~A. Davidescu, C.~P{\^a}nzaru, B.~M. M{\u a}descu, I.~Poro{\c s}nicu,
   applications, and sustainability considerations,'' \emph{Foods}, vol.~14,
   no.~24, p. 4347, 2025.
 
-\bibitem{DiRosa2017}
-A.~R. Di~Rosa, F.~Leone, F.~Cheli, and V.~Chiofalo, ``Fusion of electronic
-  nose, electronic tongue and computer vision for animal source food
-  authentication and quality assessment -- a review,'' \emph{Journal of Food
-  Engineering}, vol. 210, pp. 62--75, 2017.
-
-\bibitem{Amin2023}
-U.~Amin, M.~Shahzad, A.~Shahzad, M.~Shahzad, U.~Khan, and Z.~Mahmood,
-  ``Automatic fruits freshness classification using cnn and transfer
-  learning,'' \emph{Applied Sciences}, vol.~13, no.~14, p. 8087, 2023.
-
-\bibitem{Nguyen2024}
-D.-L. Nguyen, X.-T. Vo, A.~Priadana, M.~D. Putro, and K.-H. Jo, ``Fruit
-  ripeness detector for automatic fruit classification systems,''
-  \emph{Proceedings of the IEEE International Symposium on Industrial
-  Electronics (ISIE)}, pp. 1--6, 2024.
-
 \bibitem{Vergara2012}
 \BIBentryALTinterwordspacing
 A.~Vergara, J.~Fonollosa, L.~Fernandez, S.~Gutierrez, and S.~Marco, ``Gas
@@ -52,11 +35,22 @@ A.~Vergara, J.~Fonollosa, L.~Fernandez, S.~Gutierrez, and S.~Marco, ``Gas
   \url{https://archive.ics.uci.edu/dataset/224/gas+sensor+array+drift+dataset}
 \BIBentrySTDinterwordspacing
 
+\bibitem{Amin2023}
+U.~Amin, M.~Shahzad, A.~Shahzad, M.~Shahzad, U.~Khan, and Z.~Mahmood,
+  ``Automatic fruits freshness classification using cnn and transfer
+  learning,'' \emph{Applied Sciences}, vol.~13, no.~14, p. 8087, 2023.
+
 \bibitem{Huerta2016}
 R.~Huerta, T.~S. Mosqueiro, J.~Fonollosa, N.~F. Rulkov, and I.~Rodriguez-Lujan,
   ``Online decorrelation of humidity and temperature in chemical sensors for
   continuous monitoring,'' \emph{Chemometrics and Intelligent Laboratory
   Systems}, vol. 157, pp. 169--176, 2016.
+
+\bibitem{DiRosa2017}
+A.~R. Di~Rosa, F.~Leone, F.~Cheli, and V.~Chiofalo, ``Fusion of electronic
+  nose, electronic tongue and computer vision for animal source food
+  authentication and quality assessment -- a review,'' \emph{Journal of Food
+  Engineering}, vol. 210, pp. 62--75, 2017.
 
 \bibitem{Yi2022}
 Z.~Yi, W.~Shang, T.~Xu, S.~Guo, and X.~Wu, ``Local discriminant subspace
@@ -108,6 +102,12 @@ Z.~Ren \emph{et~al.}, ``Multirole 3d-printed modular spectrometer for various
 X.~Gao, Z.~Xiao, and Z.~Deng, ``High accuracy food image classification via
   vision transformer with data augmentation and feature augmentation,''
   \emph{Journal of Food Engineering}, vol. 360, p. 111833, 2024.
+
+\bibitem{Nguyen2024}
+D.-L. Nguyen, X.-T. Vo, A.~Priadana, M.~D. Putro, and K.-H. Jo, ``Fruit
+  ripeness detector for automatic fruit classification systems,''
+  \emph{Proceedings of the IEEE International Symposium on Industrial
+  Electronics (ISIE)}, pp. 1--6, 2024.
 
 \bibitem{Wu2023}
 Y.~Wu, X.~Zhu, Q.~Huang, Y.~Zhang, J.~Evans, and S.~He, ``Predicting the
