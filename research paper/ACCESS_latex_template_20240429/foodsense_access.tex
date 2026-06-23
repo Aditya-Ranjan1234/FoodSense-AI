@@ -1,4 +1,8 @@
+\let\TeXyear\year
 \documentclass{ieeeaccess}
+\let\setyear\year
+\let\year\TeXyear
+
 \usepackage{cite}
 \usepackage{amsmath,amssymb,amsfonts}
 \usepackage{algorithmic}
@@ -9,6 +13,13 @@
 \usepackage{multirow}
 \usepackage{url}
 \usepackage{float}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,shapes,positioning,calc}
+
+% Re-apply spot color settings for ieeeaccess after importing tikz
+\NewSpotColorSpace{PANTONE}
+\AddSpotColor{PANTONE} {PANTONE3015C} {PANTONE\SpotSpace 3015\SpotSpace C} {1 0.3 0 0.2}
+\SetPageColorSpace{PANTONE}
 
 \usepackage{bm}
 \makeatletter
@@ -199,23 +210,120 @@ FoodSense implements a three-branch parallel inference architecture in which eac
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\columnwidth]{figures/demo_architecture.png}
-\caption{End-to-end FoodSense multimodal system architecture showing three sensing branches (gas/climate, spectroscopy, visual) converging to a unified AI inference engine.}
+\begin{tikzpicture}[
+    node distance=1.0cm,
+    block/.style={rectangle, draw=blue!50!black, fill=blue!10,
+        text width=2.2cm, text centered, rounded corners,
+        minimum height=1.0cm, font=\fontsize{7}{8}\selectfont},
+    cloud/.style={rectangle, draw=green!50!black, fill=green!10,
+        text width=1.8cm, text centered, rounded corners,
+        minimum height=0.9cm, font=\fontsize{7}{8}\selectfont},
+    server/.style={rectangle, draw=orange!50!black, fill=orange!10,
+        text width=2.2cm, text centered, rounded corners,
+        minimum height=1.0cm, font=\fontsize{7}{8}\selectfont},
+    arrow/.style={thick,->,>=stealth,draw=black!70}
+]
+    \node (produce) [cloud] at (0, 0)
+        {Produce \\ (VOCs, Pigments)};
+    \node (edge) [block] at (3.0, 0)
+        {\textbf{Hardware Node} \\ (MQ135, DHT11, RGB-LDR)};
+    \node (comp) [block] at (6.0, 0)
+        {\textbf{On-Edge Comp.} \\ (ATmega328P)};
+    \node (ai) [server] at (6.0, -2.0)
+        {\textbf{AI Engine} \\ (MLP + LSTM \\ + CNN + ViT)};
+    \node (out) [cloud] at (3.0, -2.0)
+        {\textbf{Freshness Score} \\ (State + Shelf Life)};
+    \draw [arrow] (produce) -- (edge);
+    \draw [arrow] (edge) -- (comp);
+    \draw [arrow] (comp) -- node[right, font=\tiny] {CSV Stream}
+        (ai);
+    \draw [arrow] (ai) -- (out);
+\end{tikzpicture}
+\caption{End-to-end FoodSense processing pipeline.}
 \label{fig:overall_arch}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\columnwidth]{figures/hardware_original_node.png}
-\caption{Edge hardware sensor node: MQ135 gas sensor, DHT11 temperature-humidity sensor, and Arduino Uno ATmega328P with rechargeable battery pack enclosed in a compact housing.}
+\begin{tikzpicture}[
+    sensor/.style={rectangle, draw=teal!60!black, fill=teal!10,
+        text width=2.0cm, text centered, rounded corners,
+        minimum height=0.9cm, font=\fontsize{7}{8}\selectfont},
+    mcu/.style={rectangle, draw=blue!60!black, fill=blue!10,
+        text width=2.8cm, text centered, rounded corners,
+        minimum height=1.1cm, font=\fontsize{7}{8}\selectfont},
+    math/.style={rectangle, draw=purple!60!black, fill=purple!10,
+        text width=2.4cm, text centered, rounded corners,
+        minimum height=0.9cm, font=\fontsize{7}{8}\selectfont},
+    arrow/.style={thick,->,>=stealth,draw=black!70}
+]
+    \node (mq135) [sensor] at (0, 1.2)
+        {\textbf{MQ135} \\ (Analog VOC)};
+    \node (dht11) [sensor] at (0, 0)
+        {\textbf{DHT11} \\ (Temp / Hum)};
+    \node (ldr) [sensor] at (0, -1.2)
+        {\textbf{LDR} \\ (Absorbance)};
+    \node (arduino) [mcu] at (3.8, 0)
+        {\textbf{Arduino Uno} \\ ATmega328P \\ ADC + PWM Control};
+    \node (comp) [math] at (7.5, 0)
+        {\textbf{Drift Comp.} \\
+         $R_{s,\text{corr}} = R_s / \text{corr}$};
+    \draw [arrow] (mq135.east) -- ++(0.8,0) |- (arduino.160);
+    \draw [arrow] (dht11.east) -- (arduino.west);
+    \draw [arrow] (ldr.east) -- ++(0.8,0) |- (arduino.200);
+    \draw [arrow] (arduino.east) --
+        node[above, font=\tiny] {Compensated Data} (comp.west);
+\end{tikzpicture}
+\caption{Edge hardware pipeline: sensor acquisition and on-edge drift compensation.}
 \label{fig:hardware_pipeline}
 \end{figure}
 
 \begin{figure}[H]
 \centering
-\includegraphics[width=\columnwidth]{figures/hardware_setup_open.png}
-\caption{DIY visible spectrophotometer: 3D-printed dark chamber with RGB-LED emitter, cuvette slot, and LDR photodetector in voltage-divider configuration.}
-\label{fig:spectro_hw}
+\begin{tikzpicture}[
+    route/.style={rectangle, draw=orange!60!black, fill=orange!10,
+        text width=1.9cm, text centered, rounded corners,
+        minimum height=0.9cm, font=\fontsize{7}{8}\selectfont},
+    model/.style={rectangle, draw=blue!60!black, fill=blue!10,
+        text width=2.4cm, text centered, rounded corners,
+        minimum height=0.8cm, font=\fontsize{7}{8}\selectfont},
+    output/.style={rectangle, draw=green!60!black, fill=green!10,
+        text width=1.9cm, text centered, rounded corners,
+        minimum height=0.8cm, font=\fontsize{7}{8}\selectfont},
+    arrow/.style={thick,->,>=stealth,draw=black!70}
+]
+    \node (gas) [route] at (0, 1.8) {Gas/Climate \\ Inputs};
+    \node (spec) [route] at (0, 0) {Spectroscopy \\ Inputs};
+    \node (vis) [route] at (0, -1.8) {Visual \\ Inputs};
+    \node (mlp) [model] at (3.5, 2.4)
+        {MLP Gas \\ Classifier};
+    \node (lstm) [model] at (3.5, 1.2)
+        {Attention-LSTM \\ Shelf-Life};
+    \node (calib) [model] at (3.5, 0.3)
+        {Calibration \\ MLP (nm)};
+    \node (pig) [model] at (3.5, -0.9)
+        {Pigment \\ Classifier};
+    \node (cnn) [model] at (3.5, -2.1)
+        {Fine-Tuned \\ CNN};
+    \node (vit) [model] at (3.5, -3.0)
+        {Vision \\ Transformer};
+    \node (out) [output] at (7.0, 0)
+        {Unified \\ Freshness Score \\ + Shelf Life};
+    \draw [arrow] (gas) -- ++(0.5,0) |- (mlp.west);
+    \draw [arrow] (gas) -- ++(0.5,0) |- (lstm.west);
+    \draw [arrow] (spec) -- ++(0.5,0) |- (calib.west);
+    \draw [arrow] (spec) -- ++(0.5,0) |- (pig.west);
+    \draw [arrow] (vis) -- ++(0.5,0) |- (cnn.west);
+    \draw [arrow] (vis) -- ++(0.5,0) |- (vit.west);
+    \draw [arrow] (mlp.east) -- ++(0.5,0) |- (out.north);
+    \draw [arrow] (lstm.east) -- ++(0.3,0) |- (out.160);
+    \draw [arrow] (calib.east) -- ++(0.3,0) |- (out.170);
+    \draw [arrow] (pig.east) -- ++(0.3,0) |- (out.190);
+    \draw [arrow] (cnn.east) -- ++(0.3,0) |- (out.200);
+    \draw [arrow] (vit.east) -- ++(0.5,0) |- (out.south);
+\end{tikzpicture}
+\caption{Trimodal AI inference pipeline.}
+\label{fig:ai_pipeline}
 \end{figure}
 
 
