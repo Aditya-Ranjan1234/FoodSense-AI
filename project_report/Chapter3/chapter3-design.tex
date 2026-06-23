@@ -53,7 +53,7 @@ Figure \ref{fig:overall_architecture} illustrates the overall end-to-end system 
     arrow/.style={thick,->,>=stealth,draw=black!70}
 ]
     % Sensors Left
-    \node (mq135) [sensor] at (0, 1.4) {\textbf{MQ135 Gas Sensor} \\ (Analog NH3 VOC)};
+    \node (mq135) [sensor] at (0, 1.4) {\textbf{MQ135 Gas Sensor} \\ (Analog VOC Sensor)};
     \node (dht11) [sensor] at (0, 0) {\textbf{DHT11 Sensor} \\ (Digital Temp / Hum)};
     \node (ldr) [sensor] at (0, -1.4) {\textbf{LDR Photoresistor} \\ (Analog Absorbance)};
 
@@ -82,7 +82,7 @@ Figure \ref{fig:overall_architecture} illustrates the overall end-to-end system 
     arrow/.style={thick,->,>=stealth,draw=black!70}
 ]
     % Column 1: API Routes
-    \node (gas_route) [route] at (0, 2.25) {\textbf{Gas API Route} \\ (Ammonia, Temp, Hum)};
+    \node (gas_route) [route] at (0, 2.25) {\textbf{Gas API Route} \\ (VOC, Temp, Hum)};
     \node (spec_route) [route] at (0, -0.75) {\textbf{Spectroscopy API} \\ (RGB LDR Intensities)};
     \node (vis_route) [route] at (0, -3.75) {\textbf{Vision API Route} \\ (Camera Frame Payload)};
 
@@ -138,7 +138,7 @@ where Rs is the uncompensated sensor resistance.
 \subsection{CSV Transmission}
 The Arduino transmits the sensor data in CSV format over the serial port. Each line contains:
 \[
-\text{timestamp\_ms, temperature, humidity, nh3\_ppm, status}
+\text{timestamp\_ms, temperature, humidity, voc\_est\_concentration, status}
 \]
 This format allows direct ingestion into Python using pandas.read\_csv, without the need for additional parsing middleware.
 
@@ -146,7 +146,7 @@ This format allows direct ingestion into Python using pandas.read\_csv, without 
 The FoodSense AI system uses two complementary AI models for different tasks.
 
 \subsection{MLP Gas Classifier}
-The MLP classifier is used for point-in-time detection of ammonia, a primary marker of food spoilage. The model takes 128 features as input (from the UCI Gas Sensor Array Drift Dataset) and outputs a binary classification (ammonia present or not).
+The MLP classifier is used for point-in-time classification of gas concentrations. The model takes 128 features as input (from the UCI Gas Sensor Array Drift Dataset) and outputs a binary classification (elevated VOC exposure present or not).
 
 Key design choices for the MLP include:
 \begin{itemize}
@@ -156,7 +156,7 @@ Key design choices for the MLP include:
 \end{itemize}
 
 \subsection{LSTM with Temporal Attention}
-The LSTM with temporal attention is used for continuous shelf-life prediction. Spoilage is a process, not a snapshot, so the model needs to capture temporal dependencies across time. The model uses a 1-hour context window (last 30 readings) to predict the remaining shelf life in hours.
+The LSTM with temporal attention is used for continuous shelf-life prediction. Spoilage is a process, not a snapshot, so the model needs to capture temporal dependencies across time. The model uses a 1-hour context window (last 30 readings) to predict the remaining shelf life in hours. This is evaluated as a proof-of-concept for temporal drift modeling.
 
 Key design choices for the LSTM include:
 \begin{itemize}

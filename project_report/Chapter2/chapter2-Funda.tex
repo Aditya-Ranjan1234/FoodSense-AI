@@ -5,13 +5,13 @@ This chapter covers the fundamental concepts and technologies used in the FoodSe
 The FoodSense AI system uses two main sensors and an Arduino microcontroller for data acquisition.
 
 \subsection{MQ135 Gas Sensor}
-The MQ135 is a low-cost metal-oxide gas sensor sensitive to ammonia, sulfide, benzene vapor, and other harmful gases. It operates by measuring the change in resistance of a tin dioxide (SnO\textsubscript{2}) layer when exposed to target gases. The sensor requires a load resistor (typically 10 k$\Omega$) and operates at 5V DC.
+The MQ135 is a low-cost metal-oxide gas sensor sensitive to ammonia, sulfide, benzene vapor, and other harmful gases. It operates by measuring the change in resistance of a tin dioxide (SnO\textsubscript{2}) layer when exposed to target gases. Since the MQ135 is a broad-spectrum sensor, its output is calibrated to report an estimated ammonia-sensitive VOC concentration rather than an absolute, isolated ammonia measurement. The sensor requires a load resistor (typically 10 k$\Omega$) and operates at 5V DC.
 
 The resistance of the MQ135 sensor decreases as the concentration of target gases increases. The relationship between sensor resistance and gas concentration follows a power-law:
 \[
 C = A \times \left( \frac{R_s}{R_0} \right)^B
 \]
-where \(C\) is the gas concentration, \(R_s\) is the sensor resistance, \(R_0\) is the sensor resistance in clean air, and \(A\) and \(B\) are calibration constants.
+where \(C\) is the estimated concentration of ammonia-sensitive VOCs, \(R_s\) is the sensor resistance, \(R_0\) is the sensor resistance in clean air, and \(A\) and \(B\) are calibration constants.
 
 \subsection{DHT11 Temperature and Humidity Sensor}
 The DHT11 is a basic, ultra-low-cost digital temperature and humidity sensor. It uses a capacitive humidity sensor and a thermistor to measure the surrounding air, and outputs a digital signal on the data pin. The sensor provides temperature readings in the range of 0--50$^\circ$C with $\pm$2$^\circ$C accuracy, and humidity readings in the range of 20--90\% RH with $\pm$5\% accuracy.

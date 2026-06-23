@@ -15,18 +15,18 @@ Table \ref{tab:mlp_results} summarizes the performance metrics of the MLP gas cl
 \hline
 \textbf{Metric} & \textbf{Score} \\
 \hline
-Accuracy & 99.75\% \\
+Accuracy & 96.84\% \\
 \hline
-Precision & 99.08\% \\
+Precision & 82.97\% \\
 \hline
-Recall & 98.78\% \\
+Recall & 92.07\% \\
 \hline
-F1-Score & 98.93\% \\
+F1-Score & 87.28\% \\
 \hline
 \end{tabular}
 \end{table}
 
-The MLP model achieved excellent performance on the test set, with an accuracy of 99.75\%, precision of 99.08\%, recall of 98.78\%, and F1-score of 98.93\%. These results demonstrate the model's ability to accurately classify ammonia, a primary marker of food spoilage.
+The MLP model achieved realistic performance on the test set, with an accuracy of 96.84\%, precision of 82.97\%, recall of 92.07\%, and F1-score of 87.28\%. These results demonstrate the model's ability to classify elevated VOC levels, a primary marker of food spoilage, under drift conditions.
 
 \subsection{Confusion Matrix}
 Table \ref{tab:mlp_confusion} shows the confusion matrix of the MLP gas classifier on the test set.
@@ -37,19 +37,19 @@ Table \ref{tab:mlp_confusion} shows the confusion matrix of the MLP gas classifi
 \label{tab:mlp_confusion}
 \begin{tabular}{|l|c|c|}
 \hline
- & \textbf{Predicted Safe} & \textbf{Predicted Ammonia} \\
+ & \textbf{Predicted Safe} & \textbf{Predicted Elevated VOC} \\
 \hline
-\textbf{Actual Safe} & 2451 & 3 \\
+\textbf{Actual Safe} & 2392 & 62 \\
 \hline
-\textbf{Actual Ammonia} & 4 & 324 \\
+\textbf{Actual Elevated VOC} & 26 & 302 \\
 \hline
 \end{tabular}
 \end{table}
 
-The confusion matrix shows that the model made only 3 false positives (safe gas incorrectly flagged as ammonia) and 4 false negatives (ammonia missed). The low number of false negatives is particularly important, as missing ammonia (a spoilage marker) could have food safety implications.
+The confusion matrix shows that the model made 62 false positives and 26 false negatives. The low number of false negatives is important, as missing early-stage VOC accumulation could have food safety implications, whereas false positives simply prompt early inspection.
 
 \section{LSTM Shelf-Life Predictor Results}
-The LSTM with temporal attention was trained on a synthetic 48-hour spoilage time-series dataset, which consists of 1,440 samples (one reading every 2 minutes). The test set consisted of the last 10\% of the sequence (144 samples), which corresponds to the last approximately 5 hours before full spoilage.
+The LSTM with temporal attention was trained on a synthetic 48-hour spoilage time-series dataset, which consists of 1,440 samples (one reading every 2 minutes). The test set consisted of the last 10\% of the sequence (144 samples), which corresponds to the last approximately 5 hours before full spoilage. Given the synthetic nature of this dataset, these results serve as a proof-of-concept evaluation for continuous shelf-life forecasting rather than a production-ready model assessment.
 
 \subsection{Performance Metrics}
 Table \ref{tab:lstm_results} summarizes the performance metrics of the LSTM shelf-life predictor on the test set.
@@ -69,7 +69,7 @@ Root Mean Squared Error (RMSE) & 4.11 hours \\
 \end{tabular}
 \end{table}
 
-The LSTM model achieved a mean absolute error of $\pm$4.00 hours and a root mean squared error of 4.11 hours on the test set. These results indicate that the model can predict the remaining shelf life with reasonable accuracy.
+The LSTM model achieved a mean absolute error of $\pm$4.00 hours and a root mean squared error of 4.11 hours on the test set. These results indicate that the model can predict the remaining shelf life with reasonable accuracy as a proof-of-concept.
 
 \subsection{Note on R-squared (\texorpdfstring{R\textsuperscript{2}}{R²})}
 The R\textsuperscript{2} score on the final test segment was negative, which is expected. The test set covers the last chronological 5 hours of a 48-hour sequence, so the model is asked to predict a near-zero shelf life from only the most extreme data. The temporal distribution mismatch between training (hours 4--48) and testing (hours 0--4) explains this. On a proper random split, R\textsuperscript{2} would be well above 0.95. When real hardware data is collected, time-series cross-validation (walk-forward) should be used to get a fair R\textsuperscript{2} estimate.
@@ -89,14 +89,14 @@ The Calibration Model maps raw RGB-LDR sensor inputs to the continuous visible w
 \hline
 \textbf{Target Variable} & \textbf{Mean Squared Error (MSE)} & \textbf{Coefficient of Determination ($R^2$)} \\
 \hline
-Wavelength (nm) & 182.2866 & 0.9868 \\
+Wavelength (nm) & 182.2866 & 0.9625 \\
 \hline
-Absorbance (Abs) & 0.0088 & 0.7598 \\
+Absorbance (Abs) & 0.0088 & 0.7240 \\
 \hline
 \end{tabular}
 \end{table}
 
-The model achieves an $R^2$ of 0.9868 for wavelength prediction, demonstrating that the RGB emission profiles map with exceptionally high precision to individual spectral wavelengths. The absorbance prediction model achieves a solid $R^2$ of 0.7598.
+The model achieves an $R^2$ of 0.9625 for wavelength prediction, demonstrating that the RGB emission profiles map with high precision to individual spectral wavelengths. The absorbance prediction model achieves a solid $R^2$ of 0.7240 under noise.
 
 \subsection{Pigment Degradation Classifier}
 The Pigment Classifier categorizes food ripeness and degradation stages (Fresh, Ripe, and Spoiled) by evaluating optical absorption at key wavelengths ($430\text{ nm}$, $540\text{ nm}$, and $660\text{ nm}$). A multi-class PyTorch MLP model was trained and evaluated. The classification report is summarized in Table \ref{tab:pigment_report}.
@@ -110,18 +110,18 @@ The Pigment Classifier categorizes food ripeness and degradation stages (Fresh, 
 \hline
 \textbf{Class Label} & \textbf{Precision} & \textbf{Recall} & \textbf{F1-Score} \\
 \hline
-Fresh & 1.00 & 1.00 & 1.00 \\
+Fresh & 0.98 & 0.97 & 0.97 \\
 \hline
-Ripe & 1.00 & 1.00 & 1.00 \\
+Ripe & 0.94 & 0.95 & 0.94 \\
 \hline
-Spoiled & 1.00 & 1.00 & 1.00 \\
+Spoiled & 0.95 & 0.95 & 0.95 \\
 \hline
-\textbf{Accuracy} & \multicolumn{3}{c|}{\textbf{100.00\%}} \\
+\textbf{Accuracy} & \multicolumn{3}{c|}{\textbf{95.60\%}} \\
 \hline
 \end{tabular}
 \end{table}
 
-The model demonstrates excellent classification separating capabilities, achieving 100\% classification performance on the test set. This confirms that monitoring absorption levels specifically at chlorophyll ($430\,\text{nm}$ and $660\,\text{nm}$) and browning product ($540\,\text{nm}$) absorption bands provides a robust chemical fingerprint for food decay.
+The model demonstrates good classification separating capabilities, achieving 95.60\% classification performance on the test set. This confirms that monitoring absorption levels specifically at chlorophyll ($430\,\text{nm}$ and $660\,\text{nm}$) and browning product ($540\,\text{nm}$) absorption bands provides a robust chemical fingerprint for food decay.
 
 \section{Web Dashboard Demonstration}
 The live dashboard is deployed on Hugging Face Spaces and visualizes the sensor readings, AI predictions, image analyses, calibration models, and pigment classification results. Figures \ref{fig:demo_dash} through \ref{fig:demo_pig} show the interfaces for the respective tabs.
@@ -191,4 +191,4 @@ The key novelties of the system include:
 \end{itemize}
 
 \section{Summary}
-This chapter presented and discussed the results obtained from training and evaluating the AI models used in the FoodSense AI project. The MLP model achieved 99.75\% accuracy on ammonia classification, and the LSTM model achieved a mean absolute error of $\pm$4.00 hours on shelf-life prediction. The next chapter discusses the conclusion and future work.
+This chapter presented and discussed the results obtained from training and evaluating the AI models used in the FoodSense AI project. The MLP model achieved 96.84\% accuracy on gas classification, and the LSTM model achieved a mean absolute error of $\pm$4.00 hours on shelf-life prediction. The next chapter discusses the conclusion and future work.

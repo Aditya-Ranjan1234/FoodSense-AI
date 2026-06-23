@@ -90,10 +90,10 @@ The physical assembly of the spectrophotometer chamber is shown in Figures \ref{
 The Arduino code reads data from the sensors, performs on-device compensation, and transmits the data in CSV format over the serial port.
 
 \subsection{Sensor Reading and Compensation}
-The Arduino reads the analog value from the MQ135 sensor, converts it to resistance, applies temperature and humidity compensation, and calculates the ammonia concentration in ppm. The code also reads temperature and humidity from the DHT11 sensor.
+The Arduino reads the analog value from the MQ135 sensor, converts it to resistance, applies temperature and humidity compensation, and calculates the estimated ammonia-sensitive VOC concentration. The code also reads temperature and humidity from the DHT11 sensor.
 
 \subsection{CSV Transmission}
-The Arduino transmits the sensor data in CSV format at 2-minute intervals. Each line includes a timestamp, temperature, humidity, ammonia concentration, and status.
+The Arduino transmits the sensor data in CSV format at 2-minute intervals. Each line includes a timestamp, temperature, humidity, estimated VOC concentration, and status.
 
 \section{AI Model Implementation}
 The AI models are implemented in Python using PyTorch.
@@ -102,7 +102,7 @@ The AI models are implemented in Python using PyTorch.
 The MLP is trained on the UCI Gas Sensor Array Drift Dataset. The dataset is split into training and test sets (80/20 split), stratified by class. The model is trained using the Adam optimizer with a learning rate of 0.001 and weight decay of 1e-4.
 
 \subsection{LSTM Training}
-The LSTM is trained on a synthetic 48-hour spoilage time-series dataset. The dataset is split into training and test sets, with the test set consisting of the last 10\% of the sequence (chronological split). The model is trained using the Adam optimizer with a learning rate of 0.001, Huber loss, and a ReduceLROnPlateau scheduler.
+The LSTM model is trained on a synthetic 48-hour spoilage time-series dataset to perform a proof-of-concept evaluation of time-series shelf-life forecasting. The dataset is split into training and test sets, with the test set consisting of the last 10\% of the sequence (chronological split). The model is trained using the Adam optimizer with a learning rate of 0.001, Huber loss, and a ReduceLROnPlateau scheduler.
 
 \section{Web Dashboard Implementation}
 The web dashboard is built using HTML, CSS, and JavaScript with Tailwind CSS for styling.
