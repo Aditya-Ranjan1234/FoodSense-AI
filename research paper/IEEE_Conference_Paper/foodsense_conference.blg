@@ -15,44 +15,44 @@ Database file #1: foodsense_refs.bib
 -- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
 
 Done.
-You've used 14 entries,
+You've used 15 entries,
             4087 wiz_defined-function locations,
-            919 strings with 10708 characters,
-and the built_in function-call counts, 11664 in all, are:
-= -- 977
-> -- 336
-< -- 88
-+ -- 180
-- -- 73
-* -- 582
-:= -- 1745
-add.period$ -- 28
-call.type$ -- 14
-change.case$ -- 14
-chr.to.int$ -- 168
-cite$ -- 14
-duplicate$ -- 856
-empty$ -- 820
-format.name$ -- 81
-if$ -- 2699
+            927 strings with 10827 characters,
+and the built_in function-call counts, 12641 in all, are:
+= -- 1057
+> -- 355
+< -- 103
++ -- 192
+- -- 74
+* -- 629
+:= -- 1882
+add.period$ -- 30
+call.type$ -- 15
+change.case$ -- 15
+chr.to.int$ -- 210
+cite$ -- 15
+duplicate$ -- 914
+empty$ -- 890
+format.name$ -- 83
+if$ -- 2926
 int.to.chr$ -- 0
-int.to.str$ -- 14
-missing$ -- 157
-newline$ -- 67
-num.names$ -- 14
-pop$ -- 349
+int.to.str$ -- 15
+missing$ -- 163
+newline$ -- 70
+num.names$ -- 15
+pop$ -- 362
 preamble$ -- 1
 purify$ -- 0
 quote$ -- 2
-skip$ -- 900
+skip$ -- 971
 stack$ -- 0
-substring$ -- 474
-swap$ -- 728
-text.length$ -- 32
+substring$ -- 565
+swap$ -- 784
+text.length$ -- 33
 text.prefix$ -- 0
 top$ -- 5
-type$ -- 14
+type$ -- 15
 warning$ -- 0
-while$ -- 48
-width$ -- 16
-write$ -- 168
+while$ -- 56
+width$ -- 17
+write$ -- 177

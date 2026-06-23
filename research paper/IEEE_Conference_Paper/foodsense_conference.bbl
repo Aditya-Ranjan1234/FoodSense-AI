@@ -21,12 +21,21 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
-\bibitem{Davidescu2025}
-M.~A. Davidescu, C.~P{\^a}nzaru, B.~M. M{\u a}descu, I.~Poro{\c s}nicu,
-  C.~Simeanu, A.~Usturoi, M.~Matei, and M.~G. Doli{\c s}, ``Advances and
-  challenges in smart packaging technologies for the food industry: Trends,
-  applications, and sustainability considerations,'' \emph{Foods}, vol.~14,
-  no.~24, p. 4347, 2025.
+\bibitem{DiRosa2017}
+A.~R. Di~Rosa, F.~Leone, F.~Cheli, and V.~Chiofalo, ``Fusion of electronic
+  nose, electronic tongue and computer vision for animal source food
+  authentication and quality assessment -- a review,'' \emph{Journal of Food
+  Engineering}, vol. 210, pp. 62--75, 2017.
+
+\bibitem{Albert2012}
+D.~R. Albert, M.~A. Todt, and H.~F. Davis, ``A low-cost quantitative absorption
+  spectrophotometer,'' \emph{Journal of Chemical Education}, vol.~89, no.~11,
+  pp. 1432--1435, 2012.
+
+\bibitem{Amin2023}
+U.~Amin, M.~Shahzad, A.~Shahzad, M.~Shahzad, U.~Khan, and Z.~Mahmood,
+  ``Automatic fruits freshness classification using cnn and transfer
+  learning,'' \emph{Applied Sciences}, vol.~13, no.~14, p. 8087, 2023.
 
 \bibitem{Vergara2012}
 \BIBentryALTinterwordspacing
@@ -46,6 +55,11 @@ Z.~Yi, W.~Shang, T.~Xu, S.~Guo, and X.~Wu, ``Local discriminant subspace
   learning for gas sensor drift problem,'' \emph{IEEE Transactions on Systems,
   Man, and Cybernetics: Systems}, vol.~52, no.~1, pp. 247--259, 2022.
 
+\bibitem{Fodor2024}
+M.~Fodor, A.~Matkovits, E.~L. Benes, and Z.~J{\'o}kai, ``The role of
+  near-infrared spectroscopy in food quality assurance: A review of the past
+  two decades,'' \emph{Foods}, vol.~13, no.~21, p. 3501, 2024.
+
 \bibitem{Chang2023}
 I.-S. Chang, S.-W. Byun, T.-B. Lim, and G.-M. Park, ``A study of drift effect
   in a popular metal oxide sensor and gas recognition using public gas
@@ -56,30 +70,28 @@ Z.~M. Guo \emph{et~al.}, ``Classification for \textit{Penicillium expansum}
   spoilage and defect in apples by electronic nose combined with
   chemometrics,'' \emph{Sensors}, vol.~20, no.~7, p. 2130, 2020.
 
-\bibitem{Fodor2024}
-M.~Fodor, A.~Matkovits, E.~L. Benes, and Z.~J{\'o}kai, ``The role of
-  near-infrared spectroscopy in food quality assurance: A review of the past
-  two decades,'' \emph{Foods}, vol.~13, no.~21, p. 3501, 2024.
+\bibitem{Cortes2019}
+V.~Cort{\'e}s, J.~Blasco, N.~Aleixos, S.~Cubero, and P.~Talens, ``Monitoring
+  strategies for quality control of agricultural products using visible and
+  near-infrared spectroscopy: A review,'' \emph{Trends in Food Science \&
+  Technology}, vol.~85, pp. 138--148, 2019.
 
-\bibitem{Albert2012}
-D.~R. Albert, M.~A. Todt, and H.~F. Davis, ``A low-cost quantitative absorption
-  spectrophotometer,'' \emph{Journal of Chemical Education}, vol.~89, no.~11,
-  pp. 1432--1435, 2012.
+\bibitem{Gao2024}
+X.~Gao, Z.~Xiao, and Z.~Deng, ``High accuracy food image classification via
+  vision transformer with data augmentation and feature augmentation,''
+  \emph{Journal of Food Engineering}, vol. 360, p. 111833, 2024.
 
 \bibitem{Ren2023}
 Z.~Ren \emph{et~al.}, ``Multirole 3d-printed modular spectrometer for various
   teaching spectral experiments in the classroom and at home,'' \emph{Journal
   of Chemical Education}, vol. 100, no.~9, pp. 3622--3631, 2023.
 
-\bibitem{Amin2023}
-U.~Amin, M.~Shahzad, A.~Shahzad, M.~Shahzad, U.~Khan, and Z.~Mahmood,
-  ``Automatic fruits freshness classification using cnn and transfer
-  learning,'' \emph{Applied Sciences}, vol.~13, no.~14, p. 8087, 2023.
-
-\bibitem{Gao2024}
-X.~Gao, Z.~Xiao, and Z.~Deng, ``High accuracy food image classification via
-  vision transformer with data augmentation and feature augmentation,''
-  \emph{Journal of Food Engineering}, vol. 360, p. 111833, 2024.
+\bibitem{Saha2023}
+A.~Saha, L.~Ali, R.~Rahman, T.~Hossain, S.~J. M.~B. Shamim, M.~A.~A. Supto,
+  M.~Shidujaman, M.~R. Uddin, and M.~Hasan, ``Iot based fruit quality
+  inspection and lifespan detection system,'' \emph{Proceedings of the 2023 7th
+  International Conference on Computing, Communication, Control and Automation
+  (ICCUBEA)}, pp. 1--6, 2023.
 
 \bibitem{Nguyen2024}
 D.-L. Nguyen, X.-T. Vo, A.~Priadana, M.~D. Putro, and K.-H. Jo, ``Fruit
@@ -91,12 +103,5 @@ D.-L. Nguyen, X.-T. Vo, A.~Priadana, M.~D. Putro, and K.-H. Jo, ``Fruit
 Y.~Wu, X.~Zhu, Q.~Huang, Y.~Zhang, J.~Evans, and S.~He, ``Predicting the
   quality of tangerines using the gcnn-lstm-at network based on vis-nir
   spectroscopy,'' \emph{Applied Sciences}, vol.~13, no.~14, p. 8221, 2023.
-
-\bibitem{Saha2023}
-A.~Saha, L.~Ali, R.~Rahman, T.~Hossain, S.~J. M.~B. Shamim, M.~A.~A. Supto,
-  M.~Shidujaman, M.~R. Uddin, and M.~Hasan, ``Iot based fruit quality
-  inspection and lifespan detection system,'' \emph{Proceedings of the 2023 7th
-  International Conference on Computing, Communication, Control and Automation
-  (ICCUBEA)}, pp. 1--6, 2023.
 
 \end{thebibliography}
