@@ -4,7 +4,7 @@ Below is the verified list of direct URLs and DOIs for all bibliography items in
 
 | Ref | Citation | Link / DOI | Verification URL |
 | :--- | :--- | :--- | :--- |
-| **[1]** | Vergara et al. (2016) - Gas Sensor Array Drift Dataset | [UCI Repository Link](https://archive.ics.uci.edu/dataset/224/gas+sensor+array+drift+dataset) | `https://archive.ics.uci.edu/dataset/224/gas+sensor+array+drift+dataset` |
+| **[1]** | Vergara et al. (2012) - Gas Sensor Array Drift Dataset | [UCI Repository Link](https://archive.ics.uci.edu/dataset/224/gas+sensor+array+drift+dataset) | `https://archive.ics.uci.edu/dataset/224/gas+sensor+array+drift+dataset` |
 | **[2]** | Huerta et al. (2016) - Online decorrelation of humidity and temperature... | DOI: [10.1016/j.chemolab.2016.07.004](https://doi.org/10.1016/j.chemolab.2016.07.004) | `https://doi.org/10.1016/j.chemolab.2016.07.004` |
 | **[3]** | Yi et al. (2022) - Local Discriminant Subspace Learning... | DOI: [10.1109/TSMC.2020.2997922](https://doi.org/10.1109/TSMC.2020.2997922) | `https://doi.org/10.1109/TSMC.2020.2997922` |
 | **[4]** | Chang et al. (2023) - A Study of Drift Effect in a Popular Metal Oxide Sensor... | DOI: [10.1109/ACCESS.2023.3257414](https://doi.org/10.1109/ACCESS.2023.3257414) | `https://doi.org/10.1109/ACCESS.2023.3257414` |
