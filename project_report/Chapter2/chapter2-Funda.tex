@@ -28,10 +28,10 @@ An MLP is a class of feedforward artificial neural network that consists of at l
 The MLP used in this project has the following architecture:
 \begin{itemize}
     \item Input layer: 128 features (from the UCI Gas Sensor Array Drift Dataset)
-    \item Hidden layer 1: Linear(128) + BatchNorm + ReLU + Dropout(0.3)
-    \item Hidden layer 2: Linear(64) + BatchNorm + ReLU + Dropout(0.2)
-    \item Hidden layer 3: Linear(32) + ReLU
-    \item Output layer: Linear(1) to BCEWithLogitsLoss
+    \item Layer 1: Linear(128, 64) + BatchNorm + ReLU + Dropout(0.3)
+    \item Layer 2: Linear(64, 32) + BatchNorm + ReLU + Dropout(0.2)
+    \item Layer 3: Linear(32, 16) + ReLU
+    \item Output layer: Linear(16, 1) to BCEWithLogitsLoss
 \end{itemize}
 
 \subsection{Long Short-Term Memory (LSTM)}
@@ -42,10 +42,10 @@ The LSTM used in this project includes a temporal attention mechanism, which all
 The LSTM architecture used is:
 \begin{itemize}
     \item Input sequence: last 30 readings (1 hour context window)
-    \item LSTM layer: hidden size 128, 2 layers, dropout 0.3
+    \item LSTM layer: hidden size 64, 2 layers, dropout 0.2
     \item Temporal attention layer
-    \item Linear layer: Linear(64) + ReLU + Dropout(0.2)
-    \item Output layer: Linear(1) + Sigmoid
+    \item Linear layer: Linear(64, 32) + ReLU
+    \item Output layer: Linear(32, 1) + Sigmoid
 \end{itemize}
 
 \section{Tools and Software}

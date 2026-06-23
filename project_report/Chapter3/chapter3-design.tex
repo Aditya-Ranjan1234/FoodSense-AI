@@ -146,17 +146,17 @@ This format allows direct ingestion into Python using pandas.read\_csv, without 
 The FoodSense AI system uses two complementary AI models for different tasks.
 
 \subsection{MLP Gas Classifier}
-The MLP classifier is used for point-in-time classification of gas concentrations. The model takes 128 features as input (from the UCI Gas Sensor Array Drift Dataset) and outputs a binary classification (elevated VOC exposure present or not).
+The MLP classifier is used for point-in-time classification of gas concentrations. The model takes 128 features as input (from the UCI Gas Sensor Array Drift Dataset) and outputs a binary classification (elevated VOC exposure present or not). It utilizes a 4-layer structure mapping Linear(128, 64) $\rightarrow$ Linear(64, 32) $\rightarrow$ Linear(32, 16) $\rightarrow$ Linear(16, 1).
 
 Key design choices for the MLP include:
 \begin{itemize}
-    \item Batch normalization after each dense layer to stabilize training
+    \item Batch normalization after the first two dense layers to stabilize training
     \item BCEWithLogitsLoss with pos\_weight = 7.5 to handle class imbalance
     \item L2 regularization via weight\_decay = 1e-4 to prevent overfitting
 \end{itemize}
 
 \subsection{LSTM with Temporal Attention}
-The LSTM with temporal attention is used for continuous shelf-life prediction. Spoilage is a process, not a snapshot, so the model needs to capture temporal dependencies across time. The model uses a 1-hour context window (last 30 readings) to predict the remaining shelf life in hours. This is evaluated as a proof-of-concept for temporal drift modeling.
+The LSTM with temporal attention is used for continuous shelf-life prediction. Spoilage is a process, not a snapshot, so the model needs to capture temporal dependencies across time. The model uses a 1-hour context window (last 30 readings) with a hidden size of 64 and a Linear(64, 32) $\rightarrow$ Linear(32, 1) mapping to predict the remaining shelf life. This is evaluated as a proof-of-concept for temporal drift modeling.
 
 Key design choices for the LSTM include:
 \begin{itemize}
