@@ -1,0 +1,299 @@
+\documentclass[conference]{IEEEtran}
+\IEEEoverridecommandlockouts
+% -------------------------------------------------------
+% Packages
+% -------------------------------------------------------
+\usepackage{cite}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{algorithmic}
+\usepackage{graphicx}
+\usepackage{textcomp}
+\usepackage{xcolor}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{url}
+\usepackage{hyperref}
+\hypersetup{colorlinks=true,linkcolor=black,citecolor=black,urlcolor=black}
+
+\def\BibTeX{{\rm B\kern-.05em{\sc i\kern-.025em b}\kern-.08em
+    T\kern-.1667em\lower.7ex\hbox{E}\kern-.125emX}}
+
+% -------------------------------------------------------
+\begin{document}
+% -------------------------------------------------------
+
+\title{FoodSense: A Multimodal IoT--AI System for\\Early Food Spoilage Prediction Using\\Gas Sensing, Visible Spectroscopy, and Vision}
+
+\author{
+  \IEEEauthorblockN{Aditya Ranjan}
+  \IEEEauthorblockA{\textit{Dept.\ of Computer Science Engineering}\\
+  \textit{RV College of Engineering}\\
+  Bengaluru, India\\
+  adityaranjan@rvce.edu.in}
+  \and
+  \IEEEauthorblockN{Gnanendra Naidu N}
+  \IEEEauthorblockA{\textit{Dept.\ of Computer Science Engineering}\\
+  \textit{RV College of Engineering}\\
+  Bengaluru, India\\
+  gnanendra@rvce.edu.in}
+  \and
+  \IEEEauthorblockN{Arumita Nandi}
+  \IEEEauthorblockA{\textit{Dept.\ of Electronics \& Communication Engg.}\\
+  \textit{RV College of Engineering}\\
+  Bengaluru, India\\
+  arumita@rvce.edu.in}
+  \and
+  \IEEEauthorblockN{Vinay A}
+  \IEEEauthorblockA{\textit{Dept.\ of Electronics \& Communication Engg.}\\
+  \textit{RV College of Engineering}\\
+  Bengaluru, India\\
+  vinaya@rvce.edu.in}
+  \and
+  \IEEEauthorblockN{Dr.\ Anitha Sandeep}
+  \IEEEauthorblockA{\textit{Dept.\ of Computer Science Engineering}\\
+  \textit{RV College of Engineering}\\
+  Bengaluru, India\\
+  anithasandeep@rvce.edu.in}
+}
+
+\maketitle
+
+% -------------------------------------------------------
+\begin{abstract}
+Food spoilage accounts for nearly 19\% of global food production loss, creating pressing food-security and economic consequences. Existing automated detection systems either rely on expensive multi-sensor electronic noses or yield only binary ``fresh/spoiled'' labels without temporal context. This paper presents \textbf{FoodSense}, a low-cost, multimodal IoT--AI pipeline that integrates (i)~an MQ135 metal-oxide gas sensor with on-edge temperature-humidity drift compensation, (ii)~a DIY RGB-LED/LDR visible spectrophotometer for pigment-level analysis, and (iii)~a server-side image-analysis branch using a fine-tuned CNN and Vision Transformer. A Multi-Layer Perceptron (MLP) trained on the UCI Gas Sensor Array Drift Dataset achieves \textbf{96.84\%} accuracy and an F1-score of \textbf{87.28\%} for VOC-elevation detection. An attention-augmented Long Short-Term Memory (LSTM) network provides continuous shelf-life regression with a Mean Absolute Error of \textbf{$\pm$4.0~hours} on a proof-of-concept synthetic time-series. A virtual spectrometer calibration model maps RGB-LDR signals to visible wavelengths with $R^{2} = 0.9625$, and a pigment-degradation classifier distinguishes Fresh, Ripe, and Spoiled stages at \textbf{95.60\%} accuracy. The full system is deployed as an open-source FastAPI web application on Hugging Face Spaces, exposing real-time WebSocket telemetry and a mobile-responsive dashboard.
+\end{abstract}
+
+\begin{IEEEkeywords}
+food spoilage detection, IoT sensor fusion, MLP gas classifier, attention LSTM, visible spectroscopy, multimodal AI, edge computing, shelf-life prediction
+\end{IEEEkeywords}
+
+% -------------------------------------------------------
+\section{Introduction}
+\label{sec:intro}
+% -------------------------------------------------------
+
+The United Nations Environment Programme estimates that approximately 19\% of all food produced globally is wasted before consumption~\cite{Davidescu2025}. Spoilage-driven waste has downstream consequences for greenhouse gas emissions, economic loss, and food insecurity. The commercial solution—an electronic nose (e-nose) comprising a calibrated array of metal-oxide sensors—costs upward of several thousand USD and is confined to laboratory settings~\cite{Vergara2012}. Consumer-grade systems are therefore limited to manual inspection, a subjective and error-prone process.
+
+Recent advances in edge computing and deep learning have opened the possibility of deploying AI-driven spoilage detectors on low-cost hardware. However, the majority of prior work falls into one of two categories: (a)~single-modality systems that either analyse gas-phase volatile organic compounds (VOCs) or classify visual ripeness, but not both; and (b)~static classifiers that report an instantaneous label without any estimate of remaining shelf life.
+
+This paper addresses both gaps through the following contributions:
+\begin{itemize}
+    \item \textbf{On-edge drift compensation.} A closed-form temperature-humidity correction formula is executed directly on the Arduino microcontroller, eliminating the need for post-hoc recalibration.
+    \item \textbf{Continuous shelf-life regression.} A 2-layer, attention-augmented LSTM processes a rolling 30-reading window to predict remaining shelf life in hours, rather than outputting a binary label.
+    \item \textbf{Multimodal architecture.} Three parallel inference branches—gas/climate, spectroscopy, and vision—contribute to a unified freshness score served over WebSockets.
+    \item \textbf{Virtual spectrophotometry.} A machine-learning calibration model maps cheap RGB-LED/LDR signals to continuous wavelength (nm) and absorbance values, realising a sub-\$5 spectrometer.
+\end{itemize}
+
+% -------------------------------------------------------
+\section{Related Work}
+\label{sec:related}
+% -------------------------------------------------------
+
+\textbf{Gas-sensor spoilage detection.} Vergara et al.~\cite{Vergara2012} collected a 36-month benchmark demonstrating significant drift in metal-oxide sensors. Huerta et al.~\cite{Huerta2016} quantified the contribution of temperature and humidity to drift in open-sampling e-noses. Yi et al.~\cite{Yi2022} proposed discriminant subspace learning for batch drift compensation, while Chang et al.~\cite{Chang2023} analysed temporal and spatial artifacts in public gas datasets. Guo et al.~\cite{Guo2020} classified \textit{Penicillium expansum} spoilage in apples using an e-nose combined with chemometrics.
+
+\textbf{Spectroscopy and colorimetry.} Fodor et al.~\cite{Fodor2024} demonstrated that NIR absorption peaks at specific wavelengths directly indicate chlorophyll degradation and melanin formation—markers of spoilage. Albert et al.~\cite{Albert2012} showed that Arduino-controlled RGB LEDs paired with LDR photodetectors can perform quantitative spectrophotometry. Ren et al.~\cite{Ren2023} extended this approach with a 3D-printed modular spectrometer for education and research.
+
+\textbf{Vision and deep learning.} Amin et al.~\cite{Amin2023} demonstrated CNN-based automatic fruit freshness classification with high accuracy. Gao et al.~\cite{Gao2024} applied Vision Transformers (ViT) for food image classification, achieving state-of-the-art results. Nguyen et al.~\cite{Nguyen2024} designed an optical fruit-ripeness detector for automated sorting.
+
+\textbf{Temporal modeling.} Wu et al.~\cite{Wu2023} proposed the GCNN-LSTM-AT network for tangerine quality prediction using Vis-NIR spectroscopy. Saha et al.~\cite{Saha2023} built an IoT-based fruit lifespan detection system at the network edge.
+
+FoodSense advances the state-of-the-art by combining all three modalities—gas, spectroscopy, and vision—in a single low-cost platform with on-edge drift correction and continuous shelf-life output.
+
+% -------------------------------------------------------
+\section{System Architecture}
+\label{sec:architecture}
+% -------------------------------------------------------
+
+FoodSense is structured as a three-tier system: (1)~an \emph{edge hardware node} for data acquisition, (2)~a \emph{FastAPI backend} for AI inference, and (3)~a \emph{web dashboard} for visualisation and interaction.
+
+\subsection{Edge Hardware Node}
+
+The hardware node houses two sensing sub-systems in a compact enclosure:
+
+\textbf{Gas/Climate Sensor Node.} An MQ135 metal-oxide gas sensor~\cite{Huerta2016} reads ambient VOC concentration via the Arduino ADC. A DHT11 sensor supplies temperature ($T$, \textdegree C) and relative humidity ($H$, \%). On-device drift compensation is applied before serial transmission:
+\begin{equation}
+  \text{corr} = 1 + 0.02\,(T - 20) + 0.01\,(H - 65)
+  \label{eq:comp}
+\end{equation}
+\begin{equation}
+  R_{s,\text{corr}} = \frac{R_s}{\text{corr}}
+  \label{eq:rs}
+\end{equation}
+The corrected resistance $R_{s,\text{corr}}$ is then converted to an estimated ammonia-sensitive VOC concentration (ppm) using the standard power-law sensor model and transmitted via USB serial as comma-separated values (CSV) at 2-minute intervals.
+
+\textbf{DIY Visible Spectrophotometer.} A common-cathode RGB LED illuminates a cuvette containing the test solution; an LDR photodetector measures transmitted intensity at red (660~nm), green (540~nm), and blue (430~nm) channels. The assembly is housed in a 3D-printed dark chamber to eliminate ambient light interference. Raw ADC readings are transmitted alongside the gas data to the host computer.
+
+\subsection{Backend AI Engine}
+
+The FastAPI server exposes three REST/WebSocket API routes, each connected to dedicated AI models:
+
+\textbf{Gas API Route.} Feeds temperature-compensated VOC readings to (a)~an MLP binary gas classifier and (b)~an attention-augmented LSTM for shelf-life regression.
+
+\textbf{Spectroscopy API Route.} Accepts RGB-LDR absorbance values and routes them to (a)~a Virtual Spectrometer Calibration MLP and (b)~a Pigment Degradation Classifier MLP.
+
+\textbf{Vision API Route.} Accepts JPEG/PNG frames and runs inference through a fine-tuned EfficientNet-B0 CNN for spoilage-state classification and a Vision Transformer (ViT-B/16) for quality regression, both pre-trained on ImageNet and fine-tuned on a combined Kaggle fruit-freshness dataset~\cite{Amin2023}.
+
+\subsection{Web Dashboard}
+
+A Tailwind CSS + JavaScript single-page application is hosted on Hugging Face Spaces. The dashboard maintains a persistent WebSocket connection for live telemetry, renders chart.js time-series plots, and supports image upload for on-demand visual analysis.
+
+% -------------------------------------------------------
+\section{AI Model Design}
+\label{sec:models}
+% -------------------------------------------------------
+
+\subsection{MLP Gas Classifier}
+
+The MLP is trained on the UCI Gas Sensor Array Drift Dataset~\cite{Vergara2012}, which contains 13,910 real sensor readings from a 36-month experiment. The binary label indicates elevated VOC exposure (ammonia, acetone, ethylene) versus baseline air.
+
+\textbf{Architecture.}
+\begin{align*}
+  &\text{Linear}(128, 64) \to \text{BN} \to \text{ReLU} \to \text{Dropout}(0.3) \\
+  &\to \text{Linear}(64, 32) \to \text{BN} \to \text{ReLU} \to \text{Dropout}(0.2) \\
+  &\to \text{Linear}(32, 16) \to \text{ReLU} \\
+  &\to \text{Linear}(16, 1) \to \text{BCEWithLogitsLoss}
+\end{align*}
+
+\textbf{Training.} Adam optimiser, learning rate $10^{-3}$, weight decay $10^{-4}$, 80/20 stratified split, \texttt{pos\_weight}=7.5 for class imbalance correction.
+
+\subsection{Attention-Augmented LSTM}
+
+Spoilage is a dynamic process; the LSTM captures the temporal progression of VOC signals across a 1-hour rolling context window (30 readings, one per 2~min).
+
+\textbf{Architecture.}
+\begin{align*}
+  &\text{LSTM}(\text{hidden}=64,\,\text{layers}=2,\,\text{dropout}=0.2) \\
+  &\to \text{Temporal Attention Layer} \\
+  &\to \text{Linear}(64, 32) \to \text{ReLU} \\
+  &\to \text{Linear}(32, 1) \to \text{Sigmoid} \times 48\,\text{h}
+\end{align*}
+
+\textbf{Training.} Huber loss, ReduceLROnPlateau scheduler, gradient clipping (max\_norm=1.0), target normalised to $[0,1]$.
+
+\subsection{Virtual Spectrometer Calibration MLP}
+
+The calibration model maps $(R_{\text{raw}}, G_{\text{raw}}, B_{\text{raw}})$ triplets from the LDR to continuous wavelength (nm) and absorbance (Abs) values. It is trained on an experimental potassium permanganate ($\text{KMnO}_4$) scanning dataset generated using the DIY spectrophotometer.
+
+\subsection{Pigment Degradation Classifier}
+
+A 3-class MLP trained on laboratory spectral measurements classifies produce into \textit{Fresh}, \textit{Ripe}, and \textit{Spoiled} categories by evaluating optical absorption at the chlorophyll bands (430~nm, 660~nm) and the enzymatic-browning band (540~nm).
+
+% -------------------------------------------------------
+\section{Experimental Results}
+\label{sec:results}
+% -------------------------------------------------------
+
+\subsection{MLP Gas Classifier}
+
+Table~\ref{tab:mlp} reports performance on the 20\% hold-out test split (2,782 samples). The model achieves 96.84\% accuracy with strong recall, ensuring that genuine VOC elevations (indicative of active spoilage) are rarely missed.
+
+\begin{table}[ht]
+\centering
+\caption{MLP Gas Classifier — Test Set Performance}
+\label{tab:mlp}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Metric} & \textbf{Score} \\
+\midrule
+Accuracy & 96.84\% \\
+Precision & 82.97\% \\
+Recall & 92.07\% \\
+F1-Score & 87.28\% \\
+True Negatives & 2392 \\
+False Positives & 62 \\
+False Negatives & 26 \\
+True Positives & 302 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The 26 false negatives represent 8.0\% of positive instances, a clinically meaningful but operationally acceptable miss rate for an early-warning system where false positives merely trigger early inspection.
+
+\subsection{LSTM Shelf-Life Predictor}
+
+The LSTM is evaluated on a synthetic 48-hour spoilage time-series (1,440 samples at 2-min intervals) using a chronological 90/10 train-test split. This constitutes a proof-of-concept evaluation; real-world performance will require walk-forward cross-validation on collected hardware data.
+
+\begin{table}[ht]
+\centering
+\caption{LSTM Shelf-Life Predictor — Proof-of-Concept Metrics}
+\label{tab:lstm}
+\begin{tabular}{lc}
+\toprule
+\textbf{Metric} & \textbf{Score} \\
+\midrule
+MAE & $\pm$4.00 hours \\
+RMSE & 4.11 hours \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+The temporal attention mechanism allows the model to assign higher weight to recent VOC spikes that signal accelerating spoilage, improving short-horizon predictions.
+
+\subsection{Virtual Spectrometer Calibration}
+
+\begin{table}[ht]
+\centering
+\caption{Virtual Spectrometer Calibration Model Metrics}
+\label{tab:cal}
+\begin{tabular}{lcc}
+\toprule
+\textbf{Target} & \textbf{MSE} & \boldmath$R^2$ \\
+\midrule
+Wavelength (nm) & 182.29 & 0.9625 \\
+Absorbance & 0.0088 & 0.7240 \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+An $R^2$ of 0.9625 for wavelength prediction confirms that the discrete RGB emission profiles are sufficient to reconstruct the continuous visible spectrum with high fidelity.
+
+\subsection{Pigment Degradation Classifier}
+
+\begin{table}[ht]
+\centering
+\caption{Pigment Classifier — Per-Class Report}
+\label{tab:pigment}
+\begin{tabular}{lccc}
+\toprule
+\textbf{Class} & \textbf{Precision} & \textbf{Recall} & \textbf{F1} \\
+\midrule
+Fresh   & 0.98 & 0.97 & 0.97 \\
+Ripe    & 0.94 & 0.95 & 0.94 \\
+Spoiled & 0.95 & 0.95 & 0.95 \\
+\midrule
+\textbf{Accuracy} & \multicolumn{3}{c}{\textbf{95.60\%}} \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+Monitoring absorption at 430~nm and 660~nm (chlorophyll $a$ and $b$) and at 540~nm (oxidative browning products) provides a robust three-point chemical fingerprint sufficient to distinguish all three ripeness stages.
+
+% -------------------------------------------------------
+\section{Deployment and Dashboard}
+\label{sec:deployment}
+% -------------------------------------------------------
+
+The full FoodSense stack is containerised and deployed on Hugging Face Spaces via a GitHub Actions CI/CD pipeline. Model updates are automatically pushed to the live endpoint. The dashboard provides:
+\begin{itemize}
+    \item \textbf{Live sensor tab:} scrolling VOC, temperature, and humidity charts with shelf-life countdown updated every 3~s.
+    \item \textbf{Evaluation tab:} confusion matrix, precision–recall curves, and calibration plots.
+    \item \textbf{Image analysis tab:} drag-and-drop JPEG upload with CNN and ViT inference results displayed within $\approx$1~s.
+    \item \textbf{Architecture tab:} interactive multiflow diagram illustrating the six-model AI engine.
+\end{itemize}
+
+% -------------------------------------------------------
+\section{Conclusion}
+\label{sec:conclusion}
+% -------------------------------------------------------
+
+FoodSense demonstrates that a sub-\$30 hardware platform—an Arduino, an MQ135 gas sensor, a DHT11 humidity probe, and a DIY RGB-LED/LDR spectrophotometer—can support a production-grade multimodal AI pipeline for early food spoilage detection. On-edge temperature-humidity compensation eliminates the single largest source of metal-oxide sensor drift without any server-side post-processing. The parallel MLP and attention-LSTM inference tracks provide both instantaneous VOC classification and continuous shelf-life regression, addressing a critical gap in existing consumer-grade systems.
+
+Future work will: (i)~collect real sensor time-series to validate and retrain the LSTM with walk-forward cross-validation; (ii)~implement model compression (quantisation, pruning) to deploy the CNN and ViT branches directly on a Raspberry Pi; and (iii)~expand the food-type coverage to include grains, dairy, and processed foods.
+
+% -------------------------------------------------------
+% Bibliography
+% -------------------------------------------------------
+\bibliographystyle{IEEEtran}
+\bibliography{foodsense_refs}
+
+\end{document}

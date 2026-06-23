@@ -1,0 +1,58 @@
+This is BibTeX, Version 0.99e
+Capacity: max_strings=200000, hash_size=200000, hash_prime=170003
+The top-level auxiliary file: foodsense_access.aux
+Reallocating 'name_of_file' (item size: 1) to 9 items.
+The style file: IEEEtran.bst
+Reallocating 'name_of_file' (item size: 1) to 15 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Reallocating 'wiz_functions' (item size: 4) to 6000 items.
+Reallocating 'singl_function' (item size: 4) to 100 items.
+Database file #1: foodsense_refs.bib
+-- IEEEtran.bst version 1.14 (2015/08/26) by Michael Shell.
+-- http://www.michaelshell.org/tex/ieeetran/bibtex/
+-- See the "IEEEtran_bst_HOWTO.pdf" manual for usage information.
+
+Done.
+You've used 19 entries,
+            4087 wiz_defined-function locations,
+            955 strings with 11846 characters,
+and the built_in function-call counts, 16153 in all, are:
+= -- 1363
+> -- 444
+< -- 137
++ -- 240
+- -- 90
+* -- 803
+:= -- 2410
+add.period$ -- 38
+call.type$ -- 19
+change.case$ -- 19
+chr.to.int$ -- 276
+cite$ -- 19
+duplicate$ -- 1167
+empty$ -- 1132
+format.name$ -- 103
+if$ -- 3745
+int.to.chr$ -- 0
+int.to.str$ -- 19
+missing$ -- 207
+newline$ -- 82
+num.names$ -- 19
+pop$ -- 446
+preamble$ -- 1
+purify$ -- 0
+quote$ -- 2
+skip$ -- 1247
+stack$ -- 0
+substring$ -- 731
+swap$ -- 1010
+text.length$ -- 45
+text.prefix$ -- 0
+top$ -- 5
+type$ -- 19
+warning$ -- 0
+while$ -- 73
+width$ -- 21
+write$ -- 221
