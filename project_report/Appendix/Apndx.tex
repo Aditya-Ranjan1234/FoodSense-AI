@@ -42,15 +42,6 @@ void readChannel(String name, int r, int g, int b) {
   analogWrite(GREEN_PIN, g);
   analogWrite(BLUE_PIN, b);
   delay(150);
-  
-  int val = analogRead(LDR_PIN);
-  Serial.print(name);
-  Serial.print(" LDR Raw: ");
-  Serial.println(val);
-  
-  analogWrite(RED_PIN, 0);
-  analogWrite(GREEN_PIN, 0);
-  analogWrite(BLUE_PIN, 0);
 }
 \end{lstlisting}
 \end{tcolorbox}
