@@ -422,7 +422,7 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
   </div>
 
   <!-- 9. Live Spectral Stream Tab -->
-  <div id="tab-content-spectral" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
+  <div id="tab-content-spectral" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden" style="justify-content: flex-start; padding-top: 0.75rem;">
     <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
       
       <!-- Left Column: Controls & Real-Time Data -->
@@ -440,6 +440,17 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
 
         <!-- Stream Player Controls -->
         <div class="bg-surface-container/60 border border-outline-variant/30 rounded-2xl p-4 space-y-3">
+          
+          <!-- Stream Source Selector -->
+          <div class="flex gap-2">
+            <button id="btn-source-fresh" onclick="setStreamSource('fresh')" class="flex-1 bg-primary/20 text-primary border border-primary/30 font-bold text-[11px] py-1.5 px-3 rounded-lg transition-all text-center">
+              Fresh Food (Green/Yellow)
+            </button>
+            <button id="btn-source-spoiled" onclick="setStreamSource('spoiled')" class="flex-1 bg-background hover:bg-surface-container text-[#dde4dd]/60 border border-outline-variant/30 font-bold text-[11px] py-1.5 px-3 rounded-lg transition-all text-center">
+              Spoiled Food (Red)
+            </button>
+          </div>
+
           <div class="flex items-center justify-between">
             <div class="flex gap-2">
               <button id="btn-stream-play" onclick="toggleStream()" class="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-lg px-4 py-2 text-xs font-bold transition-all flex items-center gap-1.5">
@@ -973,6 +984,7 @@ let streamIsPlaying = false;
 let runChloAbs = [];
 let runCaroAbs = [];
 let accumulatedPoints = [];
+let streamSource = 'fresh';
 
 async function initStream() {
   if (streamData.length > 0) return;
@@ -1008,7 +1020,11 @@ async function toggleStream() {
     streamIsPlaying = true;
     icon.textContent = 'pause';
     txt.textContent = 'Pause Stream';
-    btn.className = "bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-500 border border-yellow-500/30 rounded-lg px-4 py-2 text-xs font-bold transition-all flex items-center gap-1.5";
+    if (streamSource === 'fresh') {
+      btn.className = "bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-500 border border-yellow-500/30 rounded-lg px-4 py-2 text-xs font-bold transition-all flex items-center gap-1.5";
+    } else {
+      btn.className = "bg-error/20 hover:bg-error/30 text-error border border-error/30 rounded-lg px-4 py-2 text-xs font-bold transition-all flex items-center gap-1.5";
+    }
     streamIntervalId = setInterval(tickStream, streamSpeed);
   }
 }
@@ -1020,6 +1036,22 @@ function changeStreamSpeed(val) {
     clearInterval(streamIntervalId);
     streamIntervalId = setInterval(tickStream, streamSpeed);
   }
+}
+
+function setStreamSource(source) {
+  streamSource = source;
+  const freshBtn = document.getElementById('btn-source-fresh');
+  const spoiledBtn = document.getElementById('btn-source-spoiled');
+
+  if (source === 'fresh') {
+    freshBtn.className = "flex-1 bg-primary/20 text-primary border border-primary/30 font-bold text-[11px] py-1.5 px-3 rounded-lg transition-all text-center";
+    spoiledBtn.className = "flex-1 bg-background hover:bg-surface-container text-[#dde4dd]/60 border border-outline-variant/30 font-bold text-[11px] py-1.5 px-3 rounded-lg transition-all text-center";
+  } else {
+    spoiledBtn.className = "flex-1 bg-error/20 text-error border border-error/30 font-bold text-[11px] py-1.5 px-3 rounded-lg transition-all text-center";
+    freshBtn.className = "flex-1 bg-background hover:bg-surface-container text-[#dde4dd]/60 border border-outline-variant/30 font-bold text-[11px] py-1.5 px-3 rounded-lg transition-all text-center";
+  }
+  
+  resetStream();
 }
 
 function resetStream() {
@@ -1081,7 +1113,17 @@ function tickStream() {
   const wl = parseFloat(row["Wavelength (nm)"]);
   const rgbRaw = row["RGB Values"];
   const ldr = parseFloat(row["LDR Value"]);
-  const abs = parseFloat(row["Absorbance (Abs)"]);
+  let abs = parseFloat(row["Absorbance (Abs)"]);
+
+  if (streamSource === 'spoiled') {
+    // Modify absorbance values to simulate spoilage (low chlorophyll, high browning)
+    if ((wl >= 400 && wl <= 440) || (wl >= 640 && wl <= 680)) {
+      abs = abs * 0.12; // deplete chlorophyll peak absorbance
+    }
+    if (wl >= 490 && wl <= 580) {
+      abs = abs + 0.8; // increase browning absorption
+    }
+  }
 
   // Clean up RGB representation
   let rgbClean = rgbRaw.replace(/[()\"']/g, '');
@@ -1114,26 +1156,37 @@ function tickStream() {
   const avgCaro = runCaroAbs.length ? (runCaroAbs.reduce((a,b) => a+b, 0) / runCaroAbs.length) : -0.5;
 
   // Absorbance ranges from -0.8 to 1.5 in data. Let's scale it to nice percentages
-  const chloPct = Math.round(Math.min(100, Math.max(15, (avgChlo + 0.8) * 55)));
-  const caroPct = Math.round(Math.min(100, Math.max(10, (avgCaro + 0.8) * 45)));
+  let chloPct = Math.round(Math.min(100, Math.max(15, (avgChlo + 0.8) * 55)));
+  let caroPct = Math.round(Math.min(100, Math.max(10, (avgCaro + 0.8) * 45)));
+
+  if (streamSource === 'spoiled') {
+    chloPct = Math.round(chloPct * 0.18);
+    caroPct = Math.round(caroPct * 0.25);
+  }
 
   document.getElementById('lbl-chlo-pct').textContent = `${chloPct}%`;
   document.getElementById('bar-chlo-pct').style.width = `${chloPct}%`;
   document.getElementById('lbl-caro-pct').textContent = `${caroPct}%`;
   document.getElementById('bar-caro-pct').style.width = `${caroPct}%`;
 
-  // Classification & Badge: SHOW ONLY GREEN (FRESH) AND YELLOW (RIPE)
+  // Classification & Badge
   const badge = document.getElementById('stream-status-badge');
   const expl = document.getElementById('stream-status-explanation');
 
-  if (chloPct > 55) {
-    badge.textContent = 'FRESH';
-    badge.className = 'inline-block px-6 py-2.5 rounded-full font-bold text-xl text-emerald-400 bg-emerald-500/10 border border-emerald-500/20';
-    expl.textContent = 'High chlorophyll absorption signatures detected. The produce is in highly fresh, optimal storage condition.';
+  if (streamSource === 'spoiled') {
+    badge.textContent = 'SPOILED';
+    badge.className = 'inline-block px-6 py-2.5 rounded-full font-bold text-xl text-error bg-error/10 border border-error/20';
+    expl.textContent = 'Chlorophyll peaks are depleted and browning (melanins) absorption is very high. Spoilage process is advanced.';
   } else {
-    badge.textContent = 'RIPE';
-    badge.className = 'inline-block px-6 py-2.5 rounded-full font-bold text-xl text-yellow-500 bg-yellow-500/10 border border-yellow-500/20';
-    expl.textContent = 'Chlorophyll peaks are stable/moderating and yellow carotenoid pigmentation is emerging. Excellent for current stock.';
+    if (chloPct > 55) {
+      badge.textContent = 'FRESH';
+      badge.className = 'inline-block px-6 py-2.5 rounded-full font-bold text-xl text-emerald-400 bg-emerald-500/10 border border-emerald-500/20';
+      expl.textContent = 'High chlorophyll absorption signatures detected. The produce is in highly fresh, optimal storage condition.';
+    } else {
+      badge.textContent = 'RIPE';
+      badge.className = 'inline-block px-6 py-2.5 rounded-full font-bold text-xl text-yellow-500 bg-yellow-500/10 border border-yellow-500/20';
+      expl.textContent = 'Chlorophyll peaks are stable/moderating and yellow carotenoid pigmentation is emerging. Excellent for current stock.';
+    }
   }
 
   // Plot Chart Point
@@ -1146,6 +1199,16 @@ function tickStream() {
     const normalized = (a - (-0.8)) / (1.5 - (-0.8));
     return 120 - Math.min(120, Math.max(0, normalized * 120));
   };
+
+  const strokeColor = streamSource === 'spoiled' ? '#ffb4ab' : '#4edea3';
+  document.getElementById('spectrum-chart-path').setAttribute('stroke', strokeColor);
+
+  const gradStop1 = document.querySelector('#grad-spectral stop:first-child');
+  const gradStop2 = document.querySelector('#grad-spectral stop:last-child');
+  if (gradStop1 && gradStop2) {
+    gradStop1.setAttribute('stop-color', strokeColor);
+    gradStop2.setAttribute('stop-color', strokeColor);
+  }
 
   if (accumulatedPoints.length > 0) {
     let pathD = `M ${mapX(accumulatedPoints[0].wl)} ${mapY(accumulatedPoints[0].abs)}`;
