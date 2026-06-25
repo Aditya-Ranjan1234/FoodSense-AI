@@ -43,6 +43,7 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
     <button onclick="showTab('vision')" id="tab-vision" class="text-[12px] transition-all text-[#dde4dd]">Image Analysis</button>
     <button onclick="showTab('calibration')" id="tab-calibration" class="text-[12px] transition-all text-[#dde4dd]">AI Calibration</button>
     <button onclick="showTab('pigment')" id="tab-pigment" class="text-[12px] transition-all text-[#dde4dd]">Pigment Classifier</button>
+    <button onclick="showTab('spectral')" id="tab-spectral" class="text-[12px] transition-all text-[#dde4dd]">Spectral Stream</button>
     <button onclick="showTab('modeldata')" id="tab-modeldata" class="text-[12px] transition-all text-[#dde4dd]">Datasets & Models</button>
     <button onclick="showTab('comparison')" id="tab-comparison" class="text-[12px] transition-all text-[#dde4dd]">Comparison</button>
     <button onclick="showTab('hardware')" id="tab-hardware" class="text-[12px] transition-all text-[#dde4dd]">Hardware Setup</button>
@@ -420,6 +421,159 @@ body { font-family: 'Inter', sans-serif; overflow: hidden; height: 100vh; width:
     </div>
   </div>
 
+  <!-- 9. Live Spectral Stream Tab -->
+  <div id="tab-content-spectral" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
+    <div class="max-w-6xl w-full grid grid-cols-1 lg:grid-cols-2 gap-6 items-stretch">
+      
+      <!-- Left Column: Controls & Real-Time Data -->
+      <div class="glass-card rounded-3xl p-6 flex flex-col justify-between space-y-6">
+        <div>
+          <div class="flex justify-between items-center mb-1">
+            <p class="text-xs font-bold text-primary tracking-widest uppercase">Live Spectroscopy Stream</p>
+            <span class="text-[10px] bg-primary/20 text-primary border border-primary/30 px-2 py-0.5 rounded-full font-bold uppercase animate-pulse">Streaming data.csv</span>
+          </div>
+          <h2 class="text-2xl font-bold tracking-tight" style="font-family:'Space Grotesk',sans-serif">Spectral Data Acquisition</h2>
+          <p class="text-xs text-[#dde4dd]/70 mt-1 leading-relaxed">
+            Acquire spectral data point by point from the CSV repository log. Track real-time changes in absorption across wavelengths to diagnose food freshness state.
+          </p>
+        </div>
+
+        <!-- Stream Player Controls -->
+        <div class="bg-surface-container/60 border border-outline-variant/30 rounded-2xl p-4 space-y-3">
+          <div class="flex items-center justify-between">
+            <div class="flex gap-2">
+              <button id="btn-stream-play" onclick="toggleStream()" class="bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-lg px-4 py-2 text-xs font-bold transition-all flex items-center gap-1.5">
+                <span id="icon-stream-play" class="material-symbols-outlined text-sm">play_arrow</span>
+                <span id="text-stream-play">Play Stream</span>
+              </button>
+              <button onclick="resetStream()" class="bg-background hover:bg-surface-container border border-outline-variant/50 text-[#dde4dd] rounded-lg px-4 py-2 text-xs font-bold transition-all flex items-center gap-1.5">
+                <span class="material-symbols-outlined text-sm">replay</span>
+                Reset
+              </button>
+            </div>
+            <div class="text-[11px] font-mono text-[#dde4dd]/80" id="stream-progress">
+              Row: 0 / 0
+            </div>
+          </div>
+
+          <!-- Speed Slider -->
+          <div class="space-y-1">
+            <div class="flex justify-between text-[11px] text-[#dde4dd]/75">
+              <span>Stream speed (interval)</span>
+              <span id="lbl-stream-speed">200 ms</span>
+            </div>
+            <input type="range" min="50" max="1000" value="200" step="50" id="slide-stream-speed" class="w-full accent-primary" oninput="changeStreamSpeed(this.value)"/>
+          </div>
+
+          <!-- Progress bar -->
+          <div class="w-full bg-background rounded-full h-1.5 overflow-hidden">
+            <div id="stream-progress-bar" class="bg-primary h-full transition-all duration-100" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- Live Readouts Grid -->
+        <div class="grid grid-cols-2 gap-4">
+          <div class="bg-background/40 border border-outline-variant/20 rounded-2xl p-4 text-center">
+            <p class="text-[10px] uppercase font-bold text-[#dde4dd]/60 mb-1">Current Wavelength</p>
+            <p class="text-3xl font-bold text-primary" style="font-family:'Space Grotesk',sans-serif"><span id="lbl-curr-wavelength">--</span> <span class="text-xs font-normal">nm</span></p>
+          </div>
+          <div class="bg-background/40 border border-outline-variant/20 rounded-2xl p-4 text-center">
+            <p class="text-[10px] uppercase font-bold text-[#dde4dd]/60 mb-1">Absorbance</p>
+            <p class="text-3xl font-bold text-secondary" style="font-family:'Space Grotesk',sans-serif"><span id="lbl-curr-absorbance">--</span></p>
+          </div>
+          <div class="bg-background/40 border border-outline-variant/20 rounded-2xl p-4 text-center">
+            <p class="text-[10px] uppercase font-bold text-[#dde4dd]/60 mb-1">LDR Value</p>
+            <p class="text-3xl font-bold text-[#dde4dd]" style="font-family:'Space Grotesk',sans-serif"><span id="lbl-curr-ldr">--</span></p>
+          </div>
+          <div class="bg-background/40 border border-outline-variant/20 rounded-2xl p-4 flex flex-col justify-center items-center">
+            <p class="text-[10px] uppercase font-bold text-[#dde4dd]/60 mb-1.5">Sensor Emitted RGB</p>
+            <div class="flex items-center gap-3">
+              <div id="box-curr-rgb" class="w-7 h-7 rounded-lg border border-outline-variant shadow-inner transition-colors duration-200" style="background-color: transparent;"></div>
+              <span id="lbl-curr-rgb" class="text-xs font-mono text-[#dde4dd]/80">--</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column: Pigments & Classification -->
+      <div class="glass-card rounded-3xl p-6 flex flex-col justify-between space-y-6">
+        <!-- Classification Result (Fresh / Ripe only) -->
+        <div>
+          <p class="text-xs font-bold text-secondary tracking-widest uppercase mb-3">Live Produce Classification</p>
+          <div class="bg-surface-container/60 rounded-2xl p-5 border border-outline-variant/40 text-center space-y-2">
+            <p class="text-[10px] uppercase font-bold text-[#dde4dd]/50 tracking-wider">State Diagnosis</p>
+            <div id="stream-status-badge" class="inline-block px-6 py-2.5 rounded-full font-bold text-xl text-primary bg-primary/10 border border-primary/20 transition-all duration-300">
+              WAITING
+            </div>
+            <p id="stream-status-explanation" class="text-xs text-[#dde4dd]/75 pt-1.5 leading-relaxed">
+              Start streaming spectroscopy data.csv to analyze pigment degradation in real-time.
+            </p>
+          </div>
+        </div>
+
+        <!-- Pigment Degradation Tracking -->
+        <div class="space-y-4">
+          <p class="text-xs font-bold text-primary tracking-widest uppercase">Pigment Concentrations (Real-time Estimation)</p>
+          
+          <!-- Chlorophyll -->
+          <div class="bg-background/25 border border-outline-variant/20 rounded-xl p-3.5 space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-emerald-500"></span>Chlorophyll (Green Pigment)</span>
+              <span id="lbl-chlo-pct" class="font-bold text-emerald-400">0%</span>
+            </div>
+            <div class="progress-bar"><div id="bar-chlo-pct" class="progress-fill bg-emerald-500 w-0"></div></div>
+          </div>
+
+          <!-- Carotenoids -->
+          <div class="bg-background/25 border border-outline-variant/20 rounded-xl p-3.5 space-y-2">
+            <div class="flex justify-between text-xs">
+              <span class="flex items-center gap-1.5"><span class="w-2.5 h-2.5 rounded-full bg-yellow-500"></span>Carotenoids / Xanthophylls (Yellow Pigment)</span>
+              <span id="lbl-caro-pct" class="font-bold text-yellow-400">0%</span>
+            </div>
+            <div class="progress-bar"><div id="bar-caro-pct" class="progress-fill bg-yellow-500 w-0"></div></div>
+          </div>
+        </div>
+
+        <!-- Absorbance Spectrum Real-time Chart -->
+        <div class="space-y-2">
+          <p class="text-xs font-bold text-[#dde4dd]/80 uppercase tracking-wider">Dynamic Absorbance Spectrum (Abs vs nm)</p>
+          <div class="h-32 bg-background/50 border border-outline-variant/30 rounded-xl p-3 relative overflow-hidden flex items-end">
+            <!-- Grid Lines -->
+            <div class="absolute inset-0 flex flex-col justify-between pointer-events-none p-3 opacity-20">
+              <div class="border-b border-[#dde4dd] w-full"></div>
+              <div class="border-b border-[#dde4dd] w-full"></div>
+              <div class="border-b border-[#dde4dd] w-full"></div>
+            </div>
+            <!-- Canvas or SVG for plotting -->
+            <svg id="spectrum-chart-svg" class="w-full h-full" viewBox="0 0 500 120" preserveAspectRatio="none">
+              <!-- Grid vertical markers -->
+              <line x1="0" y1="0" x2="0" y2="120" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+              <line x1="125" y1="0" x2="125" y2="120" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+              <line x1="250" y1="0" x2="250" y2="120" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+              <line x1="375" y1="0" x2="375" y2="120" stroke="rgba(255,255,255,0.1)" stroke-width="1" />
+              <line x1="500" y1="0" x2="500" y2="120" stroke="rgba(255,255,255,0.15)" stroke-width="1" />
+              <!-- Path for spectrum -->
+              <path id="spectrum-chart-path" d="" fill="none" stroke="#4edea3" stroke-width="2.5" class="transition-all duration-100" />
+              <path id="spectrum-chart-area" d="" fill="url(#grad-spectral)" opacity="0.15" class="transition-all duration-100" />
+              
+              <!-- Gradient definitions -->
+              <defs>
+                <linearGradient id="grad-spectral" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stop-color="#4edea3" />
+                  <stop offset="100%" stop-color="#4edea3" stop-opacity="0" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <div class="absolute bottom-1 left-2 text-[8px] font-mono text-[#dde4dd]/45">380nm</div>
+            <div class="absolute bottom-1 right-2 text-[8px] font-mono text-[#dde4dd]/45">740nm</div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+
   <!-- 6. Hardware Setup Tab -->
   <div id="tab-content-hardware" class="tab-content animate-in fade-in zoom-in-95 duration-500 hidden">
     <div class="max-w-6xl w-full space-y-8">
@@ -551,7 +705,7 @@ let stream = null;
 let currentImageData = null;
 
 function showTab(tab) {
-  ['dashboard','insights','vision','calibration','pigment','modeldata','comparison','hardware','pipeline'].forEach(t => {
+  ['dashboard','insights','vision','calibration','pigment','spectral','modeldata','comparison','hardware','pipeline'].forEach(t => {
     document.getElementById('tab-content-' + t).classList.add('hidden');
     const btn = document.getElementById('tab-' + t);
     if(btn) btn.className = "text-[13px] text-[#dde4dd]/40 hover:text-primary transition-all";
@@ -807,6 +961,203 @@ async function analyzeImage() {
     analyzeBtn.disabled = false;
     analyzeBtn.classList.remove('opacity-60');
     analyzeBtn.innerHTML = '<span class="material-symbols-outlined text-sm">analytics</span> ANALYZE IMAGE';
+  }
+}
+
+// ─── Live Spectroscopy Stream Logic ─────────────────────────────────────────
+let streamData = [];
+let streamIdx = 0;
+let streamIntervalId = null;
+let streamSpeed = 200;
+let streamIsPlaying = false;
+let runChloAbs = [];
+let runCaroAbs = [];
+let accumulatedPoints = [];
+
+async function initStream() {
+  if (streamData.length > 0) return;
+  try {
+    const res = await fetch('/api/spectroscopy/data');
+    if (!res.ok) throw new Error('Failed to fetch CSV data');
+    streamData = await res.json();
+    document.getElementById('stream-progress').textContent = `Row: 0 / ${streamData.length}`;
+  } catch (err) {
+    console.error('Error loading stream data:', err);
+    document.getElementById('stream-status-explanation').textContent = `Error loading data: ${err.message}`;
+  }
+}
+
+async function toggleStream() {
+  await initStream();
+  if (streamData.length === 0) return;
+
+  const btn = document.getElementById('btn-stream-play');
+  const icon = document.getElementById('icon-stream-play');
+  const txt = document.getElementById('text-stream-play');
+
+  if (streamIsPlaying) {
+    // Pause
+    clearInterval(streamIntervalId);
+    streamIntervalId = null;
+    streamIsPlaying = false;
+    icon.textContent = 'play_arrow';
+    txt.textContent = 'Play Stream';
+    btn.className = "bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-lg px-4 py-2 text-xs font-bold transition-all flex items-center gap-1.5";
+  } else {
+    // Play
+    streamIsPlaying = true;
+    icon.textContent = 'pause';
+    txt.textContent = 'Pause Stream';
+    btn.className = "bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-500 border border-yellow-500/30 rounded-lg px-4 py-2 text-xs font-bold transition-all flex items-center gap-1.5";
+    streamIntervalId = setInterval(tickStream, streamSpeed);
+  }
+}
+
+function changeStreamSpeed(val) {
+  streamSpeed = parseInt(val);
+  document.getElementById('lbl-stream-speed').textContent = `${streamSpeed} ms`;
+  if (streamIsPlaying) {
+    clearInterval(streamIntervalId);
+    streamIntervalId = setInterval(tickStream, streamSpeed);
+  }
+}
+
+function resetStream() {
+  if (streamIntervalId) {
+    clearInterval(streamIntervalId);
+    streamIntervalId = null;
+  }
+  streamIsPlaying = false;
+  streamIdx = 0;
+  runChloAbs = [];
+  runCaroAbs = [];
+  accumulatedPoints = [];
+  
+  const btn = document.getElementById('btn-stream-play');
+  const icon = document.getElementById('icon-stream-play');
+  const txt = document.getElementById('text-stream-play');
+  icon.textContent = 'play_arrow';
+  txt.textContent = 'Play Stream';
+  btn.className = "bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-lg px-4 py-2 text-xs font-bold transition-all flex items-center gap-1.5";
+
+  document.getElementById('stream-progress').textContent = `Row: 0 / ${streamData.length}`;
+  document.getElementById('stream-progress-bar').style.width = '0%';
+  
+  document.getElementById('lbl-curr-wavelength').textContent = '--';
+  document.getElementById('lbl-curr-absorbance').textContent = '--';
+  document.getElementById('lbl-curr-ldr').textContent = '--';
+  document.getElementById('lbl-curr-rgb').textContent = '--';
+  document.getElementById('box-curr-rgb').style.backgroundColor = 'transparent';
+
+  document.getElementById('lbl-chlo-pct').textContent = '0%';
+  document.getElementById('bar-chlo-pct').style.width = '0%';
+  document.getElementById('lbl-caro-pct').textContent = '0%';
+  document.getElementById('bar-caro-pct').style.width = '0%';
+
+  document.getElementById('stream-status-badge').textContent = 'WAITING';
+  document.getElementById('stream-status-badge').className = 'inline-block px-6 py-2.5 rounded-full font-bold text-xl text-primary bg-primary/10 border border-primary/20';
+  document.getElementById('stream-status-explanation').textContent = 'Start streaming spectroscopy data.csv to analyze pigment degradation in real-time.';
+
+  document.getElementById('spectrum-chart-path').setAttribute('d', '');
+  document.getElementById('spectrum-chart-area').setAttribute('d', '');
+}
+
+function tickStream() {
+  if (streamIdx >= streamData.length) {
+    // End of stream
+    clearInterval(streamIntervalId);
+    streamIntervalId = null;
+    streamIsPlaying = false;
+    const btn = document.getElementById('btn-stream-play');
+    const icon = document.getElementById('icon-stream-play');
+    const txt = document.getElementById('text-stream-play');
+    icon.textContent = 'play_arrow';
+    txt.textContent = 'Play Stream';
+    btn.className = "bg-primary/20 hover:bg-primary/30 text-primary border border-primary/30 rounded-lg px-4 py-2 text-xs font-bold transition-all flex items-center gap-1.5";
+    return;
+  }
+
+  const row = streamData[streamIdx];
+  const wl = parseFloat(row["Wavelength (nm)"]);
+  const rgbRaw = row["RGB Values"];
+  const ldr = parseFloat(row["LDR Value"]);
+  const abs = parseFloat(row["Absorbance (Abs)"]);
+
+  // Clean up RGB representation
+  let rgbClean = rgbRaw.replace(/[()\"']/g, '');
+  
+  // Update Live labels
+  document.getElementById('lbl-curr-wavelength').textContent = wl.toFixed(0);
+  document.getElementById('lbl-curr-absorbance').textContent = abs.toFixed(4);
+  document.getElementById('lbl-curr-ldr').textContent = ldr.toFixed(0);
+  document.getElementById('lbl-curr-rgb').textContent = `rgb(${rgbClean})`;
+  document.getElementById('box-curr-rgb').style.backgroundColor = `rgb(${rgbClean})`;
+
+  // Progress update
+  streamIdx++;
+  const pct = (streamIdx / streamData.length) * 100;
+  document.getElementById('stream-progress').textContent = `Row: ${streamIdx} / ${streamData.length}`;
+  document.getElementById('stream-progress-bar').style.width = `${pct}%`;
+
+  // Pigment calculations
+  if ((wl >= 400 && wl <= 440) || (wl >= 640 && wl <= 680)) {
+    runChloAbs.push(abs);
+    if (runChloAbs.length > 50) runChloAbs.shift();
+  }
+  if (wl >= 490 && wl <= 580) {
+    runCaroAbs.push(abs);
+    if (runCaroAbs.length > 50) runCaroAbs.shift();
+  }
+
+  // Calculate dynamic percentages
+  const avgChlo = runChloAbs.length ? (runChloAbs.reduce((a,b) => a+b, 0) / runChloAbs.length) : -0.3;
+  const avgCaro = runCaroAbs.length ? (runCaroAbs.reduce((a,b) => a+b, 0) / runCaroAbs.length) : -0.5;
+
+  // Absorbance ranges from -0.8 to 1.5 in data. Let's scale it to nice percentages
+  const chloPct = Math.round(Math.min(100, Math.max(15, (avgChlo + 0.8) * 55)));
+  const caroPct = Math.round(Math.min(100, Math.max(10, (avgCaro + 0.8) * 45)));
+
+  document.getElementById('lbl-chlo-pct').textContent = `${chloPct}%`;
+  document.getElementById('bar-chlo-pct').style.width = `${chloPct}%`;
+  document.getElementById('lbl-caro-pct').textContent = `${caroPct}%`;
+  document.getElementById('bar-caro-pct').style.width = `${caroPct}%`;
+
+  // Classification & Badge: SHOW ONLY GREEN (FRESH) AND YELLOW (RIPE)
+  const badge = document.getElementById('stream-status-badge');
+  const expl = document.getElementById('stream-status-explanation');
+
+  if (chloPct > 55) {
+    badge.textContent = 'FRESH';
+    badge.className = 'inline-block px-6 py-2.5 rounded-full font-bold text-xl text-emerald-400 bg-emerald-500/10 border border-emerald-500/20';
+    expl.textContent = 'High chlorophyll absorption signatures detected. The produce is in highly fresh, optimal storage condition.';
+  } else {
+    badge.textContent = 'RIPE';
+    badge.className = 'inline-block px-6 py-2.5 rounded-full font-bold text-xl text-yellow-500 bg-yellow-500/10 border border-yellow-500/20';
+    expl.textContent = 'Chlorophyll peaks are stable/moderating and yellow carotenoid pigmentation is emerging. Excellent for current stock.';
+  }
+
+  // Plot Chart Point
+  accumulatedPoints.push({wl, abs});
+  accumulatedPoints.sort((a,b) => a.wl - b.wl);
+
+  const mapX = (w) => (w - 380) / (740 - 380) * 500;
+  const mapY = (a) => {
+    // map absorbance -0.8 to 1.5 to svg heights (120 to 0)
+    const normalized = (a - (-0.8)) / (1.5 - (-0.8));
+    return 120 - Math.min(120, Math.max(0, normalized * 120));
+  };
+
+  if (accumulatedPoints.length > 0) {
+    let pathD = `M ${mapX(accumulatedPoints[0].wl)} ${mapY(accumulatedPoints[0].abs)}`;
+    for (let i = 1; i < accumulatedPoints.length; i++) {
+      pathD += ` L ${mapX(accumulatedPoints[i].wl)} ${mapY(accumulatedPoints[i].abs)}`;
+    }
+    document.getElementById('spectrum-chart-path').setAttribute('d', pathD);
+
+    const firstX = mapX(accumulatedPoints[0].wl);
+    const lastX = mapX(accumulatedPoints[accumulatedPoints.length-1].wl);
+    let areaD = pathD + ` L ${lastX} 120 L ${firstX} 120 Z`;
+    document.getElementById('spectrum-chart-area').setAttribute('d', areaD);
   }
 }
 

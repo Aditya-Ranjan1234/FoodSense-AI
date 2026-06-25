@@ -217,3 +217,27 @@ def analyze_vision(payload: VisionRequest):
         "spoilage_confidence": round(spoilage_conf * 100.0, 1),
         "deduction": deduction,
     }
+
+
+@app.get("/api/spectroscopy/data")
+def get_spectroscopy_data():
+    csv_path = os.path.join(BASE_DIR, "data.csv")
+    if not os.path.exists(csv_path):
+        csv_path = os.path.join(BASE_DIR, "..", "spectroscopy", "data.csv")
+    
+    if not os.path.exists(csv_path):
+        raise HTTPException(status_code=404, detail="data.csv not found")
+    
+    import csv
+    data = []
+    try:
+        with open(csv_path, mode='r', encoding='utf-8') as f:
+            reader = csv.DictReader(f)
+            for row in reader:
+                cleaned_row = {k.strip(): v.strip() for k, v in row.items()}
+                data.append(cleaned_row)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+    
+    return data
+
